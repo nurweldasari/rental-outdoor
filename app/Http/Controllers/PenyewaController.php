@@ -74,8 +74,7 @@ class PenyewaController extends Controller
 
         DB::commit();
 
-        return redirect()
-            ->route('data_penyewa')
+        return redirect('/data_penyewa')
             ->with('success', 'Penyewa berhasil ditambahkan');
 
     } catch (\Exception $e) {

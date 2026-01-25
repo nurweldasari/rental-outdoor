@@ -231,6 +231,7 @@ body{background:#f7f3ee}
   align-items: center;
   gap: 8px;
   font-weight: 600;
+  text-decoration: none;   /* ⬅️ HILANGKAN GARIS BAWAH */
 }
 
 /* TABLE */
@@ -461,10 +462,14 @@ th {
       <span>Pengaturan Akun</span>
     </a>
     <hr>
-    <a href="#" class="logout">
-      <i class="fa-solid fa-right-from-bracket"></i>
-      <span>Logout</span>
-    </a>
+    <form method="POST" action="{{ route('logout') }}" style="margin:0">
+      @csrf
+      <a href="#" class="logout"
+         onclick="event.preventDefault(); this.closest('form').submit();">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </form>
   </div>
 </div>
     </header>

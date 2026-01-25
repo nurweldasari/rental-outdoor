@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AkunController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardCabangController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PenyewaController;
@@ -54,10 +56,33 @@ Route::get('/tambah_penyewa', [PenyewaController::class, 'create'])
 Route::post('/tambah_penyewa', [PenyewaController::class, 'store'])
     ->name('tambah_penyewa.store');
 
+Route::get('/profil_cabang', [AkunController::class, 'editcabang'])
+    ->name('profil.cabang');
+
+Route::post('/profil_cabang', [AkunController::class, 'profilcabang'])
+    ->name('profil.cabang.update');
+
+Route::get('/profil_penyewa', [AkunController::class, 'editpenyewa']);
+Route::post('/profil_penyewa', [AkunController::class, 'profilpenyewa'])
+    ->name('profil.penyewa.update');
+
+Route::get('/ganti_password', function () {
+    return view('ganti_password');
+})->name('ganti.password');
+
+
+// ===============================
+// PROSES UPDATE PASSWORD
+// ===============================
+Route::post(
+    '/ganti_password',
+    [AkunController::class, 'updatePassword']
+)->name('ganti.password.update');
 
 Route::post('/logout', function () {
-    auth()->logout();
+    Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/login');
-});
+
+    return redirect()->route('login');
+})->name('logout');

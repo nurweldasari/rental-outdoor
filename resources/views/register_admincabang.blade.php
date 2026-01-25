@@ -240,7 +240,6 @@
 
     <button type="submit" class="btn-register">Register</button>
 </form>
-
 <div class="login-link">
     Sudah Punya Akun? <a href="{{ route('login') }}">Login</a>
 </div>

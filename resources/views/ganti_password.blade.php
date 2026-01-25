@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard Admin Cabang</title>
+<title>Profil Cabang</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -84,12 +84,6 @@ body{background:#f7f3ee}
 .sidebar.collapsed .menu-title{display:none}
 .sidebar.collapsed nav a{justify-content:center}
 .sidebar.collapsed .sidebar-header{justify-content:center}
-
-/* 🔥 FIX PENTING: ICON TIDAK BOLEH HILANG */
-.sidebar.collapsed nav a,
-.sidebar.collapsed nav a i{
-  display:flex !important
-}
 
 /* ===== MAIN ===== */
 .main {
@@ -183,45 +177,89 @@ body{background:#f7f3ee}
   color: #333;
 }
 
-/* ===== CONTENT WRAPPER ===== */
-.content-wrapper {
-  padding: 20px;
+/* ===== PROFILE ===== */
+.profile-container{
+  background:#fff;
+  border:1px solid #999;
+  border-radius:12px;
+  padding:24px;
+  width:80%;
+  margin:40px 120px
 }
 
-/* FILTER */
-.filter {
-  margin-bottom: 20px;
+/* TAB */
+.profile-tabs{
+  display:flex;
+  gap:40px;
+  margin-bottom:24px;
+  justify-content:center
 }
 
-.filter select {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #777;
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: none;
 }
 
-/* CARDS */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+.tab.active {
+  color: #b45300;
+  position: relative;
 }
 
-.card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 16px;
-  text-align: center;
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #b45300;
+  border-radius: 4px;
 }
 
-.card i {
-  font-size: 28px;
-  color: #c56a00;
-  margin-bottom: 10px;
+
+/* FORM */
+.profile-form{
+  margin-top:30px
 }
 
-.card h2 {
-  font-size: 28px;
-  margin-bottom: 5px;
+.form-row{
+  display:flex;
+  gap:16px;
+  margin-bottom:16px
+}
+
+.form-row.full input{
+  width:100%
+}
+
+.profile-form input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #7d7dc5;
+  font-size:14px
+}
+
+/* BUTTON */
+.btn-simpan{
+  width:100%;
+  margin-top:20px;
+  background:#b45300;
+  color:#fff;
+  border:none;
+  padding:14px;
+  font-size:16px;
+  border-radius:10px;
+  cursor:pointer
+}
+
+.btn-simpan:hover{
+  background:#9c4600
 }
 </style>
 </head>
@@ -229,6 +267,7 @@ body{background:#f7f3ee}
 <body>
 <div class="layout">
 
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="logo">
@@ -240,7 +279,7 @@ body{background:#f7f3ee}
   </div>
 
   <nav>
-    <a class="active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+    <a href="dashboard_cabang"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
     <a><i class="fa-solid fa-file-contract"></i><span>Kontrak Franchise</span></a>
 
     <div class="menu-title">Manajemen Penyewa<i class="fa-solid fa-chevron-down"></i></div>
@@ -259,24 +298,19 @@ body{background:#f7f3ee}
 </aside>
 
 <!-- MAIN -->
-  <main class="main">
+<main class="main">
 
-    <!-- NAVBAR -->
-    <header class="topbar">
-      <h2>Dashboard</h2>
-      <div class="user-dropdown">
-  <button class="user-btn" id="userBtn">
-    <span>Admin Cabang</span>
-    <i class="fa-solid fa-chevron-down"></i>
-  </button>
+  <!-- NAVBAR -->
+  <header class="topbar">
+    <h2>Profil</h2>
 
-  <div class="dropdown-menu" id="dropdownMenu">
-    <a href="/profil_cabang">
-    <i class="fa-solid fa-gear"></i>
-    <span>Pengaturan Akun</span>
-</a>
+    <div class="user-dropdown">
+      <button class="user-btn" id="userBtn">
+        <span>Admin Cabang</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
 
-    <hr>
+      <div class="dropdown-menu" id="dropdownMenu">
 
     <form method="POST" action="{{ route('logout') }}" style="margin:0">
       @csrf
@@ -286,48 +320,61 @@ body{background:#f7f3ee}
         <span>Logout</span>
       </a>
     </form>
-  </div>
-</div>
-    </header>
 
-    <!-- CONTENT -->
-    <div class="content-wrapper">
-
-      <div class="filter">
-        <select>
-          <option>Pilih Tahun</option>
-          <option>2024</option>
-          <option>2025</option>
-        </select>
-      </div>
-
-      <section class="cards">
-        <div class="card">
-          <i class="fa-solid fa-user"></i>
-          <h2>250</h2>
-          <p>Total Penyewa</p>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-cart-shopping"></i>
-          <h2>50</h2>
-          <p>Total Penyewaan</p>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-toolbox"></i>
-          <h2>150</h2>
-          <p>Total Alat</p>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-layer-group"></i>
-          <h2>15</h2>
-          <p>Kategori</p>
-        </div>
-      </section>
 
     </div>
-  </main>
-</div>
+  </header>
 
+<div class="profile-container">
+
+  <!-- TAB -->
+  <div class="profile-tabs">
+
+<a href="/profil_cabang" class="tab">
+    <i class="fa-solid fa-user"></i>
+    Profile
+</a>
+
+    <div class="tab active">
+      <i class="fa-solid fa-lock"></i>
+      <span>Ganti Password</span>
+    </div>
+
+    <div class="tab">
+      <i class="fa-solid fa-building-columns"></i>
+      <span>Rekening</span>
+    </div>
+  </div>
+
+  <!-- ✅ FORM PASSWORD (BEDA DI SINI SAJA) -->
+  <form class="profile-form"
+        method="POST"
+        action="{{ route('ganti.password.update') }}">
+    @csrf
+
+    <div class="form-row full">
+      <input type="password" name="password_lama"
+             placeholder="Password Lama" required>
+    </div>
+
+    <div class="form-row full">
+      <input type="password" name="password_baru"
+             placeholder="Password Baru" required>
+    </div>
+
+    <div class="form-row full">
+      <input type="password" name="password_baru_confirmation"
+             placeholder="Konfirmasi Password Baru" required>
+    </div>
+
+    <button type="submit" class="btn-simpan">
+      Simpan Password
+    </button>
+  </form>
+
+</div>
+</main>
+</div>
 <script>
 const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('toggleBtn');
@@ -362,6 +409,19 @@ document.addEventListener('click', () => {
   dropdownMenu.classList.remove('show');
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+@if (session('success'))
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil',
+    text: "{{ session('success') }}",
+    showConfirmButton: false,
+    timer: 2000
+});
+</script>
+@endif
 </body>
 </html>
