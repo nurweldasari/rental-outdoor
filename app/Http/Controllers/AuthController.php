@@ -22,33 +22,15 @@ class AuthController extends Controller
         'password' => 'required'
     ]);
 
-    if (Auth::attempt([
-    'username' => $request->username,
-    'password' => $request->password
-])) {
-    $request->session()->regenerate();
+    if (Auth::attempt($request->only('username','password'))) {
 
-    $user = auth()->user();
+        $request->session()->regenerate();
 
-    switch ($user->status) {
-        case 'penyewa':
-            return redirect('/dashboard_penyewa');
-        case 'admin_cabang':
-            return redirect('/dashboard_cabang');
-        case 'admin_pusat': 
-            return redirect()->route('dashboard.admin');
-        default:
-            Auth::logout();
-            return redirect()->route('login')->withErrors([
-                'status' => 'Role tidak dikenali'
-            ]);
+        return redirect()->route('dashboard');
     }
-}
 
-
-    // login gagal
     return back()->withErrors([
-        'login' => 'Username atau password salah'
+        'username' => 'Username atau password salah'
     ]);
 }
 

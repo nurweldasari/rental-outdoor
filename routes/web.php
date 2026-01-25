@@ -37,14 +37,10 @@ Route::post('/register_admincabang', [AuthController::class, 'registerAdminCaban
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/dashboard_penyewa', [DashboardController::class, 'dashboard_penyewa'])
-    ->name('dashboard.penyewa')
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard')
     ->middleware('auth');
 
-Route::get('/dashboard_cabang', [DashboardCabangController::class, 'dashboard_cabang'])
-    ->name('dashboard.cabang')
-    ->middleware('auth');
-    
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
     ->middleware('auth');
 
