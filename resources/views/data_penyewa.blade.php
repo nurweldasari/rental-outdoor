@@ -426,7 +426,7 @@ th {
   </div>
 
   <nav>
-    <a href="dashboard_cabang"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+    <a href="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
     <a><i class="fa-solid fa-file-contract"></i><span>Kontrak Franchise</span></a>
 
     <div class="menu-title">Manajemen Penyewa<i class="fa-solid fa-chevron-down"></i></div>
