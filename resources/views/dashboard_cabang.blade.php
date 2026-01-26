@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard Admin Cabang</title>
+<title>Dashboard Admin</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="{{ asset('assets/images/logo1.png') }}" type="image/png">
 <link rel="stylesheet" href="{{ asset('css/dashboard_cabang.css') }}">
@@ -23,22 +23,143 @@
   </div>
 
   <nav>
-    <a class="active"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
-    <a><i class="fa-solid fa-file-contract"></i><span>Kontrak Franchise</span></a>
+    {{-- ================= DASHBOARD ================= --}}
+<a href="{{ route('dashboard') }}"
+   class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+    <i class="fa-solid fa-gauge"></i>
+    <span>Dashboard</span>
+</a>
 
-    <div class="menu-title">Manajemen Penyewa<i class="fa-solid fa-chevron-down"></i></div>
-    <a href="data_penyewa"><i class="fa-solid fa-circle-user"></i><span>Data Penyewa</span></a>
 
-    <div class="menu-title">Manajemen Penyewaan<i class="fa-solid fa-chevron-down"></i></div>
+{{-- ================================================= --}}
+{{-- ================= ADMIN CABANG ================= --}}
+{{-- ================================================= --}}
+@if(auth()->user()->status === 'admin_cabang')
+
+    <a>
+        <i class="fa-solid fa-file-contract"></i>
+        <span>Kontrak Franchise</span>
+    </a>
+
+    <div class="menu-title">
+        Manajemen Penyewa <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <a href="/data_penyewa">
+        <i class="fa-solid fa-circle-user"></i>
+        <span>Data Penyewa</span>
+    </a>
+
+    <div class="menu-title">
+        Manajemen Penyewaan <i class="fa-solid fa-chevron-down"></i>
+    </div>
     <a><i class="fa-solid fa-cart-shopping"></i><span>Penyewaan</span></a>
     <a><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat Penyewaan</span></a>
-    <a><i class="fa-solid fa-print"></i><span>Laporan Pendapatan</span></a>
+    <a>
+        <i class="fa-solid fa-print"></i>
+        <span>Laporan Pendapatan</span>
+    </a>
 
-    <div class="menu-title">Manajemen Alat<i class="fa-solid fa-chevron-down"></i></div>
+    <div class="menu-title">
+        Manajemen Alat <i class="fa-solid fa-chevron-down"></i>
+    </div>
     <a><i class="fa-solid fa-store"></i><span>Data Alat</span></a>
     <a><i class="fa-solid fa-layer-group"></i><span>Data Kategori</span></a>
-    <a><i class="fa-solid fa-sack-dollar"></i><span>Bagi Hasil</span></a>
-  </nav>
+
+    <a>
+        <i class="fa-solid fa-sack-dollar"></i>
+        <span>Bagi Hasil</span>
+    </a>
+
+@endif
+
+
+{{-- ================================================= --}}
+{{-- ================= ADMIN PUSAT ================= --}}
+{{-- ================================================= --}}
+@if(auth()->user()->status === 'admin_pusat')
+
+    <div class="menu-title">
+        Manajemen Penyewa <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <a href="/data_penyewa">
+        <i class="fa-solid fa-circle-user"></i>
+        <span>Data Penyewa</span>
+    </a>
+
+    <div class="menu-title">
+        Manajemen Penyewaan <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <a><i class="fa-solid fa-cart-shopping"></i><span>Penyewaan</span></a>
+    <a><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat Penyewaan</span></a>
+
+    <a>
+        <i class="fa-solid fa-file-lines"></i>
+        <span>Laporan Pendataan</span>
+    </a>
+
+    <div class="menu-title">
+        Manajemen Alat <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <a><i class="fa-solid fa-store"></i><span>Data Alat</span></a>
+    <a><i class="fa-solid fa-layer-group"></i><span>Data Kategori</span></a>
+
+@endif
+
+
+{{-- ================================================= --}}
+{{-- ================= OWNER ================= --}}
+{{-- ================================================= --}}
+@if(auth()->user()->status === 'owner')
+
+    <div class="menu-title">
+        Manajemen Penyewa <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <a href="/data_penyewa">
+        <i class="fa-solid fa-circle-user"></i>
+        <span>Data Penyewa</span>
+    </a>
+
+    <div class="menu-title">
+        Manajemen Penyewaan <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <a><i class="fa-solid fa-cart-shopping"></i><span>Penyewaan</span></a>
+    <a><i class="fa-solid fa-clock-rotate-left"></i><span>Riwayat Penyewaan</span></a>
+
+    <a>
+        <i class="fa-solid fa-file-lines"></i>
+        <span>Laporan Pendataan</span>
+    </a>
+
+    <div class="menu-title">
+        Manajemen Alat <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <a><i class="fa-solid fa-store"></i><span>Data Alat</span></a>
+    <a><i class="fa-solid fa-layer-group"></i><span>Data Kategori</span></a>
+
+    <a>
+        <i class="fa-solid fa-truck-fast"></i>
+        <span>Distribusi Produk</span>
+    </a>
+
+    <div class="menu-title">
+        Manajemen Cabang <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <a href="/cabang">
+        <i class="fa-solid fa-store"></i>
+        <span>Data Cabang</span>
+    </a>
+    <a href="/laporan-cabang">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Laporan Cabang</span>
+    </a>
+
+    <a>
+        <i class="fa-solid fa-sack-dollar"></i>
+        <span>Bagi Hasil</span>
+    </a>
+
+@endif
+
 </aside>
 
 <main class="main">
@@ -47,10 +168,13 @@
   <h2>Dashboard</h2>
 
   <div class="user-dropdown">
-    <button class="user-btn" id="userBtn">
-      <span>Admin Cabang</span>
-      <i class="fa-solid fa-chevron-down"></i>
-    </button>
+  <button class="user-btn" id="userBtn">
+    <span>
+      {{ ucwords(str_replace('_', ' ', auth()->user()->status)) }}
+    </span>
+    <i class="fa-solid fa-chevron-down"></i>
+  </button>
+
 
     <div class="dropdown-menu" id="dropdownMenu">
       <a href="/profil_cabang">

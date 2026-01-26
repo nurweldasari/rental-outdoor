@@ -44,6 +44,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/dashboard_cabang', [DashboardController::class, 'dashboardCabang'])
     ->middleware('auth');
 
+
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
     ->middleware('auth');
 
