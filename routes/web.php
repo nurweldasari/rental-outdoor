@@ -6,8 +6,11 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardCabangController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DistribusiProdukController;
 use App\Http\Controllers\PenyewaController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PermintaanProdukController;
+use App\Http\Controllers\ProdukCabangController;
 use App\Http\Controllers\ProdukController;
 use App\Models\Cabang; 
 
@@ -113,6 +116,32 @@ Route::delete('/data_produk/{id}', [ProdukController::class, 'destroy'])
 
 
 
+Route::get('/produk_cabang', [ProdukCabangController::class, 'index'])
+     ->name('produk_cabang')
+     ->middleware('auth'); // hanya user login (cabang)
+// Tampilkan form permintaan
+Route::get('/permintaan_alat', [PermintaanProdukController::class, 'create'])
+    ->name('permintaan_produk.create')
+    ->middleware('auth');
+
+// Simpan permintaan produk
+Route::post('/permintaan_alat', [PermintaanProdukController::class, 'store'])
+    ->name('permintaan_produk.store')
+    ->middleware('auth');
+
+Route::get('/data_permintaan', 
+    [PermintaanProdukController::class, 'riwayat']
+)->name('data_permintaan');
+
+Route::get('/distribusi_produk', [DistribusiProdukController::class, 'index'])
+    ->name('distribusi_produk');
+
+Route::post('/distribusi_produk/kirim', [DistribusiProdukController::class, 'kirimPermintaan'])
+    ->name('distribusi_produk.kirim');
+
+Route::post('/distribusi_produk/terima/{id}', [DistribusiProdukController::class, 'terima'])
+    ->name('distribusi_produk.terima');
+
 // ===============================
 // PROSES UPDATE PASSWORD
 // ===============================
@@ -128,3 +157,4 @@ Route::post('/logout', function () {
 
     return redirect()->route('login');
 })->name('logout');
+

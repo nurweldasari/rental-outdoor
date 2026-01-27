@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,4 +28,14 @@ class Produk extends Model
     {
         return $this->belongsTo(Kategori::class, 'kategori_idkategori', 'idkategori');
     }
+
+    public function stokCabang()
+{
+    return $this->hasMany(
+        StokCabang::class,
+        'produk_idproduk',
+        'idproduk'
+    );
+}
+
 }

@@ -6,30 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('stok_cabang', function (Blueprint $table) {
-            $table->id('idstok');
+        Schema::create('permintaan_produk', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
 
-            $table->unsignedBigInteger('produk_idproduk');
-            $table->unsignedBigInteger('cabang_idcabang');
+            $table->bigIncrements('idpermintaan'); // BIGINT UNSIGNED
+            $table->unsignedBigInteger('cabang_idcabang'); // FK cabang
+            $table->unsignedBigInteger('produk_idproduk'); // FK produk
+            $table->integer('jumlah_diminta'); // jumlah yang diminta cabang
+            $table->string('tanggal_permintaan', 45);
+           // status enum
+    $table->enum('status', ['menunggu', 'disetujui', 'ditolak', 'sampai'])
+          ->default('menunggu');
 
-            $table->integer('jumlah');
-            $table->enum('status', ['menunggu', 'dikirim', 'diterima'])->default('menunggu');
+    $table->string('keterangan', 255)->nullable(); // opsional
+    $table->timestamps();
 
-            $table->timestamps();
-
-            $table->foreign('produk_idproduk')->references('idproduk')->on('produk');
-            $table->foreign('cabang_idcabang')->references('idcabang')->on('cabang');
+            $table->foreign('cabang_idcabang')->references('idcabang')->on('cabang')->onDelete('cascade');
+            $table->foreign('produk_idproduk')->references('idproduk')->on('produk')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('permintaan_produk');

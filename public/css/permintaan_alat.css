@@ -1,0 +1,122 @@
+/* ===== PERMINTAAN PRODUK ===== */
+.permintaan h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* ===== FORM BOX ===== */
+.form-box {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px;
+    background: #fff;
+    max-width: 800px;
+    margin: auto;
+}
+
+/* ===== HEADER FORM ===== */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* ===== FORM ITEM GRID ===== */
+.form-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 100px 40px;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.form-item input,
+.form-item select {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+/* TEXTAREA */
+textarea {
+    width: 100%;
+    height: 80px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    resize: vertical;
+    font-size: 14px;
+}
+
+/* ===== FORM ACTIONS ===== */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn-orange {
+    background: #f59e0b;
+}
+
+.btn-green {
+    background: #16a34a;
+}
+
+.btn-red {
+    background: #dc2626;
+}
+
+.small {
+    font-size: 12px;
+    padding: 6px 10px;
+}
+
+/* ===== TOMBOL HAPUS ===== */
+.btn-delete {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    height: 36px; /* Sesuaikan tinggi input */
+}
+
+/* ===== TOMBOL TAMBAH ===== */
+#tambah-permintaan {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    .form-item {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-item button.btn-delete {
+        grid-column: 2 / 3;
+        margin-top: 5px;
+    }
+}

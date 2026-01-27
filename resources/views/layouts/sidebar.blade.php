@@ -88,7 +88,9 @@
         Manajemen Produk
     </div>
 
-    <a class="{{ ($active ?? '') === 'produk' ? 'active' : '' }}">
+
+    <a href="{{ route('produk_cabang') }}"
+    class="{{ ($active ?? '') === 'produk.cabang' ? 'active' : '' }}">
         <i class="fa-solid fa-store"></i>
         <span>Data Produk</span>
     </a>
@@ -214,10 +216,17 @@
     <span>Data Kategori</span>
 </a>
 
-    <a class="{{ ($active ?? '') === 'distribusi' ? 'active' : '' }}">
-        <i class="fa-solid fa-truck"></i>
-        <span>Distribusi Produk</span>
-    </a>
+ <a href="{{ route('data_kategori') }}"
+   class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
+    <i class="fa-solid fa-layer-group"></i>
+    <span>Data Kategori</span>
+</a>
+
+    <a href="{{ route('distribusi_produk') }}"
+   class="{{ ($active ?? '') === 'distribusi' ? 'active' : '' }}">
+    <i class="fa-solid fa-truck"></i>
+    <span>Distribusi Produk</span>
+</a>
 
 
     <div class="menu-title {{ in_array($active ?? '', ['cabang','laporan_cabang']) ? 'open' : '' }}">

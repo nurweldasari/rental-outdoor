@@ -1,0 +1,128 @@
+/* ===== CONTAINER ===== */
+.kelola-container {
+    max-width: 900px;
+    margin: auto;
+}
+
+/* ===== HEADER ===== */
+.kelola-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.kelola-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* ===== BUTTON ===== */
+.btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn-orange {
+    background: #f59e0b;
+    color: #fff;
+}
+
+.btn-green {
+    background: #3f8f5a;
+    color: #fff;
+}
+
+.btn-full {
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* ===== CARD ===== */
+.permintaan-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 22px;
+}
+
+/* ===== TOP INFO ===== */
+.permintaan-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.permintaan-info strong {
+    font-size: 15px;
+}
+
+.admin {
+    font-size: 14px;
+    color: #555;
+}
+
+.tanggal {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 4px 0;
+}
+
+.jumlah-produk {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* ===== STATUS ===== */
+.status {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status.menunggu {
+    background: #fdecc8;
+    color: #92400e;
+}
+
+/* ===== PRODUK BOX ===== */
+.produk-box {
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.produk-box h4 {
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+.diminta {
+    font-size: 13px;
+    margin-bottom: 12px;
+    color: #374151;
+}
+
+.produk-box label {
+    font-size: 13px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.produk-box input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
