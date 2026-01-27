@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('distribusi_produk', function (Blueprint $table) {
             $table->engine = 'InnoDB';
 
-            $table->bigIncrements('iddistribusi'); // BIGINT UNSIGNED
-            $table->unsignedBigInteger('permintaan_id'); // FK ke permintaan_produk
+            $table->bigIncrements('iddistribusi'); // PK
+            $table->unsignedBigInteger('permintaan_produk_id'); // FK ke permintaan_produk
 
             $table->string('tanggal_distribusi', 45);
             $table->integer('jumlah_dikirim'); // jumlah yang dikirim pusat
@@ -21,8 +21,8 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->foreign('permintaan_id')
-                  ->references('idpermintaan')
+            $table->foreign('permintaan_produk_id')
+                  ->references('id') // id di tabel permintaan_produk
                   ->on('permintaan_produk')
                   ->onDelete('cascade');
         });

@@ -37,42 +37,46 @@
         </div>
 
         <div class="produk-grid">
-            @foreach($produkList as $produk)
+            @forelse($produkList as $produk)
+                @php
+                    // Hitung stok cabang yang sedang login
+                    $stok = $produk->stokCabang
+                        ->where('cabang_idcabang', auth()->user()->cabang_idcabang ?? 0)
+                        ->sum('jumlah');
 
-            @php
-                // Ambil stok cabang, kalau belum ada default 0
-                $stok = optional($produk->stokCabang->first())->jumlah ?? 0;
+                    // Ambil gambar, fallback ke placeholder
+                    $gambar = $produk->gambar_produk && file_exists(public_path($produk->gambar_produk))
+                        ? asset($produk->gambar_produk)
+                        : asset('images/placeholder.png');
+                @endphp
 
-                // Ambil path gambar, fallback ke placeholder jika tidak ada
-                $gambar = $produk->gambar_produk && file_exists(public_path($produk->gambar_produk))
-                    ? asset($produk->gambar_produk)
-                    : asset('images/placeholder.png');
-            @endphp
+                <div class="produk-card">
+                    <span class="badge">{{ $produk->kategori->nama_kategori ?? '-' }}</span>
 
-            <div class="produk-card">
-                <span class="badge">
-                    {{ $produk->kategori->nama_kategori }}
-                </span>
+                    <img src="{{ $gambar }}" alt="{{ $produk->nama_produk }}">
 
-                <img src="{{ $gambar }}" alt="{{ $produk->nama_produk }}">
+                    <h4>{{ $produk->nama_produk }}</h4>
 
-                <h4>{{ $produk->nama_produk }}</h4>
+                    <p class="harga">
+                        Rp {{ number_format($produk->harga) }} / hari
+                    </p>
 
-                <p class="harga">
-                    Rp {{ number_format($produk->harga) }} / hari
-                </p>
+                    <span class="stok tersedia">
+                        Stok: {{ $stok }}
+                    </span>
+                </div>
 
-                <span class="stok tersedia">
-                    Stok: {{ $stok }}
-                </span>
+            @empty
+                <p class="no-data">Belum ada produk tersedia.</p>
+            @endforelse
+        </div>
+
+        @if(method_exists($produkList, 'links'))
+            <div class="pagination">
+                {{ $produkList->withQueryString()->links() }}
             </div>
-
-            @endforeach
-        </div>
-
-        <div class="pagination">
-           
-        </div>
+        @endif
     </div>
 </div>
+
 @endsection

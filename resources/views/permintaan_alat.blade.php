@@ -73,21 +73,54 @@
 @push('scripts')
 <script>
 const container = document.getElementById('daftar-permintaan');
+const btnTambah = document.getElementById('tambah-permintaan');
+const btnReset = document.querySelector('button[type=reset]');
 
+// =====================
 // Tambah row baru
-document.getElementById('tambah-permintaan').addEventListener('click', function() {
-    const item = container.querySelector('.form-item').cloneNode(true);
-    item.querySelector('.produk-dropdown').selectedIndex = 0;
-    item.querySelector('input[type=number]').value = '';
-    container.appendChild(item);
+// =====================
+btnTambah.addEventListener('click', function() {
+    const firstItem = container.querySelector('.form-item');
+    const newItem = firstItem.cloneNode(true);
+
+    // Reset input di row baru
+    newItem.querySelector('.produk-dropdown').selectedIndex = 0;
+    newItem.querySelector('input[type=number]').value = '';
+
+    container.appendChild(newItem);
 });
 
-// Hapus row
+// =====================
+// Hapus row (minimal 1 row tersisa)
+// =====================
 container.addEventListener('click', function(e){
     if(e.target.classList.contains('btn-delete')) {
         const items = container.querySelectorAll('.form-item');
-        if(items.length > 1) e.target.closest('.form-item').remove();
+        if(items.length > 1) {
+            const row = e.target.closest('.form-item');
+            if(row) row.remove();
+        }
     }
+});
+
+// =====================
+// Reset form: kembalikan hanya 1 row kosong & reset jumlah dan select
+// =====================
+btnReset.addEventListener('click', function(e) {
+    e.preventDefault(); // agar JS reset bisa dijalankan
+    const items = container.querySelectorAll('.form-item');
+    items.forEach((item, index) => {
+        if(index === 0){
+            item.querySelector('.produk-dropdown').selectedIndex = 0;
+            item.querySelector('input[type=number]').value = '';
+        } else {
+            item.remove();
+        }
+    });
+
+    // Reset textarea juga
+    const textarea = document.querySelector('textarea[name="keterangan"]');
+    if(textarea) textarea.value = '';
 });
 </script>
 @endpush

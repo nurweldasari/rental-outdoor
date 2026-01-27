@@ -10,32 +10,34 @@ class DistribusiProduk extends Model
     protected $primaryKey = 'iddistribusi';
     protected $guarded = [];
 
-    public function permintaan()
-    {
-        return $this->belongsTo(PermintaanProduk::class, 'permintaan_id', 'idpermintaan');
-    }
+ public function permintaanProduk()
+{
+    return $this->belongsTo(PermintaanProduk::class, 'permintaan_produk_id', 'id');
+}
 
     // Update stok cabang otomatis saat status diterima
     public function confirm()
-{
-    if ($this->status_distribusi != 'diterima') {
-        // Update status distribusi
-        $this->status_distribusi = 'diterima';
-        $this->save();
+    {
+        if ($this->status_distribusi != 'diterima' && $this->permintaan) {
 
-        // Update stok cabang
-        $stok = StokCabang::firstOrCreate(
-            [
-                'produk_idproduk' => $this->permintaan->produk_idproduk,
-                'cabang_idcabang' => $this->permintaan->cabang_idcabang
-            ],
-            ['jumlah' => 0]
-        );
+            $this->status_distribusi = 'diterima';
+            $this->save();
 
-        $stok->jumlah += $this->jumlah_dikirim;
-        $stok->save();
+            $cabangId = $this->permintaan->cabang_idcabang ?? null;
+            $produkId = $this->permintaan->produk_idproduk ?? null;
+
+            if ($cabangId && $produkId) {
+                $stok = StokCabang::firstOrCreate(
+                    [
+                        'produk_idproduk' => $produkId,
+                        'cabang_idcabang' => $cabangId
+                    ],
+                    ['jumlah' => 0]
+                );
+
+                $stok->jumlah += $this->jumlah_dikirim;
+                $stok->save();
+            }
+        }
     }
 }
-
-}
-

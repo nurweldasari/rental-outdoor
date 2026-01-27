@@ -142,6 +142,7 @@ Route::post('/distribusi_produk/kirim', [DistribusiProdukController::class, 'kir
 Route::post('/distribusi_produk/terima/{id}', [DistribusiProdukController::class, 'terima'])
     ->name('distribusi_produk.terima');
 
+
 // ===============================
 // PROSES UPDATE PASSWORD
 // ===============================

@@ -5,44 +5,35 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Produk;
 use App\Models\Kategori;
-use App\Models\AdminCabang;
+use App\Models\StokCabang;
 use Illuminate\Support\Facades\Auth;
 
 class ProdukCabangController extends Controller
 {
     public function index(Request $request)
     {
-        // 🔹 ambil admin cabang dari user login
-        $adminCabang = AdminCabang::where(
-            'users_idusers',
-            Auth::user()->idusers
-        )->first();
+        $cabangId = Auth::user()->cabang_idcabang ?? null; // asumsi user punya cabang_idcabang
 
-        if (!$adminCabang) {
-            abort(403, 'Akun bukan admin cabang');
+        // Ambil produk yang ada stok di cabang ini
+        $query = Produk::with(['kategori', 'stokCabang' => function($q) use($cabangId) {
+            $q->where('cabang_idcabang', $cabangId);
+        }])
+        ->whereHas('stokCabang', function($q) use($cabangId) {
+            $q->where('cabang_idcabang', $cabangId)
+              ->where('jumlah', '>', 0); // hanya yang tersedia
+        });
+
+        if ($request->kategori) {
+            $query->where('kategori_idkategori', $request->kategori);
         }
 
-        // 🔹 ambil semua produk, relasi stokCabang untuk cabang login
-        $produkList = Produk::with([
-            'kategori',
-            'stokCabang' => function ($q) use ($adminCabang) {
-                $q->where('cabang_idcabang', $adminCabang->cabang_idcabang);
-            }
-        ])
-        ->when($request->kategori, function($q) use ($request) {
-            $q->where('kategori_id', $request->kategori);
-        })
-        ->when($request->search, function($q) use ($request) {
-            $q->where('nama_produk', 'like', '%'.$request->search.'%');
-        })
-        ->get();
+        if ($request->search) {
+            $query->where('nama_produk', 'like', '%'.$request->search.'%');
+        }
 
+        $produkList = $query->paginate(20);
         $kategoriList = Kategori::all();
 
-        return view('produk_cabang', compact(
-            'produkList',
-            'kategoriList',
-            'adminCabang'
-        ));
+        return view('produk_cabang', compact('produkList', 'kategoriList'));
     }
 }
