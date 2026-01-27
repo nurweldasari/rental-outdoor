@@ -93,4 +93,8 @@ Swal.fire({
 </script>
 @endif
 
+<<<<<<< HEAD
 @endpush
+=======
+@endpush
+>>>>>>> 42f48a3537ddf33b7fb78ada82cccd349abcd699
