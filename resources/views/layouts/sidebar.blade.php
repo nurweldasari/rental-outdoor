@@ -18,6 +18,30 @@
     <span>Dashboard</span>
 </a>
 
+{{-- ================================================= --}}
+{{-- ================= PENYEWA ================= --}}
+{{-- ================================================= --}}
+@if(auth()->user()->status === 'penyewa')
+
+    <a href="{{ route('katalog_produk') }}"
+       class="{{ ($active ?? '') === 'katalog' ? 'active' : '' }}">
+        <i class="fa-solid fa-store"></i>
+        <span>Katalog Produk</span>
+    </a>
+
+    <a href="{{ route('penyewa.sewa') }}"
+       class="{{ ($active ?? '') === 'sewa_penyewa' ? 'active' : '' }}">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Penyewaan Saya</span>
+    </a>
+
+    <a href="{{ route('penyewa.riwayat') }}"
+       class="{{ ($active ?? '') === 'riwayat_penyewa' ? 'active' : '' }}">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Riwayat Penyewaan</span>
+    </a>
+
+@endif
 
 {{-- ================================================= --}}
 {{-- ================= ADMIN CABANG ================= --}}

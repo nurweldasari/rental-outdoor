@@ -44,7 +44,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/dashboard_cabang', [DashboardController::class, 'dashboardCabang'])
     ->middleware('auth');
 
-
+// Katalog produk berdasarkan cabang
+Route::get('/katalog/{cabang}', [App\Http\Controllers\PenyewaController::class, 'katalog'])
+     ->name('katalog_produk');
+     
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
     ->middleware('auth');
 
