@@ -1,4 +1,4 @@
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Roboto',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
 body{background:#f7f3ee}
 .layout{display:flex;min-height:100vh}
 
@@ -75,20 +75,20 @@ body{background:#f7f3ee}
 .sidebar.collapsed nav a{justify-content:center}
 .sidebar.collapsed .sidebar-header{justify-content:center}
 
-/* ICON TIDAK HILANG */
+/* FIX PENTING: ICON TIDAK BOLEH HILANG */
 .sidebar.collapsed nav a,
 .sidebar.collapsed nav a i{
   display:flex !important
 }
 
-/* MAIN */
+/* ===== MAIN ===== */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* TOPBAR */
+/* ===== NAVBAR (MENYATU) ===== */
 .topbar {
   height: 64px;
   background: #fff;
@@ -99,21 +99,23 @@ body{background:#f7f3ee}
   border-bottom: 1px solid #eee;
 }
 
+/* JUDUL DASHBOARD */
 .topbar h2 {
-  font-size: 15px;
-  font-weight: 400;
+  font-size: 15px;        /* sesuai request */
+  font-weight: 400;      /* normal / tidak bold */
   color: #000;
 }
 
-/* DROPDOWN */
-.user-dropdown {position: relative;}
+/* ===== DROPDOWN USER ===== */
+.user-dropdown {
+  position: relative;
+}
 
 .user-btn {
   background: none;
   border: none;
   color: #c56a00;
   font-size: 14px;
-  font-style: bold;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -121,6 +123,7 @@ body{background:#f7f3ee}
   cursor: pointer;
 }
 
+/* BOX DROPDOWN */
 .dropdown-menu {
   position: absolute;
   top: 130%;
@@ -135,54 +138,132 @@ body{background:#f7f3ee}
   z-index: 1000;
 }
 
-.dropdown-menu.show {display:block;}
+.dropdown-menu.show {
+  display: block;
+}
 
+/* ITEM */
 .dropdown-menu a {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
   text-decoration: none;
-  color: #666;
+  color: #555;
   font-size: 14px;
 }
 
-.dropdown-menu a:hover {background:#f7f3ee}
-.dropdown-menu hr {border:none;border-top:1px solid #e5e5e5}
-.dropdown-menu .logout {color:#666}
-
-/* CONTENT */
-.content-wrapper {padding:20px}
-
-.filter {margin-bottom:20px}
-.filter select {
-  padding:8px 12px;
-  border-radius:8px;
-  border:1px solid #c6c6c6;
+.dropdown-menu a i {
+  font-size: 18px;
 }
 
-.cards {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:20px;
+/* HOVER */
+.dropdown-menu a:hover {
+  background: #f7f3ee;
 }
 
-.card {
-  background:#fff;
-  padding:20px;
-  border-radius:16px;
-  text-align:center;
-  border:2px solid #c6c6c6;
+/* GARIS PEMISAH */
+.dropdown-menu hr {
+  border: none;
+  border-top: 1px solid #e5e5e5;
 }
 
-.card i {
-  font-size:28px;
-  color:#c56a00;
-  margin-bottom:10px;
+/* LOGOUT */
+.dropdown-menu .logout {
+  color: #555;
 }
 
-.card h2 {
-  font-size:28px;
-  margin-bottom:5px;
-  color:#666;
+.profile-container {
+  background: #ffffff;
+  border: 1px solid #999;
+  border-radius: 12px;
+  padding: 24px;
+
+  width: 80%;
+  max-width: 100%;      /* ⬅️ ini kunci */
+  margin: 40px 120px;       /* ⬅️ jangan auto */
+}
+
+
+
+/* TAB */
+.profile-tabs {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #777;
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.tab.active {
+  color: #b45300;
+  position: relative;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: #b45300;
+  border-radius: 0 0 20px 20px; 
+}
+
+/* FORM */
+.profile-form {
+  margin-top: 30px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row.full input {
+  width: 100%;
+}
+
+.form-row.center {
+  justify-content: center;
+}
+
+.profile-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #7d7dc5;
+  font-size: 14px;
+}
+
+.username-input {
+  max-width: 260px;
+}
+
+/* BUTTON */
+.btn-simpan {
+  width: 100%;
+  margin-top: 20px;
+  background: #b45300;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn-simpan:hover {
+  background: #9c4600;
 }

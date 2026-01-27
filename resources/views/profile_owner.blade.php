@@ -1,13 +1,9 @@
 @extends('layouts.app')
 
-<<<<<<< HEAD
-@section('title', 'Profile Cabang')
-=======
-@section('title', 'Profil Cabang')
->>>>>>> 42f48a3537ddf33b7fb78ada82cccd349abcd699
+@section('title', 'Profile Owner')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/profil_cabang.css') }}">
+<link rel="stylesheet" href="{{ asset('css/profil_owner.css') }}">
 @endpush
 
 
@@ -39,11 +35,7 @@
     <form
         class="profile-form"
         method="POST"
-<<<<<<< HEAD
-        action="{{ route('profil_cabang') }}"
-=======
         action="{{ route('profil.cabang.update') }}"
->>>>>>> 42f48a3537ddf33b7fb78ada82cccd349abcd699
     >
         @csrf
 
@@ -132,8 +124,4 @@ Swal.fire({
 </script>
 @endif
 
-<<<<<<< HEAD
 @endpush
-=======
-@endpush
->>>>>>> 42f48a3537ddf33b7fb78ada82cccd349abcd699

@@ -1,0 +1,221 @@
+/* ============================= */
+/* CONTAINER HALAMAN KATEGORI   */
+/* ============================= */
+
+.container-kategori {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #555;
+
+}
+
+/* ============================= */
+/* HEADER ATAS                   */
+/* ============================= */
+
+.header-kategori {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-kategori .left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-kategori select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.header-kategori .right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-kategori input[type="text"] {
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    width: 200px;
+    outline: none;
+}
+
+.btn-tambah {
+    background: #D17A00;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-tambah:hover {
+    background: #d97706;
+}
+
+/* ============================= */
+/* TABLE KATEGORI               */
+/* ============================= */
+
+.table-kategori {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table-kategori thead {
+     background: #f8a11547;
+    border-top: 1px solid #555;    /* border atas */
+    border-bottom: 1px solid #555; /* border bawah */
+    border-left: none;             /* optional, hilangkan border kiri */
+    border-right: none;            /* optional, hilangkan border kanan */
+}
+
+.table-kategori th,
+.table-kategori td {
+    padding: 12px 14px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.table-kategori th {
+    font-weight: 700;
+    color: #333;
+}
+
+/* Tombol Aksi*/
+.btn-edit { 
+    background: #fff;
+    color: #056A28;  
+    border: none; 
+    font-size: 18px;                
+}
+
+.btn-hapus {
+    background: #fff;
+    color: #DB2C00;  
+    border: none;   
+    font-size: 18px; 
+}
+
+/* ============================= */
+/* MODAL (TAMBAH & EDIT)        */
+/* ============================= */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #92400e;
+}
+
+/* ============================= */
+/* FORM DI MODAL                */
+/* ============================= */
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #f59e0b;
+}
+
+/* ============================= */
+/* FOOTER MODAL (TOMBOL)        */
+/* ============================= */
+
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-simpan {
+    background: #056A28;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-simpan:hover {
+    background: #056A28;
+}
+
+.btn-batal {
+    background: #DB2C00;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-batal:hover {
+    background: #DB2C00;
+}
+
+/* ============================= */
+/* ANIMASI MODAL                */
+/* ============================= */
+
+@keyframes fadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
