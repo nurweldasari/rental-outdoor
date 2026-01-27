@@ -36,7 +36,7 @@ class DashboardController extends Controller
         /* ================= OWNER ================= */
         if ($user->status === 'owner') {
 
-            return view('/dashboard_cabang');
+            return view('/dashboard_owner');
         }
 
         abort(403);

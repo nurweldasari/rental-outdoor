@@ -12,26 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('produk', function (Blueprint $table) {
-            $table->id('idproduk');
-            $table->string('nama_produk',45);
-            $table->integer('stok');
-            $table->string('gambar_produk',45);
-        
-            $table->unsignedBigInteger('kategori_idkategori');
-            $table->unsignedBigInteger('cabang_idcabang');
-            $table->unsignedBigInteger('harga_idharga');
-            $table->unsignedBigInteger('admin_pusat_idadmin_pusat');
-        
-            $table->foreign('kategori_idkategori')->references('idkategori')->on('kategori');
-            $table->foreign('cabang_idcabang')->references('idcabang')->on('cabang');
-            $table->foreign('harga_idharga')->references('idharga')->on('harga');
-            $table->foreign('admin_pusat_idadmin_pusat')->references('idadmin_pusat')->on('admin_pusat');
-        
-            $table->timestamps();
-        });
-        
-    }
+    $table->id('idproduk');
+    $table->string('nama_produk',45);
+    $table->integer('stok_pusat');   
+    $table->integer('harga');
+    $table->string('jenis_skala',45);
+    $table->string('gambar_produk',100)->nullable();
 
+    // ✅ TAMBAH KATEGORI
+    $table->unsignedBigInteger('kategori_idkategori');
+
+    $table->unsignedBigInteger('admin_pusat_idadmin_pusat');
+    $table->timestamps();
+
+    // foreign key
+    $table->foreign('kategori_idkategori')
+          ->references('idkategori')
+          ->on('kategori');
+});
+    }
     /**
      * Reverse the migrations.
      */

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardCabangController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PenyewaController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\ProdukController;
 use App\Models\Cabang; 
 
 
@@ -57,7 +59,7 @@ Route::post('/tambah_penyewa', [PenyewaController::class, 'store'])
     ->name('tambah_penyewa.store');
 
 Route::get('/profil_cabang', [AkunController::class, 'editcabang'])
-    ->name('profil.cabang');
+    ->name('profil_cabang');
 
 Route::post('/profil_cabang', [AkunController::class, 'profilcabang'])
     ->name('profil.cabang.update');
@@ -69,6 +71,43 @@ Route::post('/profil_penyewa', [AkunController::class, 'profilpenyewa'])
 Route::get('/ganti_password', function () {
     return view('ganti_password');
 })->name('ganti.password');
+
+
+/* ========== Kategori ========== */
+
+Route::get('/data_kategori', [KategoriController::class, 'index'])->name('data_kategori');
+Route::post('/data_kategori', [KategoriController::class, 'store'])->name('kategori.store');
+Route::put('/data_kategori/{id}', [KategoriController::class, 'update'])->name('data_kategori');
+Route::delete('/data_kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+
+/* ========== Produk ========== */
+/* ========== PRODUK PUSAT ========== */
+
+// halaman list produk
+Route::get('/data_produk', [ProdukController::class, 'index'])
+    ->name('data_produk');
+
+// halaman form tambah produk
+Route::get('/tambah_produk', [ProdukController::class, 'create'])
+    ->name('tambah_produk');
+
+// simpan produk baru
+Route::post('/tambah_produk', [ProdukController::class, 'store'])
+    ->name('produk.store');
+
+// update produk
+// Tampilkan halaman edit produk
+Route::get('/edit_produk/{id}', [ProdukController::class, 'edit'])
+    ->name('produk.edit');
+
+// Update produk (PUT)
+Route::put('/edit_produk/{id}', [ProdukController::class, 'update'])
+    ->name('produk.update');
+
+// hapus produk
+Route::delete('/data_produk/{id}', [ProdukController::class, 'destroy'])
+    ->name('produk.destroy');
+
 
 
 // ===============================

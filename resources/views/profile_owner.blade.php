@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Profile Cabang')
+@section('title', 'Profile Owner')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/profil_cabang.css') }}">
+<link rel="stylesheet" href="{{ asset('css/profil_owner.css') }}">
 @endpush
 
 
@@ -35,7 +35,7 @@
     <form
         class="profile-form"
         method="POST"
-        action="{{ route('profil_cabang') }}"
+        action="{{ route('profil.cabang.update') }}"
     >
         @csrf
 

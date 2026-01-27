@@ -60,13 +60,13 @@
     </a>
 
 
-    <div class="menu-title {{ in_array($active ?? '', ['alat','kategori']) ? 'open' : '' }}">
-        Manajemen Alat
+    <div class="menu-title {{ in_array($active ?? '', ['produk','kategori']) ? 'open' : '' }}">
+        Manajemen Produk
     </div>
 
-    <a class="{{ ($active ?? '') === 'alat' ? 'active' : '' }}">
+    <a class="{{ ($active ?? '') === 'produk' ? 'active' : '' }}">
         <i class="fa-solid fa-store"></i>
-        <span>Data Alat</span>
+        <span>Data Produk</span>
     </a>
 
     <a class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
@@ -113,24 +113,27 @@
     </a>
 
     <a class="{{ ($active ?? '') === 'laporan_pendataan' ? 'active' : '' }}">
-        <i class="fa-solid fa-file-lines"></i>
+        <i class="fa-solid fa-print"></i>
         <span>Laporan Pendataan</span>
     </a>
 
 
-    <div class="menu-title {{ in_array($active ?? '', ['alat','kategori']) ? 'open' : '' }}">
-        Manajemen Alat
+    <div class="menu-title {{ in_array($active ?? '', ['produk','kategori']) ? 'open' : '' }}">
+        Manajemen Produk
     </div>
 
-    <a class="{{ ($active ?? '') === 'alat' ? 'active' : '' }}">
+    <a href="{{ route('data_produk') }}"
+    class="{{ ($active ?? '') === 'produk' ? 'active' : '' }}">
         <i class="fa-solid fa-store"></i>
-        <span>Data Alat</span>
+        <span>Data Produk</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
-        <i class="fa-solid fa-layer-group"></i>
-        <span>Data Kategori</span>
-    </a>
+    <a href="{{ route('data_kategori') }}"
+   class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
+    <i class="fa-solid fa-layer-group"></i>
+    <span>Data Kategori</span>
+</a>
+
 
 @endif
 
@@ -166,27 +169,29 @@
     </a>
 
     <a class="{{ ($active ?? '') === 'laporan_pendataan' ? 'active' : '' }}">
-        <i class="fa-solid fa-file-lines"></i>
+        <i class="fa-solid fa-print"></i>
         <span>Laporan Pendataan</span>
     </a>
 
 
-    <div class="menu-title {{ in_array($active ?? '', ['alat','kategori','distribusi']) ? 'open' : '' }}">
-        Manajemen Alat
+    <div class="menu-title {{ in_array($active ?? '', ['produk','kategori','distribusi']) ? 'open' : '' }}">
+        Manajemen Produk
     </div>
 
-    <a class="{{ ($active ?? '') === 'alat' ? 'active' : '' }}">
+    <a href="{{ route('data_produk') }}" 
+    class="{{ ($active ?? '') === 'produk' ? 'active' : '' }}">
         <i class="fa-solid fa-store"></i>
-        <span>Data Alat</span>
+        <span>Data Produk</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
-        <i class="fa-solid fa-layer-group"></i>
-        <span>Data Kategori</span>
-    </a>
+    <a href="{{ route('data_kategori') }}"
+   class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
+    <i class="fa-solid fa-layer-group"></i>
+    <span>Data Kategori</span>
+</a>
 
     <a class="{{ ($active ?? '') === 'distribusi' ? 'active' : '' }}">
-        <i class="fa-solid fa-truck-fast"></i>
+        <i class="fa-solid fa-truck"></i>
         <span>Distribusi Produk</span>
     </a>
 
@@ -197,13 +202,13 @@
 
     <a href="/cabang"
        class="{{ ($active ?? '') === 'cabang' ? 'active' : '' }}">
-        <i class="fa-solid fa-store"></i>
+        <i class="fa-solid fa-building"></i>
         <span>Data Cabang</span>
     </a>
 
     <a href="/laporan-cabang"
        class="{{ ($active ?? '') === 'laporan_cabang' ? 'active' : '' }}">
-        <i class="fa-solid fa-chart-line"></i>
+        <i class="fa-solid fa-print"></i>
         <span>Laporan Cabang</span>
     </a>
 
