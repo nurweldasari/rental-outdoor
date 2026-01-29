@@ -34,6 +34,7 @@
                         </option>
                     @endforeach
                 </select>
+                <i class="fa-solid fa-caret-down"></i>
             </div>
 
             {{-- Stok Pusat --}}
@@ -53,13 +54,15 @@
                     <option value="Skala Besar">Skala Besar</option>
                     <option value="Skala Kecil">Skala Kecil</option>
                 </select>
+                <i class="fa-solid fa-caret-down"></i>
             </div>
 
             {{-- Upload Gambar --}}
             <div class="form-group upload-box">
                 <label class="upload-label">
-                    <input type="file" name="gambar_produk">
-                    <span>Upload gambar produk</span>
+                    <input type="file" name="gambar_produk" id="gambar_produk">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span id="upload-text">Upload gambar produk</span>
                 </label>
             </div>
 
@@ -78,4 +81,17 @@
     </div>
 
 </div>
+<script>
+document.getElementById('gambar_produk').addEventListener('change', function () {
+    const text = document.getElementById('upload-text');
+
+    if (this.files.length > 0) {
+        text.textContent = this.files[0].name;
+        text.classList.add('file-selected');
+    } else {
+        text.textContent = 'Upload gambar produk';
+        text.classList.remove('file-selected');
+    }
+});
+</script>
 @endsection
