@@ -1,0 +1,151 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* LEFT IMAGE — SAMA DENGAN LOGIN */
+        .register-image{
+    width:50%;
+    height:100vh;
+    background: url('../assets/images/login.png') no-repeat center top;
+    background-size: cover;
+    flex-shrink: 0;
+}
+
+
+        /* RIGHT FORM — SCROLL */
+        .register-container {
+            width: 50%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background-color: #ffffff;
+            overflow-y: auto;
+        }
+
+        .register-box {
+            width: 380px;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .register-box h2 {
+            color: #c86b00;
+            margin-bottom: 15px;
+        }
+
+        .logo-img {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px 40px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .input-group textarea {
+            resize: none;
+        }
+
+        .input-group i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 15px;
+            color: #999;
+        }
+
+        /* UPLOAD */
+        .upload-box {
+            border: 1px dashed #c86b00;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 6px 14px;
+            background-color: #c86b00;
+            color: #fff;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .upload-area {
+            border: 1px dashed #f0b57a;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #999;
+            word-break: break-all;
+        }
+
+        .upload-area i {
+            display: block;
+            font-size: 20px;
+            color: #c86b00;
+            margin-bottom: 5px;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background-color: #c86b00;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-register:hover {
+            background-color: #a85700;
+        }
+
+        .login-link {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .login-link a {
+            color: #c86b00;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .register-image {
+                display: none;
+            }
+
+            .register-container {
+                width: 100%;
+            }
+        }

@@ -1,0 +1,165 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    overflow:hidden;
+}
+
+/* ===== GAMBAR KIRI (SAMA LOGIN) ===== */
+.left-image{
+    width:50%;
+    background:url('../assets/images/login.png') no-repeat center top;
+    background-size:cover;
+}
+
+/* ===== KANAN ===== */
+.container{
+    width:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#fff;
+}
+
+/* ===== FORM (SCROLL) ===== */
+.register-box{
+    width:420px;
+    height:90vh;
+    overflow-y:auto;
+    padding-right:10px;
+
+    scrollbar-width:none;
+}
+.register-box::-webkit-scrollbar{
+    display:none;
+}
+
+.register-box h2{
+    color:#c86b00;
+    margin-bottom:15px;
+    text-align:center;
+}
+
+.logo{
+    width:130px;
+    display:block;
+    margin:10px auto 20px;
+}
+
+/* ===== INPUT ===== */
+.input-group{
+    position:relative;
+    margin-bottom:14px;
+}
+
+.input-group input,
+.input-group textarea{
+    width:100%;
+    padding:12px 40px;
+    border-radius:10px; /* DISAMAKAN */
+    border:1px solid #ccc;
+    font-size:13px;
+    outline:none;
+}
+
+.input-group textarea{
+    border-radius:10px;
+    resize:none;
+}
+
+.input-group i{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    left:15px;
+    color:#999;
+}
+
+/* ===== ROW ADMIN (TETAP) ===== */
+.row{
+    display:flex;
+    gap:10px;
+}
+
+/* ===== UPLOAD ===== */
+/* UPLOAD */
+        .upload-box {
+            border: 1px dashed #c86b00;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 6px 14px;
+            background-color: #c86b00;
+            color: #fff;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .upload-area {
+            border: 1px dashed #f0b57a;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #999;
+            word-break: break-all;
+        }
+
+        .upload-area i {
+            display: block;
+            font-size: 20px;
+            color: #c86b00;
+            margin-bottom: 5px;
+        }
+
+.file-name{
+    margin-top:6px;
+    font-size:12px;
+    color:#c86b00;
+    font-style:italic;
+}
+
+/* ===== BUTTON ===== */
+.btn-register{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    background:#c86b00;
+    color:#fff;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.btn-register:hover{
+    background:#a85700;
+}
+
+.login-link{
+    margin-top:15px;
+    font-size:13px;
+    text-align:center;
+}
+
+.login-link a{
+    color:#c86b00;
+    text-decoration:none;
+    font-weight:500;
+}
+
+@media(max-width:768px){
+    .left-image{display:none;}
+    .container{width:100%;}
+}
