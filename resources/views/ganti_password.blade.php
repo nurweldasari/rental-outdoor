@@ -78,7 +78,6 @@
 
 
 @push('scripts')
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @if (session('success'))
@@ -92,9 +91,4 @@ Swal.fire({
 });
 </script>
 @endif
-
-<<<<<<< HEAD
 @endpush
-=======
-@endpush
->>>>>>> 42f48a3537ddf33b7fb78ada82cccd349abcd699
