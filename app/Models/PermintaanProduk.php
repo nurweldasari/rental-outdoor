@@ -15,6 +15,13 @@ class PermintaanProduk extends Model
     {
         return $this->belongsTo(Cabang::class, 'cabang_idcabang', 'idcabang');
     }
+    
+public function permintaan()
+{
+    return $this->belongsTo(Permintaan::class, 'permintaan_id', 'idpermintaan');
+}
+
+
 
     // Relasi ke produk
     public function produk()

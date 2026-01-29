@@ -62,44 +62,55 @@ class DistribusiProdukController extends Controller
     }
 
     // Terima semua distribusi dari satu permintaan
-    public function terima($id)
+   public function terima($id)
 {
-    DB::transaction(function() use ($id) {
-        $distribusiList = DistribusiProduk::whereIn('permintaan_produk_id', function($q) use($id) {
-            $q->select('id')
-              ->from('permintaan_produk')
-              ->where('permintaan_id', $id);
-        })->get();
+    DB::transaction(function () use ($id) {
+
+        $distribusiList = DistribusiProduk::whereIn(
+            'permintaan_produk_id',
+            PermintaanProduk::where('permintaan_id', $id)->pluck('id')
+        )->get();
 
         foreach ($distribusiList as $distribusi) {
-            if ($distribusi->status_distribusi == 'diterima') continue;
 
+            if ($distribusi->status_distribusi === 'diterima') {
+                continue;
+            }
+
+            // ✅ AMBIL RELASI DETAIL
+            $permintaanProduk = $distribusi->permintaanProduk;
+
+            // ✅ AMBIL HEADER PERMINTAAN
+            $permintaan = $permintaanProduk->permintaan;
+
+            $cabangId = $permintaan->cabang_idcabang;
+            $produkId = $permintaanProduk->produk_idproduk;
+
+            // ✅ SIMPAN KE STOK CABANG
+            $stokCabang = StokCabang::firstOrCreate(
+                [
+                    'cabang_idcabang' => $cabangId,
+                    'produk_idproduk' => $produkId
+                ],
+                [
+                    'jumlah' => 0
+                ]
+            );
+
+            $stokCabang->jumlah += $distribusi->jumlah_dikirim;
+            $stokCabang->save();
+
+            // update status distribusi
             $distribusi->status_distribusi = 'diterima';
             $distribusi->save();
-
-            $cabangId = $distribusi->permintaanProduk->cabang_idcabang ?? null;
-            $produkId = $distribusi->permintaanProduk->produk_idproduk ?? null;
-
-            if ($cabangId && $produkId) {
-                $stokCabang = StokCabang::firstOrCreate(
-                    [
-                        'cabang_idcabang' => $cabangId,
-                        'produk_idproduk' => $produkId
-                    ],
-                    ['jumlah' => 0]
-                );
-
-                $stokCabang->jumlah += $distribusi->jumlah_dikirim;
-                $stokCabang->save();
-            }
         }
 
-        $permintaanHeader = Permintaan::findOrFail($id);
-        $permintaanHeader->status = 'sampai';
-        $permintaanHeader->save();
+        // update header
+        Permintaan::where('idpermintaan', $id)
+            ->update(['status' => 'sampai']);
     });
 
-    return back()->with('success', 'Barang berhasil diterima dan stok cabang diperbarui.');
+    return back()->with('success', 'Barang diterima & stok cabang bertambah');
 }
 
 }

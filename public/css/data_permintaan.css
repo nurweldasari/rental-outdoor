@@ -109,17 +109,32 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    border: 1.5px solid transparent; /* supaya ukuran sama */
+     margin: 0 auto; 
+     transform: translateX(-30px);
 }
 
+/* ✅ SUCCESS */
 .badge.success {
     background: #dcfce7;
     color: #15803d;
+    border-color: #22c55e;
 }
 
+/* ⏳ WAITING */
 .badge.waiting {
     background: #fef3c7;
     color: #92400e;
+    border-color: #f59e0b;
 }
+
+/* 📦 SAMPAI */
+.badge.info {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #3b82f6;
+}
+
 
 /* ===== MODAL (FIX JELEK 😄) ===== */
 .modal-custom {

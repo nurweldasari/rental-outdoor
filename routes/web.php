@@ -115,10 +115,6 @@ Route::delete('/data_produk/{id}', [ProdukController::class, 'destroy'])
     ->name('produk.destroy');
 
 
-
-Route::get('/produk_cabang', [ProdukCabangController::class, 'index'])
-     ->name('produk_cabang')
-     ->middleware('auth'); // hanya user login (cabang)
 // Tampilkan form permintaan
 Route::get('/permintaan_alat', [PermintaanProdukController::class, 'create'])
     ->name('permintaan_produk.create')
@@ -139,9 +135,14 @@ Route::get('/distribusi_produk', [DistribusiProdukController::class, 'index'])
 Route::post('/distribusi_produk/kirim', [DistribusiProdukController::class, 'kirimPermintaan'])
     ->name('distribusi_produk.kirim');
 
-Route::post('/distribusi_produk/terima/{id}', [DistribusiProdukController::class, 'terima'])
-    ->name('distribusi_produk.terima');
+Route::match(['get','post'], '/distribusi_produk/terima/{id}',
+    [DistribusiProdukController::class, 'terima']
+)->name('distribusi_produk.terima');
 
+
+Route::get('/produk_cabang', [ProdukCabangController::class, 'index'])
+     ->name('produk_cabang')
+     ->middleware('auth'); // hanya user login (cabang)
 
 // ===============================
 // PROSES UPDATE PASSWORD

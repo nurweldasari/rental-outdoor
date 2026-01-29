@@ -10,34 +10,66 @@ class DistribusiProduk extends Model
     protected $primaryKey = 'iddistribusi';
     protected $guarded = [];
 
- public function permintaanProduk()
-{
-    return $this->belongsTo(PermintaanProduk::class, 'permintaan_produk_id', 'id');
-}
+    /**
+     * DETAIL PERMINTAAN
+     */
+    public function permintaanProduk()
+    {
+        return $this->belongsTo(
+            PermintaanProduk::class,
+            'permintaan_produk_id',
+            'id'
+        );
+    }
 
-    // Update stok cabang otomatis saat status diterima
+    /**
+     * HEADER PERMINTAAN
+     */
+    public function permintaan()
+    {
+        return $this->hasOneThrough(
+            Permintaan::class,
+            PermintaanProduk::class,
+            'id',                // FK di permintaan_produk
+            'idpermintaan',      // PK di permintaan
+            'permintaan_produk_id',
+            'permintaan_id'
+        );
+    }
+
+    /**
+     * KONFIRMASI TERIMA BARANG
+     */
     public function confirm()
     {
-        if ($this->status_distribusi != 'diterima' && $this->permintaan) {
-
-            $this->status_distribusi = 'diterima';
-            $this->save();
-
-            $cabangId = $this->permintaan->cabang_idcabang ?? null;
-            $produkId = $this->permintaan->produk_idproduk ?? null;
-
-            if ($cabangId && $produkId) {
-                $stok = StokCabang::firstOrCreate(
-                    [
-                        'produk_idproduk' => $produkId,
-                        'cabang_idcabang' => $cabangId
-                    ],
-                    ['jumlah' => 0]
-                );
-
-                $stok->jumlah += $this->jumlah_dikirim;
-                $stok->save();
-            }
+        if ($this->status_distribusi === 'diterima') {
+            return;
         }
+
+        $permintaanProduk = $this->permintaanProduk;
+        $permintaan       = $permintaanProduk?->permintaan;
+
+        if (!$permintaanProduk || !$permintaan) {
+            return;
+        }
+
+        $cabangId = $permintaan->cabang_idcabang;
+        $produkId = $permintaanProduk->produk_idproduk;
+
+        // update status distribusi
+        $this->status_distribusi = 'diterima';
+        $this->save();
+
+        // update stok cabang
+        $stok = StokCabang::firstOrCreate(
+            [
+                'produk_idproduk' => $produkId,
+                'cabang_idcabang' => $cabangId
+            ],
+            ['jumlah' => 0]
+        );
+
+        $stok->jumlah += $this->jumlah_dikirim;
+        $stok->save();
     }
 }

@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@php
+    $active = 'data.permintaan';
+@endphp
 
 @section('title','Data Permintaan Produk')
 

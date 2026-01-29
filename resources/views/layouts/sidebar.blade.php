@@ -95,10 +95,12 @@
         <span>Data Produk</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
-        <i class="fa-solid fa-layer-group"></i>
-        <span>Data Kategori</span>
+    <a href="{{ route('data_permintaan') }}"
+    class="{{ ($active ?? '') === 'data.permintaan' ? 'active' : '' }}">
+        <i class="fa-solid fa-box"></i>
+        <span>Data Permintaan</span>
     </a>
+
 
     <a class="{{ ($active ?? '') === 'bagi_hasil' ? 'active' : '' }}">
         <i class="fa-solid fa-sack-dollar"></i>

@@ -33,8 +33,8 @@ class Produk extends Model
 {
     return $this->hasMany(
         StokCabang::class,
-        'produk_idproduk',
-        'idproduk'
+        'produk_idproduk', // FK di stok_cabang
+        'idproduk'         // PK di produk
     );
 }
 

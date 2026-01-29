@@ -1,122 +1,142 @@
-/* ===== PERMINTAAN PRODUK ===== */
-.permintaan h3 {
+body {
+    background: #f7f3ee;
+}
+
+/* CARD UTAMA */
+.section.permintaan {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px 32px 36px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+.section.permintaan h3 {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
 }
 
-/* ===== FORM BOX ===== */
+/* ALERT */
+.alert {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.alert-red {
+    background: #f7f3ee;
+    color: #991b1b;
+}
+
+.alert-green {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* FORM BOX */
 .form-box {
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 20px;
-    background: #fff;
-    max-width: 800px;
-    margin: auto;
+    background: #ffffff;
 }
 
-/* ===== HEADER FORM ===== */
+/* HEADER FORM */
 .form-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 14px;
+    font-weight: 600;
 }
 
-/* ===== FORM ITEM GRID ===== */
+/* BOX ORANGE */
+#daftar-permintaan {
+    border: 1.5px solid #f59e0b;
+    background: #fffaf3;
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ROW */
 .form-item {
     display: grid;
-    grid-template-columns: 1fr 1fr 100px 40px;
+    grid-template-columns: 1.8fr 1fr 36px;
     gap: 10px;
-    margin-bottom: 15px;
+    align-items: center;
 }
 
-.form-item input,
-.form-item select {
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+/* INPUT */
+.form-item select,
+.form-item input {
+    height: 38px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
+    background: #ffffff;
 }
 
-/* TEXTAREA */
+/* DELETE ICON */
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #dc2626;
+    font-size: 16px;
+}
+
+/* CATATAN PUTIH */
 textarea {
     width: 100%;
-    height: 80px;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-bottom: 20px;
-    resize: vertical;
-    font-size: 14px;
+    margin-top: 18px;
+    padding: 12px;
+    min-height: 90px;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    font-size: 13px;
+    resize: none;
 }
 
-/* ===== FORM ACTIONS ===== */
+/* ACTION */
 .form-actions {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-bottom: 10px;
+    gap: 20px;
+    margin-top: 24px;
 }
 
-/* ===== BUTTONS ===== */
+/* BUTTON */
 .btn {
     border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
+    border-radius: 10px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
-    color: #fff;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-.btn:hover {
-    opacity: 0.9;
-}
-
-.btn-orange {
-    background: #f59e0b;
 }
 
 .btn-green {
-    background: #16a34a;
+    background: #166534;
+    color: #fff;
 }
 
 .btn-red {
     background: #dc2626;
-}
-
-.small {
-    font-size: 12px;
-    padding: 6px 10px;
-}
-
-/* ===== TOMBOL HAPUS ===== */
-.btn-delete {
-    background: #dc2626;
     color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    height: 36px; /* Sesuaikan tinggi input */
 }
 
-/* ===== TOMBOL TAMBAH ===== */
-#tambah-permintaan {
-    display: inline-block;
-    margin-top: 10px;
+.btn-orange {
+    background: #f59e0b;
+    color: #fff;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-    .form-item {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .form-item button.btn-delete {
-        grid-column: 2 / 3;
-        margin-top: 5px;
-    }
+.btn.small {
+    padding: 6px 14px;
+    font-size: 12px;
 }

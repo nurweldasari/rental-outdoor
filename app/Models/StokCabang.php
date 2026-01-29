@@ -7,8 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class StokCabang extends Model
 {
     protected $table = 'stok_cabang';
-    protected $primaryKey = 'idstok';
-    protected $guarded = [];
+
+    protected $primaryKey = 'idstok';   // 🔥 INI YANG HILANG
+
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $fillable = [
+        'produk_idproduk',
+        'cabang_idcabang',
+        'jumlah'
+    ];
 
     public function produk()
     {
@@ -16,15 +25,6 @@ class StokCabang extends Model
             Produk::class,
             'produk_idproduk',
             'idproduk'
-        );
-    }
-
-    public function cabang()
-    {
-        return $this->belongsTo(
-            Cabang::class,
-            'cabang_idcabang',
-            'idcabang'
         );
     }
 }
