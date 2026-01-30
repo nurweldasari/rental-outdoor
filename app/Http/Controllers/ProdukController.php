@@ -9,13 +9,21 @@ use Illuminate\Http\Request;
 class ProdukController extends Controller
 {
     // ================== INDEX ==================
-    public function index()
-    {
-        $produk   = Produk::with('kategori')->get();   // ambil relasi kategori
-        $kategori = Kategori::all();                   // untuk filter kalau mau
+    public function index(Request $request)
+{
+    $kategori = Kategori::all();
 
-        return view('data_produk', compact('produk', 'kategori'));
-    }
+    $produk = Produk::with('kategori')
+    ->when($request->kategori, function ($query) use ($request) {
+        $query->where('kategori_idkategori', $request->kategori);
+    })
+    ->when($request->skala, function ($query) use ($request) {
+        $query->where('jenis_skala', $request->skala);
+    }) 
+    ->get();
+
+    return view('data_produk', compact('produk', 'kategori'));
+}
 
     // ================== CREATE ==================
     public function create()

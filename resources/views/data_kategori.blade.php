@@ -48,7 +48,7 @@
             <tr>
                 <td>{{ $no + 1 }}</td>
                 <td>{{ $item->nama_kategori }}</td>
-                <td>0</td>
+                <td>{{ $item->produk_count }}</td>
                 <td>
                     {{-- BUTTON EDIT: HARUS type="button" --}}
                     <button type="button" class="btn-edit"

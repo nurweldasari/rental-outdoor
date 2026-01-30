@@ -212,12 +212,6 @@
         <span>Data Produk</span>
     </a>
 
-    <a href="{{ route('data_kategori') }}"
-   class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
-    <i class="fa-solid fa-layer-group"></i>
-    <span>Data Kategori</span>
-</a>
-
  <a href="{{ route('data_kategori') }}"
    class="{{ ($active ?? '') === 'kategori' ? 'active' : '' }}">
     <i class="fa-solid fa-layer-group"></i>

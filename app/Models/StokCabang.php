@@ -16,7 +16,8 @@ class StokCabang extends Model
     protected $fillable = [
         'produk_idproduk',
         'cabang_idcabang',
-        'jumlah'
+        'jumlah',
+        'is_active'
     ];
 
     public function produk()

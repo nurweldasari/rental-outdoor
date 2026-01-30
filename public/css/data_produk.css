@@ -1,65 +1,114 @@
-/* Container utama */
-.container-produk {
-    padding: 24px;
-    background: #fffaf3;
-    min-height: 100vh;
-}
-
 /* ================= HEADER ================= */
 .header-produk {
     display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
+    align-items: center;    /* sejajar vertikal */
+    gap: 12px;              /* jarak antar elemen */
+    margin-bottom: 20px;
+    flex-wrap: wrap;        /* responsive */
 }
 
-/* Search */
-.search {
-    width: 260px;
-    height: 42px;
-    padding: 0 16px;
-    border-radius: 24px;
-    border: 1px solid #ddd;
+/* ================= SEARCH ================= */
+.search-box {
+    position: relative;
+    flex: 0 0 auto;         /* ukuran sesuai konten */
+}
+
+.search-box i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 14px;
+    color: #000;
 }
 
-/* Filter */
-.filter {
+#searchInput {
+    width: 200px;
+    height: 42px;
+    padding-left: 38px; 
+    padding-right: 16px;
+    border-radius: 14px;
+    border: 1px solid #333;
+    font-size: 14px;
+    color: #000;
+}
+
+#searchInput::placeholder {
+    color: #000;
+}
+
+/* ================= SELECT ================= */
+select[name="skala"],
+select[name="kategori"] {
     height: 42px;
     padding: 0 18px;
     border-radius: 24px;
-    border: 1px solid #e58a00;
-    background: #e58a00;
-    color: white;
+    border: 1px solid #333;
     font-size: 14px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
-/* Tombol tambah */
-.btn-tambah {
-    margin-left: auto;
-    background: #e58a00;
+/* Warna filter */
+select[name="skala"] {
+    background: #D17A00;
     color: #fff;
-    border: none;
+}
+
+select[name="kategori"] {
+    background: #fff;
+    color: #333;
+}
+
+/* Option */
+select option {
+    background: #fff;
+    color: #333;
+}
+
+select option:hover {
+    background: #D17A00;
+    color: #fff;
+}
+
+select option:checked {
+    background: #fff;
+    color: #333;
+}
+
+/* ================= TOMBOL TAMBAH ================= */
+.btn-tambah {
+    background: #D17A00;
+    color: #fff;
+    border: 1px solid #333;
     height: 42px;
     padding: 0 22px;
     border-radius: 24px;
     font-size: 14px;
     font-weight: 500;
+
     display: flex;
     align-items: center;
     gap: 6px;
     cursor: pointer;
+
+    text-decoration: none;
+    margin-left: auto; /* Supaya tombol di kanan */
 }
 
-/* ================= GRID ================= */
+.btn-tambah:hover {
+    text-decoration: none;
+}
+
+/* ================= GRID PRODUK ================= */
 .grid-produk {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 22px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
 }
 
-/* ================= CARD ================= */
+/* ================= CARD PRODUK ================= */
 .card-produk {
     background: #ffffff;
     border-radius: 14px;
@@ -74,22 +123,90 @@
     transform: translateY(-2px);
 }
 
-/* Badge kategori */
-.badge-kategori {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #fff;
-    border: 1px solid #e58a00;
-    color: #e58a00;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    z-index: 5;
+.grid-produk {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* kecilin minmax dari 220px ke 180px */
+    gap: 16px;
 }
 
+/* Badge kategori */ 
+.badge-kategori { 
+    position: absolute; 
+    top: 10px; left: 10px; 
+    background: #FFEED5; 
+    border: 1px solid #A24400; 
+    color: #000; 
+    padding: 2px 8px; 
+    font-size: 11px; 
+    z-index: 5; 
+}
 
-/* Gambar */
+/* Dropdown Aksi */
+.dropdown {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.btn-dot {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #444;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.btn-dot:hover {
+    color: #000;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 28px;
+
+    width: 95px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+    z-index: 99;
+}
+
+.dropdown-menu a,
+.dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-menu a {
+    color: #056A28;
+}
+
+.btn-hapus {
+    color: #f70808;
+}
+
+.dropdown-menu a:hover {
+    background: #eaf6ea;
+}
+
+.btn-hapus:hover {
+    background: #fdeaea;
+}
+
+/* ================= GAMBAR PRODUK ================= */
 .img-produk {
     width: 100%;
     height: 170px;
@@ -120,24 +237,31 @@
     background: #f59e0b;
     color: white;
     padding: 4px 10px;
-    border-radius: 8px;
+    border-radius: 5px;
     font-size: 11px;
     font-weight: 500;
 }
 
 /* ================= DROPDOWN ================= */
+/* Wrapper dropdown */
 .dropdown {
     position: absolute;
     top: 10px;
     right: 10px;
 }
 
+/* Tombol titik tiga */
 .btn-dot {
     background: none;
     border: none;
-    font-size: 20px;
-    cursor: pointer;
+    font-size: 18px;
     color: #444;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.btn-dot:hover {
+    color: #000;
 }
 
 /* Menu dropdown */
@@ -146,32 +270,60 @@
     position: absolute;
     right: 0;
     top: 28px;
-    width: 150px;
-    background: white;
-    border: 1px solid #eee;
-    border-radius: 10px;
+
+    width: 95px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     overflow: hidden;
-    z-index: 20;
+    z-index: 99;
 }
 
-/* Item dropdown */
+/* ITEM UMUM */
 .dropdown-menu a,
 .dropdown-menu button {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
     width: 100%;
     padding: 10px 14px;
+
+    font-size: 14px;
     background: none;
     border: none;
     text-align: left;
-    font-size: 13px;
-    color: #333;
     cursor: pointer;
 }
 
-.dropdown-menu a:hover,
-.dropdown-menu button:hover {
-    background: #f8f8f8;
+/* EDIT */
+.dropdown-menu a {
+    color: #056A28;
 }
+
+.dropdown-menu a i {
+    font-size: 18px;
+}
+
+/* HAPUS */
+.btn-hapus {
+    color: #f70808;
+}
+
+.btn-hapus i {
+    font-size: 18px;
+}
+
+/* HOVER */
+.dropdown-menu a:hover {
+    background: #eaf6ea;
+}
+
+.btn-hapus:hover {
+    background: #fdeaea;
+}
+
 
 /* Modal */
 .modal {
@@ -190,110 +342,209 @@
     border-radius: 10px;
 }
 
-/* Container utama */
+/* =========================
+   Container
+========================= */
 .container-tambah-produk {
     display: flex;
     justify-content: center;
-    margin-top: 40px;
+    padding: 40px 0;
 }
 
-/* Card form */
+/* =========================
+   Card form
+========================= */
 .card-tambah-produk {
-    width: 420px;
+    width: 800px;
     background: #fff;
-    border-radius: 16px;
-    padding: 24px 28px;
+    border-radius: 18px;
+    padding: 32px;
     box-shadow: 0 0 0 1px #eee;
 }
 
-/* Judul */
+/* =========================
+   Judul
+========================= */
 .card-tambah-produk h3 {
-    margin-bottom: 20px;
+    margin-bottom: 28px;
     font-size: 18px;
     font-weight: 600;
+    color: #000;
 }
 
-/* Group input */
+/* =========================
+   Form group
+========================= */
 .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 18px;
+    position: relative;
 }
 
-/* Input & Select */
+/* =========================
+   Input & Select
+========================= */
 .form-group input,
 .form-group select {
     width: 100%;
-    height: 42px;
-    padding: 0 14px;
-    border-radius: 10px;
+    height: 48px;
+    padding: 0 18px;
+    border-radius: 14px;
     border: 1px solid #ddd;
     font-size: 14px;
+    background: #fff;
+    color: #000;
     outline: none;
+}
+
+.form-group input::placeholder {
+    color: #000;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #f59e0b; /* orange */
+    border-color: #f59e0b;
 }
 
-/* Upload box */
+/* Hilangkan arrow default select */
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 46px;
+}
+
+/* =========================
+   Icon caret dropdown
+========================= */
+.form-group i.fa-caret-down {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+/* =========================
+   Upload box
+========================= */
 .upload-box {
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .upload-label {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
     align-items: center;
     justify-content: center;
-    height: 90px;
+    height: 120px;
     border: 2px dashed #ddd;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
-    color: #666;
-    font-size: 14px;
+    text-align: center;
+    background: #fff;
 }
 
+/* icon cloud */
+.upload-label i {
+    font-size: 26px;
+    color: #000; /* hitam */
+}
+
+/* teks default */
+.upload-label span {
+    font-size: 14px;
+    color: #000; /* hitam */
+}
+
+/* saat file dipilih */
+.upload-label span.file-selected {
+    color: #f59e0b; /* ORANYE */
+    font-weight: 600;
+}
+
+/* sembunyikan input */
 .upload-label input {
     display: none;
 }
 
-/* Footer tombol */
+/* =========================
+   Footer tombol
+========================= */
 .form-footer {
     display: flex;
-    justify-content: space-between;
-    margin-top: 24px;
+    justify-content: center;   /* ✅ TENGAH */
+    gap: 18px;
+    margin-top: 36px;
 }
 
-/* Tombol simpan */
+/* Tombol Simpan */
 .btn-simpan {
-    width: 48%;
-    height: 42px;
+    height: 46px;
+    padding: 0 34px;           /* ✅ ukuran PAS */
     border: none;
-    border-radius: 10px;
-    background: #0f766e; /* hijau */
-    color: white;
+    border-radius: 14px;
+    background: #056A28;
+    color: #fff;
     font-weight: 600;
     cursor: pointer;
 }
 
 .btn-simpan:hover {
-    background: #115e59;
+    opacity: 0.9;
 }
 
-/* Tombol batal */
+/* Tombol Batal */
 .btn-batal {
-    width: 48%;
-    height: 42px;
-    border: none;
-    border-radius: 10px;
-    background: #ef4444; /* merah */
-    color: white;
+    height: 46px;
+    padding: 0 34px;           /* ✅ ukuran PAS */
+    border-radius: 14px;
+    background: #ff0000;
+    color: #fff;
     font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    line-height: 42px;
     text-decoration: none;
+    line-height: 46px;
 }
 
 .btn-batal:hover {
-    background: #dc2626;
+    opacity: 0.9;
+}
+
+.stok-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+}
+
+.stok-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+.btn-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 26px;
+    transition: 0.2s ease;
+}
+.btn-toggle.aktif {
+    color: #28a745;
+}
+.btn-toggle.nonaktif {
+    color: #dc3545;
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0%   { opacity: 1; }
+    50%  { opacity: .6; }
+    100% { opacity: 1; }
+}
+.btn-toggle:hover {
+    transform: scale(1.1);
+    opacity: 0.85;
 }

@@ -144,6 +144,10 @@ Route::get('/produk_cabang', [ProdukCabangController::class, 'index'])
      ->name('produk_cabang')
      ->middleware('auth'); // hanya user login (cabang)
 
+Route::post(
+    '/produk_cabang/toggle/{idstok}',
+    [ProdukCabangController::class, 'toggleStatus']
+)->name('produk_cabang.toggle');
 // ===============================
 // PROSES UPDATE PASSWORD
 // ===============================

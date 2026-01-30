@@ -18,6 +18,7 @@ return new class extends Migration
     $table->unsignedBigInteger('cabang_idcabang');
     $table->integer('jumlah')->default(0); // stok aktual cabang
 
+    $table->boolean('is_active')->default(true);
     $table->timestamps();
 
     $table->foreign('produk_idproduk')->references('idproduk')->on('produk');

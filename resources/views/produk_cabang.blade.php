@@ -7,59 +7,59 @@
 @section('title','Data Produk Cabang')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/produk_cabang.css') }}">
+<link rel="stylesheet" href="{{ asset('css/data_produk.css') }}">
 @endpush
 
 @section('content')
+<div class="container-produk">
 
-<div class="page-container">
+    {{-- HEADER (MENYAMAKAN PRODUK PUSAT) --}}
+    <div class="header-produk">
 
-    <div class="section data-produk">
+    {{-- Search --}}
+    <form method="GET" id="searchForm">
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text"
+               id="searchInput"
+               name="search"
+               placeholder="Pencarian..."
+               value="{{ request('search') }}">
+    </div>
+</form>
 
-        <!-- ================= HEADER ================= -->
-        <div class="produk-header">
-            <form method="GET">
 
-                <input
-                    type="text"
-                    name="search"
-                    class="search-input"
-                    placeholder="Pencarian..."
-                    value="{{ request('search') }}"
-                >
+    {{-- Tombol Permintaan Alat --}}
+    <a href="{{ route('permintaan_produk.create') }}" class="btn-tambah">
+        <i class="fa-solid fa-plus"></i> Permintaan Alat
+    </a>
 
-                <div class="produk-actions">
+    {{-- Filter Kategori (DIPINDAH KE KANAN) --}}
+    <form method="GET" id="filterForm">
+        <select name="kategori" onchange="this.form.submit()">
+            <option value="">Filter Kategori</option>
+            @foreach($kategoriList as $kategori)
+                <option value="{{ $kategori->idkategori }}"
+                    {{ request('kategori') == $kategori->idkategori ? 'selected' : '' }}>
+                    {{ $kategori->nama_kategori }}
+                </option>
+            @endforeach
+        </select>
+    </form>
 
-                    <a href="{{ route('permintaan_produk.create') }}"
-                       class="btn btn-orange">
-                        Permintaan Alat
-                    </a>
+</div>
 
-                    <select name="kategori"
-                            class="filter-select"
-                            onchange="this.form.submit()">
 
-                        <option value="">Filter Kategori</option>
+    {{-- GRID PRODUK --}}
+    <div class="grid-produk">
 
-                        @foreach($kategoriList as $kategori)
-                            <option value="{{ $kategori->idkategori }}"
-                                {{ request('kategori') == $kategori->idkategori ? 'selected' : '' }}>
-                                {{ $kategori->nama_kategori }}
-                            </option>
-                        @endforeach
-                    </select>
+        @forelse($produkList as $produk)
 
-                </div>
-            </form>
-        </div>
+            @php
+    // ambil stok cabang milik cabang login
+    $stokCabang = $produk->stokCabang->first();
 
-        <!-- ================= PRODUK ================= -->
-        <div class="produk-grid">
-
-            @forelse($produkList as $produk)
-
-                @php
-    $stok = $produk->stokCabang->sum('jumlah');
+    $stok = $stokCabang->jumlah ?? 0;
 
     $gambarPath = 'assets/uploads/produk/'.$produk->gambar_produk;
 
@@ -70,43 +70,86 @@
 @endphp
 
 
-                <div class="produk-card">
+            <div class="card-produk">
 
-                    <span class="badge">
-                        {{ $produk->kategori->nama_kategori ?? '-' }}
-                    </span>
+    {{-- Badge Kategori --}}
+    <span class="badge-kategori">
+        {{ $produk->kategori->nama_kategori ?? '-' }}
+    </span>
 
-                    <img src="{{ $gambar }}" alt="{{ $produk->nama_produk }}">
+    {{-- Gambar --}}
+    <img src="{{ $gambar }}"
+         alt="{{ $produk->nama_produk }}"
+         class="img-produk">
 
-                    <h4>{{ $produk->nama_produk }}</h4>
+    {{-- Nama --}}
+    <h4>{{ $produk->nama_produk }}</h4>
 
-                    <p class="harga">
-                        Rp {{ number_format($produk->harga) }} / hari
-                    </p>
+    {{-- Harga --}}
+    <p class="harga">
+        Rp {{ number_format($produk->harga) }} / hari
+    </p>
 
-                    <span class="stok tersedia">
-                        Stok: {{ $stok }}
-                    </span>
+   
+    {{-- STOK + STATUS --}}
+<div class="stok-wrapper">
 
-                </div>
+    <span class="stok-text">
+        Stok: {{ $stok }}
+    </span>
 
-            @empty
-                <p class="no-data">
-                    Belum ada produk tersedia di cabang ini.
-                </p>
-            @endforelse
+    @if($stokCabang)
+        <form action="{{ route('produk_cabang.toggle', $stokCabang->idstok) }}"
+              method="POST"
+              class="toggle-form">
+            @csrf
 
-        </div>
+            <button type="submit"
+                    class="btn-toggle {{ $stokCabang->is_active ? 'aktif' : 'nonaktif' }}"
+                    title="{{ $stokCabang->is_active ? 'Nonaktifkan produk' : 'Aktifkan produk' }}">
 
-        <!-- ================= PAGINATION ================= -->
-        @if(method_exists($produkList, 'links'))
-            <div class="pagination">
-                {{ $produkList->withQueryString()->links() }}
-            </div>
-        @endif
+                <i class="fa-solid
+                    {{ $stokCabang->is_active ? 'fa-toggle-on' : 'fa-toggle-off' }}">
+                </i>
 
-    </div>
+            </button>
+        </form>
+    @endif
 
 </div>
 
+</div>
+
+
+        @empty
+            <p>Tidak ada produk tersedia di cabang ini.</p>
+        @endforelse
+
+    </div>
+
+    {{-- PAGINATION --}}
+    @if(method_exists($produkList, 'links'))
+        <div class="pagination">
+            {{ $produkList->withQueryString()->links() }}
+        </div>
+    @endif
+
+</div>
 @endsection
+
+@push('scripts')
+<script>
+const searchInput = document.getElementById('searchInput');
+let searchTimeout;
+
+searchInput.addEventListener('keyup', function () {
+    // Hapus timeout sebelumnya
+    clearTimeout(searchTimeout);
+
+    // Delay 400ms agar tidak submit terlalu sering
+    searchTimeout = setTimeout(() => {
+        document.getElementById('searchForm').submit();
+    }, 400);
+});
+</script>
+@endpush

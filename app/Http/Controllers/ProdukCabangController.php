@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Produk;
+use App\Models\StokCabang;
 use App\Models\Kategori;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,6 +54,22 @@ class ProdukCabangController extends Controller
         return view(
             'produk_cabang',
             compact('produkList', 'kategoriList')
+        );
+    }
+
+    // TOGGLE AKTIF / NONAKTIF
+    // ===============================
+    public function toggleStatus($idstok)
+    {
+        $stok = StokCabang::findOrFail($idstok);
+
+        // 🔥 INI TARUH DI SINI
+        $stok->is_active = !$stok->is_active;
+        $stok->save();
+
+        return back()->with(
+            'success',
+            'Status produk berhasil diubah'
         );
     }
 }
