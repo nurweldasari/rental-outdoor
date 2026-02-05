@@ -14,22 +14,32 @@
     <!-- TAB -->
     <div class="profile-tabs">
 
+    @if (Auth::user()->status === 'admin_cabang')
         <a href="/profil_cabang" class="tab">
             <i class="fa-solid fa-user"></i>
             Profile
         </a>
+    @else
+        <a href="/profil" class="tab">
+            <i class="fa-solid fa-user"></i>
+            Profile
+        </a>
+    @endif
 
-        <div class="tab active">
-            <i class="fa-solid fa-lock"></i>
-            <span>Ganti Password</span>
-        </div>
+    <div class="tab active">
+        <i class="fa-solid fa-lock"></i>
+        <span>Ganti Password</span>
+    </div>
 
+    @if (Auth::user()->status === 'admin_cabang')
         <a href="/rekening" class="tab">
             <i class="fa-solid fa-money-check"></i>
             <span>Rekening</span>
         </a>
+    @endif
 
-    </div>
+</div>
+
 
     <!-- FORM GANTI PASSWORD -->
     <form
