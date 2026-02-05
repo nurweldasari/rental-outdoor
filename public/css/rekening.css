@@ -27,7 +27,7 @@ body{background:#f7f3ee}
   background:none;
   border:none;
   font-size:20px;
-  color:#333;
+  color:#c56a00;
   cursor:pointer
 }
 
@@ -49,7 +49,7 @@ body{background:#f7f3ee}
 }
 .sidebar nav a:hover,
 .sidebar nav a.active{
-  background:#f4a340;
+  background:#D17A00;
   color:#fff
 }
 
@@ -75,12 +75,6 @@ body{background:#f7f3ee}
 .sidebar.collapsed nav a{justify-content:center}
 .sidebar.collapsed .sidebar-header{justify-content:center}
 
-/* FIX PENTING: ICON TIDAK BOLEH HILANG */
-.sidebar.collapsed nav a,
-.sidebar.collapsed nav a i{
-  display:flex !important
-}
-
 /* ===== MAIN ===== */
 .main {
   flex: 1;
@@ -92,7 +86,7 @@ body{background:#f7f3ee}
 .topbar {
   height: 64px;
   background: #fff;
-  padding: 0 20px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -170,9 +164,10 @@ body{background:#f7f3ee}
 
 /* LOGOUT */
 .dropdown-menu .logout {
-  color: #555;
+  color: #333;
 }
 
+/* ===== PROFILE ===== */
 .profile-container {
   background: #ffffff;
   border: 1px solid #999;
@@ -184,14 +179,12 @@ body{background:#f7f3ee}
   margin: 40px 120px;       /* ⬅️ jangan auto */
 }
 
-
-
 /* TAB */
-.profile-tabs {
-  display: flex;
-  gap: 40px;
-  margin-bottom: 24px;
-  justify-content: center;
+.profile-tabs{
+  display:flex;
+  gap:40px;
+  margin-bottom:24px;
+  justify-content:center
 }
 
 .tab {
@@ -221,49 +214,41 @@ body{background:#f7f3ee}
 }
 
 /* FORM */
-.profile-form {
-  margin-top: 30px;
+.profile-form{
+  margin-top:30px
 }
 
-.form-row {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
+.form-row{
+  display:flex;
+  gap:16px;
+  margin-bottom:16px
 }
 
-.form-row.full input {
-  width: 100%;
+.form-row.full input{
+  width:100%
 }
 
-.form-row.center {
-  justify-content: center;
-}
-
-.profile-form input {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #7d7dc5;
-  font-size: 14px;
-}
-
-.username-input {
-  max-width: 260px;
+.profile-form input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #7d7dc5;
+  font-size:14px
 }
 
 /* BUTTON */
-.btn-simpan {
-  width: 100%;
-  margin-top: 20px;
-  background: #b45300;
-  color: #fff;
-  border: none;
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 10px;
-  cursor: pointer;
+.btn-simpan{
+  width:100%;
+  margin-top:20px;
+  background:#b45300;
+  color:#fff;
+  border:none;
+  padding:14px;
+  font-size:16px;
+  border-radius:10px;
+  cursor:pointer
 }
 
-.btn-simpan:hover {
-  background: #9c4600;
+.btn-simpan:hover{
+  background:#9c4600
 }

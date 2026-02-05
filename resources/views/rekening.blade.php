@@ -1,81 +1,80 @@
 @extends('layouts.app')
 
-@section('title', 'Ganti Password')
+@section('title', 'Rekening')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/ganti_password.css') }}">
+<link rel="stylesheet" href="{{ asset('css/rekening.css')}}">
 @endpush
 
-
 @section('content')
-
 <div class="profile-container">
 
-    <!-- TAB -->
+    <!-- TAB MENU -->
     <div class="profile-tabs">
-
         <a href="/profil_cabang" class="tab">
             <i class="fa-solid fa-user"></i>
-            Profile
+            <span>Profile</span>
+        </a>
+
+        <a href="/ganti_password" class="tab">
+            <i class="fa-solid fa-lock"></i>
+            <span>Ganti Password</span>
         </a>
 
         <div class="tab active">
-            <i class="fa-solid fa-lock"></i>
-            <span>Ganti Password</span>
-        </div>
-
-        <a href="/rekening" class="tab">
             <i class="fa-solid fa-money-check"></i>
             <span>Rekening</span>
-        </a>
-
+        </div>
     </div>
 
-    <!-- FORM GANTI PASSWORD -->
+    <!-- FORM REKENING -->
     <form
         class="profile-form"
         method="POST"
-        action="{{ route('ganti.password.update') }}"
+        action="{{ route('rekening.update') }}"
     >
         @csrf
 
+        <!-- NAMA BANK -->
         <div class="form-row full">
             <input
-                type="password"
-                name="password_lama"
-                placeholder="Password Lama"
+                type="text"
+                name="nama_bank"
+                placeholder="Nama Bank"
+                value="{{ old('nama_bank', $rekening->nama_bank ?? '') }}"
                 required
             >
         </div>
 
+        <!-- NO REKENING -->
         <div class="form-row full">
             <input
-                type="password"
-                name="password_baru"
-                placeholder="Password Baru"
+                type="text"
+                name="no_rekening"
+                placeholder="No. Rekening"
+                value="{{ old('no_rekening', $rekening->no_rekening ?? '') }}"
                 required
             >
         </div>
 
+        <!-- ATAS NAMA -->
         <div class="form-row full">
             <input
-                type="password"
-                name="password_baru_confirmation"
-                placeholder="Konfirmasi Password Baru"
+                type="text"
+                name="atas_nama"
+                placeholder="Atas Nama"
+                value="{{ old('atas_nama', $rekening->atas_nama ?? '') }}"
                 required
             >
         </div>
 
         <button type="submit" class="btn-simpan">
-            Simpan Password
+            Simpan
         </button>
 
     </form>
-
 </div>
-
 @endsection
-
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -25,6 +25,19 @@
             <!-- LOGO -->
             <img src="assets/images/logo.png" class="logo-img">
 
+            <!-- NOTIFIKASI STATUS -->
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <form method="POST" action="/login">
                 @csrf
 

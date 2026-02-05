@@ -1,0 +1,216 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #f7f3ee;
+    color: #333;
+}
+
+/* NAVBAR */
+.navbar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 40px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #c86b00;
+    font-size: 17px;
+}
+
+.brand img {
+    width: 60px;
+}
+
+.nav-right {
+    font-size: 14px;
+    color: #c86b00;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+}
+
+/* DROPDOWN */
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 20px;
+  width: 190px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  display: none;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: #555;
+  font-size: 14px;
+}
+
+.dropdown-menu a i {
+  font-size: 18px;
+}
+
+.dropdown-menu a:hover {
+  background: #f7f3ee;
+}
+
+.dropdown-menu hr {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+}
+
+.dropdown-menu .logout {
+  color: #333;
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+    margin: 50px 0 30px;
+}
+
+.hero h1 {
+    color: #8b3f00;
+    font-size: 26px;
+    margin-bottom: 8px;
+}
+
+.hero p {
+    font-size: 14px;
+    color: #666;
+}
+
+.hero small {
+    display: block;
+    margin-top: 5px;
+    color: #c86b00;
+}
+
+/* CONTENT */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 grid per baris */
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px;
+
+    /* GARIS PINGGIR */
+    border: 1.5px solid #b8b8b8;   /* coklat muda, senada tema */
+
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.card-title {
+    background: #c86b00;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    padding: 8px;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-bottom: 14px;
+    font-weight: 500;
+}
+
+.info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.info i {
+    color: #c86b00;
+    width: 18px;
+}
+
+/* PAGINATION */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    font-size: 14px;
+    color: #c86b00;
+}
+
+.pagination span {
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.pagination .active {
+    font-weight: 600;
+    border-bottom: 2px solid #c86b00;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 per baris tablet */
+    }
+}
+
+@media (max-width: 600px) {
+    .grid {
+        grid-template-columns: 1fr; /* 1 per baris HP */
+    }
+    .navbar {
+        padding: 14px 20px;
+    }
+    .dropdown-menu {
+        right: 20px;
+    }
+}

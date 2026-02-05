@@ -45,6 +45,53 @@
             margin-bottom: 25px;
         }
 
+        /* ================= ALERT / NOTIFIKASI ================= */
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeSlide 0.3s ease;
+}
+
+/* ERROR */
+.alert-danger {
+    background: #fff1f1;
+    border: 1px solid #f5c2c2;
+    color: #b42318;
+}
+
+/* INFO */
+.alert-info {
+    background: #f0f7ff;
+    border: 1px solid #cfe2ff;
+    color: #084298;
+}
+
+/* SUCCESS */
+.alert-success {
+    background: #ecfdf3;
+    border: 1px solid #b7ebc6;
+    color: #0f5132;
+}
+
+/* ANIMASI HALUS */
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
         .input-group {
             position: relative;
             margin-bottom: 18px;

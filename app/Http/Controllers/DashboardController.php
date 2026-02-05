@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cabang;
+use App\Models\Kategori;
+use App\Models\StokCabang;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -41,7 +43,5 @@ class DashboardController extends Controller
 
         abort(403);
     }
-
-
-    
+ 
 }

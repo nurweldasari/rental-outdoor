@@ -24,10 +24,10 @@
             <span>Ganti Password</span>
         </a>
 
-        <div class="tab">
+        <a href="/rekening" class="tab">
             <i class="fa-solid fa-money-check"></i>
             <span>Rekening</span>
-        </div>
+        </a>
 
     </div>
 

@@ -3,15 +3,20 @@
 use App\Http\Controllers\AkunController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CabangController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\DashboardCabangController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DistribusiProdukController;
+use App\Http\Controllers\KatalogController;
 use App\Http\Controllers\PenyewaController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KontrakFranchiseController;
+use App\Http\Controllers\PenyewaanController;
 use App\Http\Controllers\PermintaanProdukController;
 use App\Http\Controllers\ProdukCabangController;
 use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\RekeningController;
 use App\Models\Cabang; 
 
 
@@ -49,10 +54,29 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/dashboard_cabang', [DashboardController::class, 'dashboardCabang'])
     ->middleware('auth');
 
+// klik card cabang
+Route::get('/pilih-cabang/{id}', 
+    [KatalogController::class, 'pilihCabang']
+)->name('pilih.cabang');
+
+// halaman katalog produk
+Route::get('/katalog-cabang', 
+    [KatalogController::class, 'katalogCabang']
+)->name('katalog_produk');
+
 // Katalog produk berdasarkan cabang
 Route::get('/katalog/{cabang}', [App\Http\Controllers\PenyewaController::class, 'katalog'])
      ->name('katalog_produk');
-     
+    
+// tambah ke keranjang
+// routes/web.php
+Route::post('/cart/add', [CartController::class, 'add']);
+Route::post('/cart/update', [CartController::class, 'update']);
+Route::post('/cart/delete', [CartController::class, 'delete']);
+
+Route::post('/penyewaan/store', [PenyewaanController::class, 'store'])
+    ->name('penyewaan.store');
+
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
     ->middleware('auth');
 
@@ -70,14 +94,19 @@ Route::get('/profil_cabang', [AkunController::class, 'editcabang'])
 Route::post('/profil_cabang', [AkunController::class, 'profilcabang'])
     ->name('profil.cabang.update');
 
-Route::get('/profil_penyewa', [AkunController::class, 'editpenyewa']);
-Route::post('/profil_penyewa', [AkunController::class, 'profilpenyewa'])
-    ->name('profil.penyewa.update');
+Route::get('/profil', [AkunController::class, 'edit']);
+Route::post('/profil', [AkunController::class, 'profil'])
+    ->name('profil.update');
 
 Route::get('/ganti_password', function () {
     return view('ganti_password');
 })->name('ganti.password');
 
+Route::get('/rekening', [AkunController::class, 'editrekening'])
+    ->name('rekening');
+
+Route::post('/rekening', [AkunController::class, 'updateRekening'])
+    ->name('rekening.update');
 
 /* ========== Kategori ========== */
 
@@ -148,6 +177,29 @@ Route::post(
     '/produk_cabang/toggle/{idstok}',
     [ProdukCabangController::class, 'toggleStatus']
 )->name('produk_cabang.toggle');
+
+
+//Cabang
+Route::get('/cabang', [CabangController::class, 'index'])
+    ->middleware('auth');
+
+//Kontrak_Franchise
+Route::get('/kontrak_franchise', [KontrakFranchiseController::class, 'index'])->middleware('auth');
+
+// Konfirmasi
+Route::post('/cabang/terima/{id}', [CabangController::class, 'terima'])->name('cabang.terima');
+Route::post('/cabang/tolak/{id}', [CabangController::class, 'tolak'])->name('cabang.tolak');
+
+// Toggle status (reload page)
+Route::post('/cabang/toggle/{id}', [CabangController::class, 'toggleStatus'])->name('cabang.toggle');
+
+Route::get('/tambah_rekening', function () {
+   return view('tambah_rekening');
+});
+
+Route::post('/tambah_rekening', [RekeningController::class, 'store'])
+    ->name('rekening.store');
+
 // ===============================
 // PROSES UPDATE PASSWORD
 // ===============================

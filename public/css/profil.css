@@ -4,10 +4,9 @@
   border: 1px solid #999;
   border-radius: 12px;
   padding: 24px;
-
   width: 80%;
-  max-width: 100%;      /* ⬅️ ini kunci */
-  margin: 40px 120px;       /* ⬅️ jangan auto */
+  max-width: 100%;
+  margin: 10px 120px;
 }
 
 /* TAB */
@@ -69,10 +68,6 @@
   border-radius: 10px;
   border: 1px solid #7d7dc5;
   font-size: 14px;
-}
-
-.username-input {
-  max-width: 260px;
 }
 
 /* BUTTON */

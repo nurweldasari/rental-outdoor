@@ -94,7 +94,7 @@
     {{-- STOK + STATUS --}}
 <div class="stok-wrapper">
 
-    <span class="stok-text">
+    <span class="stok">
         Stok: {{ $stok }}
     </span>
 

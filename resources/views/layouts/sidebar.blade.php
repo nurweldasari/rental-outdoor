@@ -29,14 +29,12 @@
         <span>Katalog Produk</span>
     </a>
 
-    <a href="{{ route('penyewa.sewa') }}"
-       class="{{ ($active ?? '') === 'sewa_penyewa' ? 'active' : '' }}">
+    <a class="{{ ($active ?? '') === 'sewa' ? 'active' : '' }}">
         <i class="fa-solid fa-cart-shopping"></i>
-        <span>Penyewaan Saya</span>
+        <span>Penyewaan</span>
     </a>
 
-    <a href="{{ route('penyewa.riwayat') }}"
-       class="{{ ($active ?? '') === 'riwayat_penyewa' ? 'active' : '' }}">
+    <a class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
         <i class="fa-solid fa-clock-rotate-left"></i>
         <span>Riwayat Penyewaan</span>
     </a>

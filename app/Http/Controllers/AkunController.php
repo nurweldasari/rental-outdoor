@@ -72,14 +72,14 @@ class AkunController extends Controller
         }
     }
 
-    public function editpenyewa()
+    public function edit()
 {
     $user = Auth::user();
 
-    return view('profil_penyewa', compact('user'));
+    return view('profil', compact('user'));
 }
 
-public function profilpenyewa(Request $request)
+public function profil(Request $request)
 {
     $request->validate([
         'nama'       => 'required|string|max:255',
@@ -131,4 +131,59 @@ public function updatePassword(Request $request)
 
     return back()->with('success', 'Password berhasil diperbarui');
 }
+
+public function editrekening()
+    {
+        $user = Auth::user();
+
+        $cabangId = DB::table('admin_cabang')
+            ->where('users_idusers', $user->idusers)
+            ->value('cabang_idcabang');
+
+        $rekening = DB::table('rekening')
+            ->where('cabang_idcabang', $cabangId)
+            ->first();
+
+        return view('rekening', compact('user', 'rekening'));
+    }
+
+    public function updateRekening(Request $request)
+    {
+        $request->validate([
+            'nama_bank'   => 'required|max:45',
+            'no_rekening' => 'required|max:45',
+            'atas_nama'   => 'required|max:45',
+        ]);
+
+        $user = Auth::user();
+        $cabangId = DB::table('admin_cabang')
+            ->where('users_idusers', $user->idusers)
+            ->value('cabang_idcabang');
+
+        $rekening = DB::table('rekening')
+            ->where('cabang_idcabang', $cabangId)
+            ->first();
+
+        if ($rekening) {
+            DB::table('rekening')
+                ->where('idrekening', $rekening->idrekening)
+                ->update([
+                    'nama_bank'   => $request->nama_bank,
+                    'no_rekening' => $request->no_rekening,
+                    'atas_nama'   => $request->atas_nama,
+                    'updated_at'  => now(),
+                ]);
+        } else {
+            DB::table('rekening')->insert([
+                'nama_bank'       => $request->nama_bank,
+                'no_rekening'     => $request->no_rekening,
+                'atas_nama'       => $request->atas_nama,
+                'cabang_idcabang' => $cabangId,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
+        }
+
+        return back()->with('success', 'Rekening berhasil diperbarui');
+    }
 }

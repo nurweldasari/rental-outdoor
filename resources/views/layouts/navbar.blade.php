@@ -14,12 +14,19 @@
     <div class="dropdown-menu" id="dropdownMenu">
 
       {{-- ✅ PENGATURAN AKUN --}}
-      <a href="/profil_cabang">
-        <i class="fa-solid fa-gear"></i>
-        <span>Pengaturan Akun</span>
-      </a>
+    @if(Auth::user()->status == 'admin_cabang')
+        <a href="/profil_cabang">
+            <i class="fa-solid fa-gear"></i>
+            <span>Pengaturan Akun</span>
+        </a>
+    @else
+        <a href="/profil">
+            <i class="fa-solid fa-gear"></i>
+            <span>Pengaturan Akun</span>
+        </a>
+    @endif
 
-      <hr>
+    <hr>
 
       {{-- LOGOUT --}}
       <form method="POST" action="{{ route('logout') }}">
