@@ -511,6 +511,15 @@ select option:checked {
     opacity: 0.9;
 }
 
+/* ===== EMPTY ===== */
+.empty {
+    grid-column: 1 / -1;
+    margin-top: 80px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 15px;
+}
+
 /* === DATA PRODUK CABANG === */
 .stok-wrapper {
     display: flex;

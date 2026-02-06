@@ -96,7 +96,7 @@
                 <span class="stok">Stok: {{ $item->stok_pusat }}</span>
             </div>
         @empty
-            <p>Tidak ada produk di kategori ini</p>
+            <p class="empty">Belum ada data produk. Silakan tambahkan produk terlebih dahulu.</p>
         @endforelse
     </div>
 

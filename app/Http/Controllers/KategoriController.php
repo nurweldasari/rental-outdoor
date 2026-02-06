@@ -9,7 +9,7 @@ class KategoriController extends Controller
 {
     public function index()
     {
-        $kategori = Kategori::withCount('produk')->get();
+        $kategori = Kategori::withSum('produk', 'stok_pusat')->get();
         return view('data_kategori', compact('kategori'));
     }
 

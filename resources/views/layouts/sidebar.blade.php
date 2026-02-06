@@ -46,13 +46,14 @@
 {{-- ================================================= --}}
 @if(auth()->user()->status === 'admin_cabang')
 
-    <a class="{{ ($active ?? '') === 'kontrak' ? 'active' : '' }}">
+   <a href="/kontrak_franchise" 
+   class="{{ ($active ?? '') === 'kontrak' ? 'active' : '' }}">
         <i class="fa-solid fa-file-contract"></i>
         <span>Kontrak Franchise</span>
     </a>
 
     <div class="menu-title {{ in_array($active ?? '', ['penyewa']) ? 'open' : '' }}">
-        Manajemen Penyewa
+        Manajemen Penyewa <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a href="/data_penyewa"
@@ -63,7 +64,7 @@
 
 
     <div class="menu-title {{ in_array($active ?? '', ['sewa','riwayat']) ? 'open' : '' }}">
-        Manajemen Penyewaan
+        Manajemen Penyewaan <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a class="{{ ($active ?? '') === 'sewa' ? 'active' : '' }}">
@@ -83,7 +84,7 @@
 
 
     <div class="menu-title {{ in_array($active ?? '', ['produk','kategori']) ? 'open' : '' }}">
-        Manajemen Produk
+        Manajemen Produk <i class="fa-solid fa-chevron-down"></i>
     </div>
 
 
@@ -114,7 +115,7 @@
 @if(auth()->user()->status === 'admin_pusat')
 
     <div class="menu-title {{ ($active ?? '') === 'penyewa' ? 'open' : '' }}">
-        Manajemen Penyewa
+        Manajemen Penyewa <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a href="/data_penyewa"
@@ -125,7 +126,7 @@
 
 
     <div class="menu-title {{ in_array($active ?? '', ['sewa','riwayat']) ? 'open' : '' }}">
-        Manajemen Penyewaan
+        Manajemen Penyewaan <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a class="{{ ($active ?? '') === 'sewa' ? 'active' : '' }}">
@@ -145,7 +146,7 @@
 
 
     <div class="menu-title {{ in_array($active ?? '', ['produk','kategori']) ? 'open' : '' }}">
-        Manajemen Produk
+        Manajemen Produk <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a href="{{ route('data_produk') }}"
@@ -170,7 +171,7 @@
 @if(auth()->user()->status === 'owner')
 
     <div class="menu-title {{ ($active ?? '') === 'penyewa' ? 'open' : '' }}">
-        Manajemen Penyewa
+        Manajemen Penyewa <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a href="/data_penyewa"
@@ -181,7 +182,7 @@
 
 
     <div class="menu-title {{ in_array($active ?? '', ['sewa','riwayat']) ? 'open' : '' }}">
-        Manajemen Penyewaan
+        Manajemen Penyewaan <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a class="{{ ($active ?? '') === 'sewa' ? 'active' : '' }}">
@@ -201,7 +202,7 @@
 
 
     <div class="menu-title {{ in_array($active ?? '', ['produk','kategori','distribusi']) ? 'open' : '' }}">
-        Manajemen Produk
+        Manajemen Produk <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a href="{{ route('data_produk') }}" 
@@ -224,7 +225,7 @@
 
 
     <div class="menu-title {{ in_array($active ?? '', ['cabang','laporan_cabang']) ? 'open' : '' }}">
-        Manajemen Cabang
+        Manajemen Cabang <i class="fa-solid fa-chevron-down"></i>
     </div>
 
     <a href="/cabang"

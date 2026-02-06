@@ -1,0 +1,34 @@
+.container-kontrak{
+    padding: 20px;
+    display: flex;
+    justify-content: left;
+}
+
+/* kotak coklat */
+.card-kontrak{
+    background: #6E2E00;
+    width: 150px;
+    padding: 8px;
+    border-radius: 14px;
+}
+
+/* tombol: tulisan & icon PUTIH */
+.btn-mou{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    background: transparent; /* biar nyatu sama card */
+    color: white;
+
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* icon */
+.btn-mou i{
+    font-size: 16px;
+    color: white;
+}

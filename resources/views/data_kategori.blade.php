@@ -39,7 +39,7 @@
             <tr>
                 <th>No.</th>
                 <th>Nama Kategori</th>
-                <th>Jumlah Produk</th>
+                <th>Stok Pusat</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -48,7 +48,7 @@
             <tr>
                 <td>{{ $no + 1 }}</td>
                 <td>{{ $item->nama_kategori }}</td>
-                <td>{{ $item->produk_count }}</td>
+                <td>{{ $item->produk_sum_stok_pusat ?? 0 }}</td>
                 <td>
                     {{-- BUTTON EDIT: HARUS type="button" --}}
                     <button type="button" class="btn-edit"
