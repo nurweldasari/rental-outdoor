@@ -58,22 +58,25 @@
 
                 {{-- Dropdown Aksi --}}
                 <div class="menu">
+                <div class="dropdown-produk">
                     <button type="button"
                             class="btn-dot"
                             onclick="toggleDropdown({{ $item->idproduk }})">
                         <i class="fa-solid fa-ellipsis-vertical"></i>
                     </button>
 
+
                     <div class="menu-menu" id="menu-{{ $item->idproduk }}">
+                    <div class="dropdown-menu-produk" id="dropdown-{{ $item->idproduk }}">
                         <a href="{{ route('produk.update', $item->idproduk) }}">
-                            <i class="fa-solid fa-pen-to-square"></i>Edit
+                            <i class="fa-solid fa-pen-to-square"></i>Edit Produk
                         </a>
 
                         <form action="{{ route('produk.destroy', $item->idproduk) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-hapus" onclick="return confirm('Hapus produk ini?')">
-                                <i class="fa-solid fa-trash"></i> Hapus
+                                <i class="fa-solid fa-trash"></i> Hapus Produk
                             </button>
                         </form>
                     </div>
@@ -96,7 +99,7 @@
                 <span class="stok">Stok: {{ $item->stok_pusat }}</span>
             </div>
         @empty
-            <p>Tidak ada produk di kategori ini</p>
+            <p class="empty">Belum ada data produk. Silakan tambahkan produk terlebih dahulu.</p>
         @endforelse
     </div>
 
@@ -107,6 +110,7 @@
 <script>
 function toggleDropdown(id) {
     document.querySelectorAll('.menu-menu')
+    document.querySelectorAll('.dropdown-menu-produk')
         .forEach(menu => menu.style.display = 'none');
 
     const menu = document.getElementById('menu-' + id);
@@ -118,6 +122,7 @@ function toggleDropdown(id) {
 window.addEventListener('click', function(e) {
     if (!e.target.classList.contains('btn-dot')) {
         document.querySelectorAll('.menu-menu')
+        document.querySelectorAll('.dropdown-menu-produk')
             .forEach(menu => menu.style.display = 'none');
     }
 });

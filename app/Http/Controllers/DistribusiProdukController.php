@@ -13,16 +13,25 @@ use Illuminate\Support\Facades\DB;
 class DistribusiProdukController extends Controller
 {
     // Tampilkan semua permintaan
-    public function index()
-    {
-        $permintaan = Permintaan::with([
-            'produkPermintaan.produk',
-            'cabang',
-            'adminCabang.user'
-        ])->orderBy('tanggal_permintaan', 'asc')->get();
+  public function index(Request $request)
+{
+    $view = $request->get('view', 'permintaan'); 
+    // default = permintaan
 
-        return view('distribusi_produk', compact('permintaan'));
-    }
+    $permintaan = Permintaan::whereIn('status', ['menunggu','disetujui'])
+                    ->with(['produkPermintaan.produk','cabang','adminCabang.user'])
+                    ->get();
+
+    $riwayat = Permintaan::where('status','sampai')
+                    ->with(['produkPermintaan.produk','cabang'])
+                    ->get();
+
+    return view('distribusi_produk', compact(
+        'permintaan',
+        'riwayat',
+        'view'   
+    ));
+}
 
     // Kirim produk ke cabang
     public function kirimPermintaan(Request $request)
@@ -77,16 +86,16 @@ class DistribusiProdukController extends Controller
                 continue;
             }
 
-            // ✅ AMBIL RELASI DETAIL
+            //AMBIL RELASI DETAIL
             $permintaanProduk = $distribusi->permintaanProduk;
 
-            // ✅ AMBIL HEADER PERMINTAAN
+            //AMBIL HEADER PERMINTAAN
             $permintaan = $permintaanProduk->permintaan;
 
             $cabangId = $permintaan->cabang_idcabang;
             $produkId = $permintaanProduk->produk_idproduk;
 
-            // ✅ SIMPAN KE STOK CABANG
+            //SIMPAN KE STOK CABANG
             $stokCabang = StokCabang::firstOrCreate(
                 [
                     'cabang_idcabang' => $cabangId,

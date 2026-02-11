@@ -28,7 +28,7 @@
         <div class="right">
             <input type="text" placeholder="Pencarian...">
             <button type="button" class="btn-tambah" onclick="openTambahModal()">
-                + Tambah
+                <i class="fa-solid fa-plus"></i> Tambah
             </button>
         </div>
     </div>
@@ -39,7 +39,7 @@
             <tr>
                 <th>No.</th>
                 <th>Nama Kategori</th>
-                <th>Jumlah Produk</th>
+                <th>Stok Pusat</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -48,7 +48,7 @@
             <tr>
                 <td>{{ $no + 1 }}</td>
                 <td>{{ $item->nama_kategori }}</td>
-                <td>{{ $item->produk_count }}</td>
+                <td>{{ $item->produk_sum_stok_pusat ?? 0 }}</td>
                 <td>
                     {{-- BUTTON EDIT: HARUS type="button" --}}
                     <button type="button" class="btn-edit"
@@ -83,8 +83,7 @@
             @csrf
 
             <div class="form-group">
-                <label>Nama Kategori</label>
-                <input type="text" name="nama_kategori" required>
+                <input type="text" name="nama_kategori" placeholder="Nama Kategori" required>
             </div>
 
             <div class="modal-footer">
@@ -105,8 +104,7 @@
             @method('PUT')
 
             <div class="form-group">
-                <label>Nama Kategori</label>
-                <input type="text" name="nama_kategori" id="editNamaKategori" required>
+                <input type="text" name="nama_kategori" placeholder="Nama Kategori"id="editNamaKategori" required>
             </div>
 
             <div class="modal-footer">
