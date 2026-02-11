@@ -141,7 +141,7 @@ select option:checked {
 }
 
 /* Dropdown Aksi */
-.dropdown {
+.menu {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -160,7 +160,7 @@ select option:checked {
     color: #000;
 }
 
-.dropdown-menu {
+.menu-menu {
     display: none;
     position: absolute;
     right: 0;
@@ -175,8 +175,8 @@ select option:checked {
     z-index: 99;
 }
 
-.dropdown-menu a,
-.dropdown-menu button {
+.menu-menu a,
+.menu-menu button {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -189,7 +189,7 @@ select option:checked {
     cursor: pointer;
 }
 
-.dropdown-menu a {
+.menu-menu a {
     color: #056A28;
 }
 
@@ -197,7 +197,7 @@ select option:checked {
     color: #f70808;
 }
 
-.dropdown-menu a:hover {
+.menu-menu a:hover {
     background: #eaf6ea;
 }
 
@@ -242,8 +242,8 @@ select option:checked {
 }
 
 /* ================= DROPDOWN ================= */
-/* Wrapper dropdown */
-.dropdown {
+/* Wrapper menu */
+.menu {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -263,8 +263,8 @@ select option:checked {
     color: #000;
 }
 
-/* Menu dropdown */
-.dropdown-menu {
+/* Menu menu */
+.menu-menu {
     display: none;
     position: absolute;
     right: 0;
@@ -280,8 +280,8 @@ select option:checked {
 }
 
 /* ITEM UMUM */
-.dropdown-menu a,
-.dropdown-menu button {
+.menu-menu a,
+.menu-menu button {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -297,11 +297,11 @@ select option:checked {
 }
 
 /* EDIT */
-.dropdown-menu a {
+.menu-menu a {
     color: #056A28;
 }
 
-.dropdown-menu a i {
+.menu-menu a i {
     font-size: 18px;
 }
 
@@ -315,7 +315,7 @@ select option:checked {
 }
 
 /* HOVER */
-.dropdown-menu a:hover {
+.menu-menu a:hover {
     background: #eaf6ea;
 }
 
@@ -413,7 +413,7 @@ select option:checked {
 }
 
 /* =========================
-   Icon caret dropdown
+   Icon caret menu
 ========================= */
 .form-group i.fa-caret-down {
     position: absolute;

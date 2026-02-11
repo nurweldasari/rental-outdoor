@@ -35,17 +35,23 @@ class Penyewaan extends Model
 
     /* ================= RELATION ================= */
     public function penyewa()
-    {
-        return $this->belongsTo(Penyewa::class, 'penyewa_idpenyewa');
-    }
+{
+    return $this->belongsTo(
+        Penyewa::class,
+        'penyewa_idpenyewa', // foreign key di tabel penyewaan
+        'idpenyewa'          // primary key di tabel penyewa
+    );
+}
+
 
     public function cabang()
     {
         return $this->belongsTo(Cabang::class, 'cabang_idcabang');
     }
 
-    public function items()
-    {
-        return $this->hasMany(ItemPenyewaan::class, 'penyewaan_idpenyewaan');
-    }
+    public function itemPenyewaan()
+{
+    return $this->hasMany(ItemPenyewaan::class, 'penyewaan_idpenyewaan');
+}
+
 }

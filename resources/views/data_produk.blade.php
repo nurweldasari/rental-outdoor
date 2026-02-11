@@ -57,14 +57,14 @@
                 <span class="badge-kategori">{{ $item->kategori->nama_kategori }}</span>
 
                 {{-- Dropdown Aksi --}}
-                <div class="dropdown">
+                <div class="menu">
                     <button type="button"
                             class="btn-dot"
                             onclick="toggleDropdown({{ $item->idproduk }})">
                         <i class="fa-solid fa-ellipsis-vertical"></i>
                     </button>
 
-                    <div class="dropdown-menu" id="dropdown-{{ $item->idproduk }}">
+                    <div class="menu-menu" id="menu-{{ $item->idproduk }}">
                         <a href="{{ route('produk.update', $item->idproduk) }}">
                             <i class="fa-solid fa-pen-to-square"></i>Edit
                         </a>
@@ -106,18 +106,18 @@
 @push('scripts')
 <script>
 function toggleDropdown(id) {
-    document.querySelectorAll('.dropdown-menu')
+    document.querySelectorAll('.menu-menu')
         .forEach(menu => menu.style.display = 'none');
 
-    const dropdown = document.getElementById('dropdown-' + id);
-    dropdown.style.display = dropdown.style.display === 'block'
+    const menu = document.getElementById('menu-' + id);
+    menu.style.display = menu.style.display === 'block'
         ? 'none'
         : 'block';
 }
 
 window.addEventListener('click', function(e) {
     if (!e.target.classList.contains('btn-dot')) {
-        document.querySelectorAll('.dropdown-menu')
+        document.querySelectorAll('.menu-menu')
             .forEach(menu => menu.style.display = 'none');
     }
 });

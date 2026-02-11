@@ -29,12 +29,14 @@
         <span>Katalog Produk</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'sewa' ? 'active' : '' }}">
+    <a href="{{ route('item_penyewaan') }}"
+       class="{{ ($active ?? '') === 'penyewaan' ? 'active' : '' }}">
         <i class="fa-solid fa-cart-shopping"></i>
         <span>Penyewaan</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
+    <a href="{{ route('riwayat_penyewaan') }}"
+       class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
         <i class="fa-solid fa-clock-rotate-left"></i>
         <span>Riwayat Penyewaan</span>
     </a>
@@ -66,7 +68,8 @@
         Manajemen Penyewaan
     </div>
 
-    <a class="{{ ($active ?? '') === 'sewa' ? 'active' : '' }}">
+    <a href="{{ route('data_penyewaan') }}"
+       class="{{ ($active ?? '') === 'penyewaan' ? 'active' : '' }}">
         <i class="fa-solid fa-cart-shopping"></i>
         <span>Penyewaan</span>
     </a>

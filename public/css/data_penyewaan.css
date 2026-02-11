@@ -1,0 +1,204 @@
+/* ================== CONTAINER ================== */
+.container-data {
+    max-width: 1000px;
+    width: 100%;
+    margin: 10px auto 40px;
+    padding: 16px 18px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1.8px solid #bdbdbd;
+    font-family: "Segoe UI", Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+/* ================== TOP BAR ================== */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.top-bar .left form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.per-page {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1.5px solid #999;
+    font-size: 13px;
+    background: #fff;
+}
+
+.search {
+    padding: 7px 14px;
+    width: 220px;
+    border-radius: 18px;
+    border: 1.5px solid #999;
+    font-size: 13px;
+}
+
+/* ================== TABLE WRAPPER ================== */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* ================== HEADER ================== */
+.table-header {
+    display: grid;
+    grid-template-columns:
+        50px
+        1.5fr
+        2fr
+        1fr
+        1fr
+        1fr
+        0.8fr;
+    background: #e6e6e6;
+    padding: 12px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+    text-align: center;
+    min-width: 850px;
+}
+
+/* ================== ROW ================== */
+.table-row {
+    display: grid;
+    grid-template-columns:
+        50px
+        1.5fr
+        2fr
+        1fr
+        1fr
+        1fr
+        0.8fr;
+    align-items: center;
+    padding: 14px 10px;
+    font-size: 13px;
+    color: #222;
+    text-align: center;
+    border-bottom: 1px solid #cfcfcf;
+    min-width: 850px;
+}
+
+/* ================== STATUS BADGE ================== */
+.status {
+    padding: 4px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.status.pending {
+    background: #f6b1a8;
+    color: #7a1d13;
+}
+
+.status.active {
+    background: #ffd28a;
+    color: #7a4b00;
+}
+
+.status.done {
+    background: #b9e6c1;
+    color: #1f6b33;
+}
+
+.status.cancel {
+    background: #e0e0e0;
+    color: #555;
+}
+
+/* ================== KONFIRMASI ICON ================== */
+.confirm {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #fff;
+}
+
+.icon.cancel {
+    background: #e53935;
+}
+
+.icon.ok {
+    background: #2e7d32;
+}
+
+/* ================== BUTTON ================== */
+.btn-detail {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    background: #f5a623;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-detail:hover {
+    background: #e09515;
+}
+
+/* ================== PAGINATION ================== */
+/* ================== SIMPLE PAGINATION ================== */
+.pagination-simple {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* angka halaman */
+.pagination-simple .page {
+    font-size: 15px;
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* halaman aktif */
+.pagination-simple .page.active {
+    color: #c46a00;
+    font-weight: 700;
+}
+
+/* prev / next */
+.pagination-simple .nav {
+    font-size: 22px;
+    font-weight: 700;
+    color: #6b2e00;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* disabled */
+.pagination-simple .disabled {
+    color: #bbb;
+    cursor: default;
+}

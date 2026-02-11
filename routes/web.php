@@ -77,6 +77,38 @@ Route::post('/cart/delete', [CartController::class, 'delete']);
 Route::post('/penyewaan/store', [PenyewaanController::class, 'store'])
     ->name('penyewaan.store');
 
+Route::get('/penyewaan/{id}', [PenyewaanController::class, 'detail'])
+    ->name('penyewaan.detail');
+Route::get('/riwayat-penyewaan', [PenyewaanController::class, 'riwayat'])
+    ->name('item_penyewaan');
+
+
+// Halaman penyewaan selesai
+    Route::get('/riwayat', [PenyewaanController::class, 'selesai'])
+        ->name('riwayat_penyewaan');
+
+    // Detail penyewaan
+    Route::get('/penyewaan/{id}', [PenyewaanController::class, 'detail'])
+        ->name('penyewaan.detail');
+
+// Upload Bukti Bayar
+// Halaman upload bukti bayar
+Route::get('/penyewaan/{id}/upload', [PenyewaanController::class, 'uploadPage'])->name('penyewaan.upload_pembayaran');
+Route::post('/penyewaan/{id}/upload', [PenyewaanController::class, 'uploadBuktiBayar'])->name('penyewaan.upload_bukti');
+Route::get('/penyewaan', [PenyewaanController::class, 'riwayat'])->name('penyewaan.riwayat');
+
+
+Route::get('/data_penyewaan', [PenyewaanController::class, 'adminIndex'])
+    ->name('data_penyewaan');
+     // Konfirmasi pembayaran (untuk status menunggu_pembayaran)
+    // Konfirmasi pembayaran (POST) → hanya untuk status menunggu_pembayaran
+Route::post('/admin/penyewaan/konfirmasi/{id}', [PenyewaanController::class, 'konfirmasiBayar'])
+    ->name('admin.konfirmasi_bayar');
+
+// Cancel penyewaan (POST) → hanya untuk status menunggu_pembayaran
+Route::post('/admin/penyewaan/{id}/cancel', [PenyewaanController::class, 'cancel'])
+    ->name('admin.penyewaan.cancel');
+
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
     ->middleware('auth');
 
@@ -216,3 +248,9 @@ Route::post('/logout', function () {
     return redirect()->route('login');
 })->name('logout');
 
+Route::get('/cek-waktu', function () {
+    dd(
+        now()->toDateTimeString(),
+        now()->timezoneName
+    );
+});

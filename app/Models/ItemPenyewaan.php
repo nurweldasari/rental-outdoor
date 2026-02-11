@@ -13,7 +13,8 @@ class ItemPenyewaan extends Model
         'produk_idproduk',
         'harga',
         'penyewaan_idpenyewaan',
-        'qty'
+        'qty',
+        'subtotal'
     ];
 
     // 🔗 RELASI

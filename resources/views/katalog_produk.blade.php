@@ -129,15 +129,32 @@
 
 @endsection
 
-@push('scripts')
 <script>
+/* ================= CART CACHE ================= */
+let cartCache = {};
+
+/* ================= OPEN KERANJANG ================= */
 function openKeranjang(){
-    document.getElementById('katalogWrapper').classList.add('active');
+    document.getElementById('katalogWrapper')?.classList.add('active');
+}
+
+/* ================= HITUNG DURASI ================= */
+function hitungDurasi(tglSewa, tglSelesai){
+    if(!tglSewa || !tglSelesai) return 0;
+
+    const start = new Date(tglSewa);
+    const end   = new Date(tglSelesai);
+
+    if(end < start) return 0;
+
+    const diff = end.getTime() - start.getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1;
 }
 
 /* ================= CART AJAX ================= */
 function addToCart(idstok){
     openKeranjang();
+
     fetch('/cart/add',{
         method:'POST',
         headers:{
@@ -146,11 +163,17 @@ function addToCart(idstok){
             'X-CSRF-TOKEN':'{{ csrf_token() }}'
         },
         body:JSON.stringify({idstok})
-    }).then(r=>r.json()).then(renderCart);
+    })
+    .then(r=>r.json())
+    .then(cart=>{
+        cartCache = cart;
+        renderCart(cartCache);
+    });
 }
 
 function updateCart(idstok,qty){
     if(qty < 1) return deleteCart(idstok);
+
     fetch('/cart/update',{
         method:'POST',
         headers:{
@@ -159,7 +182,12 @@ function updateCart(idstok,qty){
             'X-CSRF-TOKEN':'{{ csrf_token() }}'
         },
         body:JSON.stringify({idstok,qty})
-    }).then(r=>r.json()).then(renderCart);
+    })
+    .then(r=>r.json())
+    .then(cart=>{
+        cartCache = cart;
+        renderCart(cartCache);
+    });
 }
 
 function deleteCart(idstok){
@@ -171,12 +199,17 @@ function deleteCart(idstok){
             'X-CSRF-TOKEN':'{{ csrf_token() }}'
         },
         body:JSON.stringify({idstok})
-    }).then(r=>r.json()).then(renderCart);
+    })
+    .then(r=>r.json())
+    .then(cart=>{
+        cartCache = cart;
+        renderCart(cartCache);
+    });
 }
 
 /* ================= RENDER CART ================= */
 function renderCart(cart){
-    const body = document.getElementById('cartBody');
+    const body  = document.getElementById('cartBody');
     const items = document.getElementById('formItemsContainer');
 
     if(!cart || Object.keys(cart).length === 0){
@@ -187,17 +220,31 @@ function renderCart(cart){
         return;
     }
 
+    const tglSewa    = document.getElementById('cartTanggalSewa')?.value || '';
+    const tglSelesai = document.getElementById('cartTanggalSelesai')?.value || '';
+
+    const durasi = hitungDurasi(tglSewa, tglSelesai);
+
     let html='', inputs='', totalItem=0, totalHarga=0;
 
     Object.values(cart).forEach(item=>{
         totalItem += item.qty;
-        totalHarga += item.qty * item.harga;
+
+        let subtotal = 0;
+        let subtotalText = '<em>Pilih tanggal sewa</em>';
+
+        if(durasi > 0){
+            subtotal = item.qty * item.harga * durasi;
+            totalHarga += subtotal;
+            subtotalText = `${item.qty} × ${durasi} hari = <strong>Rp ${subtotal.toLocaleString()}</strong>`;
+        }
 
         html += `
         <div class="item-keranjang">
             <div class="item-info">
                 <strong>${item.nama}</strong>
-                <p>Rp ${item.harga.toLocaleString()}</p>
+                <p>Rp ${item.harga.toLocaleString()} / hari</p>
+                <small>${subtotalText}</small>
             </div>
             <div class="item-aksi">
                 <button onclick="updateCart(${item.idstok},${item.qty-1})">−</button>
@@ -206,31 +253,33 @@ function renderCart(cart){
                 <button onclick="deleteCart(${item.idstok})">🗑</button>
             </div>
         </div>`;
-        
+
         inputs += `
         <input type="hidden" name="produk_cabang[]" value="${item.idstok}">
         <input type="hidden" name="qty[]" value="${item.qty}">`;
     });
 
-    body.innerHTML = html + `
+    body.innerHTML = `
+        ${html}
         <hr>
         <div class="ringkasan">
-            <p>Total Item Penyewaan <span>${totalItem}</span></p>
-            <p>Total Pembayaran <strong>Rp ${totalHarga.toLocaleString()}</strong></p>
+            <p>Total Item <span>${totalItem}</span></p>
+            <p>Durasi <span>${durasi > 0 ? durasi+' hari' : '-'}</span></p>
+            <p>Total <strong>Rp ${totalHarga.toLocaleString()}</strong></p>
         </div>
 
         <div class="tanggal">
             <div>
                 <label>Tanggal Sewa</label>
-                <input type="date" id="cartTanggalSewa">
+                <input type="date" id="cartTanggalSewa" value="${tglSewa}">
             </div>
             <div>
                 <label>Tanggal Berakhir</label>
-                <input type="date" id="cartTanggalSelesai">
+                <input type="date" id="cartTanggalSelesai" value="${tglSelesai}">
             </div>
         </div>
 
-        <button class="btn-pesan">Pesan Sekarang</button>
+        <button class="btn-pesan" ${durasi === 0 ? 'disabled' : ''}>Pesan Sekarang</button>
     `;
 
     items.innerHTML = inputs;
@@ -238,24 +287,27 @@ function renderCart(cart){
     document.getElementById('totalHarga').textContent = 'Rp ' + totalHarga.toLocaleString();
 }
 
+/* ================= CHANGE TANGGAL ================= */
+document.addEventListener('change',function(e){
+    if(e.target.id === 'cartTanggalSewa' || e.target.id === 'cartTanggalSelesai'){
+        renderCart(cartCache);
+    }
+});
+
 /* ================= MODAL & SUBMIT ================= */
 document.addEventListener('click',function(e){
 
-    // Buka modal bayar
+    // buka modal
     if(e.target.closest('.btn-pesan')){
-        if(!document.querySelector('#formItemsContainer input')){
-            alert('Keranjang masih kosong');
-            return;
-        }
         document.getElementById('modalBayar').classList.add('active');
     }
 
-    // Tutup modal klik background
+    // tutup modal
     if(e.target === document.getElementById('modalBayar')){
         document.getElementById('modalBayar').classList.remove('active');
     }
 
-    // Konfirmasi pembayaran → submit form
+    // konfirmasi
     if(e.target.closest('.btn-konfirmasi')){
         const metode = document.getElementById('metodeBayar').value;
         const tglSewa = document.getElementById('cartTanggalSewa').value;
@@ -275,20 +327,19 @@ document.addEventListener('click',function(e){
 });
 
 /* ================= INFO METODE ================= */
-document.getElementById('metodeBayar').addEventListener('change',function(){
+document.getElementById('metodeBayar')?.addEventListener('change',function(){
     const catatan = document.getElementById('catatanBayar');
     const info = document.getElementById('infoTransfer');
 
     if(this.value === 'cash'){
         catatan.textContent = 'Bayar ke toko (batas waktu 2 jam)';
         info.style.display = 'none';
-    } else if(this.value === 'transfer'){
+    }else if(this.value === 'transfer'){
         catatan.textContent = 'Transfer ke rekening (batas waktu 2 jam)';
         info.style.display = 'block';
-    } else {
+    }else{
         catatan.textContent = '';
         info.style.display = 'none';
     }
 });
 </script>
-@endpush

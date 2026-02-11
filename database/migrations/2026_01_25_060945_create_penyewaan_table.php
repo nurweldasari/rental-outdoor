@@ -29,8 +29,9 @@ return new class extends Migration
 
             // relasi
             $table->unsignedBigInteger('penyewa_idpenyewa');
-            $table->unsignedBigInteger('cabang_idcabang');
-            $table->unsignedBigInteger('admin_pusat_idadmin_pusat');
+            $table->unsignedBigInteger('cabang_idcabang')->nullable();
+            $table->unsignedBigInteger('admin_pusat_idadmin_pusat')->nullable();
+
 
             $table->foreign('penyewa_idpenyewa')->references('idpenyewa')->on('penyewa');
             $table->foreign('cabang_idcabang')->references('idcabang')->on('cabang');
