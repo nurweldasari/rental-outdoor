@@ -12,7 +12,6 @@ class CabangController extends Controller
 {
     $entries = $request->get('entries', 20);
 
-    // buat tabel (boleh pagination)
     $cabang = Cabang::with('adminCabang.user')
                 ->paginate($entries)
                 ->withQueryString();

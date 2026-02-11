@@ -141,7 +141,7 @@ select option:checked {
 }
 
 /* Dropdown Aksi */
-.dropdown {
+.dropdown-produk {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -160,13 +160,12 @@ select option:checked {
     color: #000;
 }
 
-.dropdown-menu {
+.dropdown-menu-produk {
     display: none;
     position: absolute;
     right: 0;
     top: 28px;
-
-    width: 95px;
+    width: 150px; 
     background: #fff;
     border: 1px solid #e5e5e5;
     border-radius: 12px;
@@ -175,35 +174,59 @@ select option:checked {
     z-index: 99;
 }
 
-.dropdown-menu a,
-.dropdown-menu button {
+/* ITEM */
+.dropdown-menu-produk a,
+.dropdown-menu-produk button {
     display: flex;
     align-items: center;
     gap: 10px;
-    width: 100%;
-    padding: 10px 14px;
+    width: 120%;              
+    padding: 12px 16px;
     font-size: 14px;
+    font-weight: 600;
     background: none;
     border: none;
     text-align: left;
     cursor: pointer;
+    border-bottom: 1px solid #e5e5e5; 
+}
+.dropdown-menu-produk i {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
 }
 
-.dropdown-menu a {
+
+/* EDIT */
+.dropdown-menu-produk a {
     color: #056A28;
+    text-decoration: none;
 }
 
+.dropdown-menu-produk a:hover {
+    background: #eaf6ea;
+}
+
+/* HAPUS */
 .btn-hapus {
     color: #f70808;
-}
-
-.dropdown-menu a:hover {
-    background: #eaf6ea;
 }
 
 .btn-hapus:hover {
     background: #fdeaea;
 }
+
+.dropdown-menu-produk button:last-child {
+    border-bottom: none;
+}
+
+.card-tambah-produk h3 {
+    text-align: center;
+}
+
 
 /* ================= GAMBAR PRODUK ================= */
 .img-produk {
@@ -240,89 +263,6 @@ select option:checked {
     font-size: 11px;
     font-weight: 500;
 }
-
-/* ================= DROPDOWN ================= */
-/* Wrapper dropdown */
-.dropdown {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-/* Tombol titik tiga */
-.btn-dot {
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: #444;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.btn-dot:hover {
-    color: #000;
-}
-
-/* Menu dropdown */
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 28px;
-
-    width: 95px;
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    overflow: hidden;
-    z-index: 99;
-}
-
-/* ITEM UMUM */
-.dropdown-menu a,
-.dropdown-menu button {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    width: 100%;
-    padding: 10px 14px;
-
-    font-size: 14px;
-    background: none;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-}
-
-/* EDIT */
-.dropdown-menu a {
-    color: #056A28;
-}
-
-.dropdown-menu a i {
-    font-size: 18px;
-}
-
-/* HAPUS */
-.btn-hapus {
-    color: #f70808;
-}
-
-.btn-hapus i {
-    font-size: 18px;
-}
-
-/* HOVER */
-.dropdown-menu a:hover {
-    background: #eaf6ea;
-}
-
-.btn-hapus:hover {
-    background: #fdeaea;
-}
-
 
 /* Modal */
 .modal {
@@ -685,7 +625,7 @@ select option:checked {
     background: #ffd9b3;
     padding: 10px 14px;
     font-weight: 600;
-    border-bottom: 1px solid #333;
+    border-radius: 12px 12px 0 0;
 }
 
 /* Body */

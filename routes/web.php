@@ -59,6 +59,10 @@ Route::get('/pilih-cabang/{id}',
     [KatalogController::class, 'pilihCabang']
 )->name('pilih.cabang');
 
+Route::get('/pilih-pusat/{id}', 
+    [KatalogController::class, 'pilihpusat']
+)->name('pilih.pusat');
+
 // halaman katalog produk
 Route::get('/katalog-cabang', 
     [KatalogController::class, 'katalogCabang']
@@ -67,7 +71,16 @@ Route::get('/katalog-cabang',
 // Katalog produk berdasarkan cabang
 Route::get('/katalog/{cabang}', [App\Http\Controllers\PenyewaController::class, 'katalog'])
      ->name('katalog_produk');
-    
+ 
+// halaman katalog produk
+Route::get('/katalog-cabang', 
+    [KatalogController::class, 'katalogCabang']
+)->name('katalog_produk');
+
+// Katalog produk berdasarkan cabang
+Route::get('/katalog/{cabang}', [App\Http\Controllers\PenyewaController::class, 'katalog'])
+     ->name('katalog_produk');
+     
 // tambah ke keranjang
 // routes/web.php
 Route::post('/cart/add', [CartController::class, 'add']);
@@ -165,8 +178,10 @@ Route::post('/distribusi_produk/kirim', [DistribusiProdukController::class, 'kir
     ->name('distribusi_produk.kirim');
 
 Route::match(['get','post'], '/distribusi_produk/terima/{id}',
-    [DistribusiProdukController::class, 'terima']
-)->name('distribusi_produk.terima');
+    [DistribusiProdukController::class, 'terima'])->name('distribusi_produk.terima');
+
+Route::get('/distribusi_produk', [DistribusiProdukController::class, 'index'])
+    ->name('distribusi_produk');
 
 
 Route::get('/produk_cabang', [ProdukCabangController::class, 'index'])

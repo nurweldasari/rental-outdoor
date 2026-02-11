@@ -57,23 +57,23 @@
                 <span class="badge-kategori">{{ $item->kategori->nama_kategori }}</span>
 
                 {{-- Dropdown Aksi --}}
-                <div class="dropdown">
+                <div class="dropdown-produk">
                     <button type="button"
                             class="btn-dot"
                             onclick="toggleDropdown({{ $item->idproduk }})">
                         <i class="fa-solid fa-ellipsis-vertical"></i>
                     </button>
 
-                    <div class="dropdown-menu" id="dropdown-{{ $item->idproduk }}">
+                    <div class="dropdown-menu-produk" id="dropdown-{{ $item->idproduk }}">
                         <a href="{{ route('produk.update', $item->idproduk) }}">
-                            <i class="fa-solid fa-pen-to-square"></i>Edit
+                            <i class="fa-solid fa-pen-to-square"></i>Edit Produk
                         </a>
 
                         <form action="{{ route('produk.destroy', $item->idproduk) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-hapus" onclick="return confirm('Hapus produk ini?')">
-                                <i class="fa-solid fa-trash"></i> Hapus
+                                <i class="fa-solid fa-trash"></i> Hapus Produk
                             </button>
                         </form>
                     </div>
@@ -106,7 +106,7 @@
 @push('scripts')
 <script>
 function toggleDropdown(id) {
-    document.querySelectorAll('.dropdown-menu')
+    document.querySelectorAll('.dropdown-menu-produk')
         .forEach(menu => menu.style.display = 'none');
 
     const dropdown = document.getElementById('dropdown-' + id);
@@ -117,7 +117,7 @@ function toggleDropdown(id) {
 
 window.addEventListener('click', function(e) {
     if (!e.target.classList.contains('btn-dot')) {
-        document.querySelectorAll('.dropdown-menu')
+        document.querySelectorAll('.dropdown-menu-produk')
             .forEach(menu => menu.style.display = 'none');
     }
 });

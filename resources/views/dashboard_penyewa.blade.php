@@ -49,6 +49,22 @@
 
 <div class="container">
     <div class="grid">
+     @if($adminpusat)
+    <a href="{{ route('pilih.pusat', $adminpusat->idusers) }}" class="card pusat">
+        <div class="card-title">{{ $adminpusat->nama }}</div>
+
+        <div class="info">
+            <i class="fa-solid fa-location-dot"></i>
+            {{ $adminpusat->alamat }}
+        </div>
+
+        <div class="info">
+            <i class="fa-brands fa-whatsapp"></i>
+            {{ $adminpusat->no_telepon }}
+        </div>
+    </a>
+@endif
+
         @foreach ($cabang as $c)
             @if ($c->status_cabang === 'aktif')
                 <a href="{{ route('pilih.cabang', $c->idcabang) }}" class="card">
