@@ -215,7 +215,7 @@ function renderCart(cart){
     if(!cart || Object.keys(cart).length === 0){
         body.innerHTML = '<p id="cartEmpty">Keranjang kosong</p>';
         items.innerHTML = '';
-        document.getElementBy  Id('totalItem').textContent = 0;
+        document.getElementById('totalItem').textContent = 0;
         document.getElementById('totalHarga').textContent = 'Rp 0';
         return;
     }
