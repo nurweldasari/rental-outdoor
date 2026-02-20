@@ -75,17 +75,18 @@
         <span>Penyewaan</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
+    <a href="{{ route('data_riwayat') }}"
+       class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
         <i class="fa-solid fa-clock-rotate-left"></i>
         <span>Riwayat Penyewaan</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'laporan_pendapatan' ? 'active' : '' }}">
+    <a href="{{ route('laporan') }}"
+       class="{{ ($active ?? '') === 'laporan' ? 'active' : '' }}">
         <i class="fa-solid fa-print"></i>
         <span>Laporan Pendapatan</span>
     </a>
-
-
+    
     <div class="menu-title {{ in_array($active ?? '', ['produk','kategori']) ? 'open' : '' }}">
         Manajemen Produk <i class="fa-solid fa-chevron-down"></i>
     </div>

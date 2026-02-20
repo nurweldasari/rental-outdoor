@@ -1,0 +1,160 @@
+/* WRAPPER */
+.detail-wrapper {
+    width: 98%;
+    margin: 15px auto 40px auto;
+    background: #f3f3f3;
+    border-radius: 10px;
+    border: 1px solid #999;
+    padding-bottom: 30px;
+}
+
+/* TITLE BAR */
+.detail-title-bar {
+    background: #d3d3d3;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.badge-status {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* STATUS COLORS */
+.badge-status.pending {
+    background: #f6b1a8;
+    color: #7a1d13;
+}
+
+.badge-status.active {
+    background: #ffd28a;
+    color: #7a4b00;
+}
+
+.badge-status.done {
+    background: #b9e6c1;
+    color: #1f6b33;
+}
+
+.badge-status.cancel {
+    background: #e0e0e0;
+    color: #555;
+}
+
+/* INFO CARD */
+.info-card {
+    margin: 25px;
+    background: #bcd4c1;
+    border: 2px solid #3f7d5c;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.info-table {
+    display: grid;
+    grid-template-columns: 180px 1fr 180px 1fr;
+}
+
+/* CELL DASAR */
+.info-cell {
+    padding: 14px 16px;
+    font-size: 14px;
+}
+
+/* GARIS VERTIKAL TENGAH SAJA */
+.info-cell:nth-child(2),
+.info-cell:nth-child(6),
+.info-cell:nth-child(10) {
+    border-right: 1px solid #7aa488;
+}
+
+/* GARIS HORIZONTAL PER BARIS */
+.info-cell:nth-child(-n+4),
+.info-cell:nth-child(n+5):nth-child(-n+8) {
+    border-bottom: 1px solid #7aa488;
+}
+
+.label {
+    font-weight: 600;
+}
+
+
+/* BUTTON BUKTI */
+.btn-bukti {
+    background: #ddd;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    text-decoration: none;
+    color: #333;
+}
+
+/* TABLE PRODUK */
+.table-wrapper {
+    margin: 0 25px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+thead {
+    background: #d0d0d0;
+}
+
+th, td {
+    padding: 12px 10px;
+    text-align: center;
+}
+
+tbody tr {
+    border-bottom: 1px solid #aaa;
+}
+
+.total-row {
+    font-weight: bold;
+}
+
+.total-label {
+    text-align: right;
+    padding-right: 20px;
+}
+
+/* BUTTONS */
+.action-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.btn-konfirmasi {
+    background: #166b2e;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-kembali {
+    background: #df2c00;
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}

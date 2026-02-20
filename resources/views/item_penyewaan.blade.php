@@ -67,7 +67,7 @@
                             <button class="btn waiting">Menunggu Pembayaran di toko</button>
                         @endif
 
-                        <a href="{{ route('penyewaan.detail', $item->idpenyewaan) }}"
+                        <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
                            class="btn detail">
                             Detail
                         </a>
@@ -108,7 +108,7 @@
                     </p>
 
                     <div class="action">
-                        <a href="{{ route('penyewaan.detail', $item->idpenyewaan) }}"
+                        <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
                            class="btn detail">
                             Detail
                         </a>

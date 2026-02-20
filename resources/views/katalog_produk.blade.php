@@ -142,14 +142,18 @@ function openKeranjang(){
 function hitungDurasi(tglSewa, tglSelesai){
     if(!tglSewa || !tglSelesai) return 0;
 
-    const start = new Date(tglSewa);
-    const end   = new Date(tglSelesai);
+    const mulai = new Date(tglSewa);
+    const selesai = new Date(tglSelesai);
 
-    if(end < start) return 0;
+    // Reset jam supaya tidak kena efek timezone
+    mulai.setHours(0,0,0,0);
+    selesai.setHours(0,0,0,0);
 
-    const diff = end.getTime() - start.getTime();
-    return Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1;
+    const selisih = (selesai - mulai) / (1000 * 60 * 60 * 24);
+
+    return Math.max(1, selisih);
 }
+
 
 /* ================= CART AJAX ================= */
 function addToCart(idstok){

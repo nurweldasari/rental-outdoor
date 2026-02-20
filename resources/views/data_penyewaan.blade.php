@@ -47,10 +47,10 @@
             <div>{{ $penyewaanList->firstItem() + $i }}.</div>
             <div>{{ \Carbon\Carbon::parse($p->tanggal_sewa)->translatedFormat('l, d M Y') }}</div>
             <div>
-                <strong>{{ $p->penyewa->nama ?? '-' }}</strong>
-({{ $p->penyewa->no_telepon ?? '-' }})
+    <strong>{{ optional($p->penyewa->user)->nama ?? '-' }}</strong>
+    ({{ optional($p->penyewa->user)->no_telepon ?? '-' }})
+</div>
 
-            </div>
 
             <div>Rp {{ number_format($p->total) }}</div>
             <div>
@@ -99,11 +99,14 @@
     <span class="icon ok">✔</span>
 @endif
 </div>
-
-
-
             <div>
-                <a href="{{ route('item_penyewaan', $p->idpenyewaan) }}" class="btn-detail">Detail</a>
+                <div>
+    <a href="{{ route('admin.penyewaan.detail', $p->idpenyewaan) }}" 
+       class="btn-detail">
+        Detail
+    </a>
+</div>
+
             </div>
         </div>
     @empty

@@ -35,11 +35,12 @@ class PenyewaanController extends Controller
             /* ================= TANGGAL ================= */
             $tanggalSewa    = Carbon::parse($request->tanggal_sewa)->startOfDay();
             $tanggalSelesai = Carbon::parse($request->tanggal_selesai)->endOfDay();
-            $durasiHari = Carbon::parse($request->tanggal_sewa)
+           $durasiHari = Carbon::parse($request->tanggal_sewa)
     ->startOfDay()
     ->diffInDays(
         Carbon::parse($request->tanggal_selesai)->startOfDay()
-    ) + 1;
+    );
+
 
             /* ================= TENTUKAN CABANG ================= */
             $cabangIdFinal = null;
@@ -120,13 +121,24 @@ $stokCabang->decrement('jumlah', $qty);
         }
     }
 
-    public function detail($id)
+public function detailPenyewa($id)
 {
-    $penyewaan = Penyewaan::with(['itemPenyewaan.produk'])
-        ->where('idpenyewaan', $id)
-        ->firstOrFail();
+    if (!auth()->check()) {
+        abort(403);
+    }
 
-    return view('item_penyewaan', compact('penyewaan'));
+    $penyewaan = Penyewaan::with([
+        'penyewa.user',
+        'itemPenyewaan.produk',
+        'cabang'
+    ])
+    ->where('idpenyewaan', $id)
+    ->whereHas('penyewa.user', function ($q) {
+        $q->where('idusers', auth()->user()->idusers);
+    })
+    ->firstOrFail();
+
+    return view('detail_sewa', compact('penyewaan'));
 }
 
 public function riwayat()
@@ -210,10 +222,14 @@ public function adminIndex(Request $request)
         abort(403, 'Admin belum terkait cabang');
     }
 
-    // Query semua penyewaan khusus cabang admin
-    $query = Penyewaan::with('penyewa', 'cabang')
-        ->where('cabang_idcabang', $cabangId)
-        ->orderBy('tanggal_sewa', 'desc');
+    $query = Penyewaan::with(['penyewa.user', 'cabang'])
+    ->where('cabang_idcabang', $cabangId)
+    ->whereIn('status_penyewaan', [
+        'menunggu_pembayaran',
+        'sedang_disewa',
+        'dibatalkan'
+    ])
+    ->orderBy('tanggal_sewa', 'desc');
 
     // Filter pencarian nama / no telepon penyewa
     if ($request->search) {
@@ -229,24 +245,139 @@ public function adminIndex(Request $request)
     return view('data_penyewaan', compact('penyewaanList'));
 }
 
-
-
-
-// Konfirmasi pembayaran (admin)
-public function konfirmasiBayar($id)
+public function adminDetail($id)
 {
-    $penyewaan = Penyewaan::findOrFail($id);
+    $user = auth()->user();
+    $adminCabang = $user->adminCabang;
 
-    if($penyewaan->status_penyewaan === 'menunggu_pembayaran'){
-        $penyewaan->update([
-            'status_penyewaan' => 'sedang_disewa',
-            'tanggal_sewa'     => now(),
-        ]);
-        return response()->json(['success' => true]);
+    if (!$adminCabang) {
+        abort(403, 'Bukan admin cabang');
     }
 
-    return response()->json(['success' => false, 'message' => 'Tidak bisa dikonfirmasi']);
+    $penyewaan = Penyewaan::with([
+        'penyewa.user',
+        'itemPenyewaan.produk',
+        'cabang'
+    ])
+    ->where('idpenyewaan', $id)
+    ->where('cabang_idcabang', $adminCabang->cabang_idcabang) // 🔥 hanya cabangnya sendiri
+    ->firstOrFail();
+
+    return view('detail_penyewaan', compact('penyewaan'));
 }
+
+public function konfirmasiBayar($id)
+{
+    $user = auth()->user();
+    $adminCabang = $user->adminCabang;
+
+    if (!$adminCabang) {
+        abort(403, 'Bukan admin cabang');
+    }
+
+    $penyewaan = Penyewaan::where('idpenyewaan', $id)
+        ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
+        ->firstOrFail();
+
+    if ($penyewaan->status_penyewaan === 'menunggu_pembayaran') {
+
+        $penyewaan->update([
+            'status_penyewaan' => 'sedang_disewa'
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Pembayaran berhasil dikonfirmasi');
+    }
+
+    return redirect()
+        ->back()
+        ->with('error', 'Tidak bisa dikonfirmasi');
+}
+public function selesaiAdmin($id)
+{
+    $user = auth()->user();
+    $adminCabang = $user->adminCabang;
+
+    if (!$adminCabang) {
+        abort(403, 'Bukan admin cabang');
+    }
+
+    $penyewaan = Penyewaan::with('itemPenyewaan')
+        ->where('idpenyewaan', $id)
+        ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
+        ->firstOrFail();
+
+    // ❌ Hanya bisa jika sedang_disewa
+    if ($penyewaan->status_penyewaan !== 'sedang_disewa') {
+        return redirect()->back()
+            ->with('error', 'Tidak bisa diselesaikan');
+    }
+
+    DB::beginTransaction();
+
+    try {
+
+        // 🔥 1. Kembalikan stok ke cabang
+        foreach ($penyewaan->itemPenyewaan as $item) {
+
+            StokCabang::where('produk_idproduk', $item->produk_idproduk)
+                ->where('cabang_idcabang', $penyewaan->cabang_idcabang)
+                ->increment('jumlah', $item->qty);
+        }
+
+        // 🔥 2. Update status & tanggal kembali
+        $penyewaan->update([
+            'status_penyewaan' => 'selesai',
+            'tanggal_kembali'  => now(),
+        ]);
+
+        DB::commit();
+
+        // 🔥 3. Redirect ke halaman RIWAYAT (bukan back lagi)
+        return redirect()
+            ->route('admin.data_riwayat')
+            ->with('success', 'Penyewaan berhasil diselesaikan');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return redirect()->back()
+            ->with('error', 'Gagal menyelesaikan penyewaan');
+    }
+}
+
+public function adminRiwayat(Request $request)
+{
+    $user = auth()->user();
+    $adminCabang = $user->adminCabang;
+
+    if (!$adminCabang) {
+        abort(403, 'Bukan admin cabang');
+    }
+
+    $perPage = $request->get('per_page', 10);
+    $search  = $request->get('search');
+
+    $query = Penyewaan::with(['penyewa.user'])
+        ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
+        ->where('status_penyewaan', 'selesai');
+
+    if ($search) {
+        $query->whereHas('penyewa.user', function ($q) use ($search) {
+            $q->where('nama', 'like', "%$search%")
+              ->orWhere('no_telepon', 'like', "%$search%");
+        });
+    }
+
+    $riwayatList = $query->orderBy('tanggal_kembali', 'desc')
+                         ->paginate($perPage)
+                         ->withQueryString();
+
+    return view('data_riwayat', compact('riwayatList'));
+}
+
 
 public function cancel($id)
 {
@@ -287,6 +418,33 @@ public function cancel($id)
             'message' => 'Gagal membatalkan penyewaan'
         ]);
     }
+}
+
+public function laporan(Request $request)
+{
+    $query = Penyewaan::with([
+        'penyewa.user',
+        'itemPenyewaan.produk'
+    ])
+    ->where('status_penyewaan', 'selesai')
+    ->orderBy('tanggal_sewa', 'desc');
+
+    // FILTER PERIODE
+    if ($request->start && $request->end) {
+        $query->whereBetween('tanggal_sewa', [
+            $request->start,
+            $request->end
+        ]);
+    }
+
+    $penyewaan = $query->get();
+
+    $totalPendapatan = $penyewaan->sum('total');
+
+    return view('laporan', compact(
+        'penyewaan',
+        'totalPendapatan'
+    ));
 }
 
 }

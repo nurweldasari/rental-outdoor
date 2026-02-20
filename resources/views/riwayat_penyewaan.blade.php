@@ -41,7 +41,7 @@
             <p class="total">Total : Rp {{ number_format($item->total) }}</p>
 
             <div class="action">
-                <a href="{{ route('penyewaan.detail', $item->idpenyewaan) }}" class="btn detail">Detail</a>
+                <a href="{{ route('detail_sewa', $item->idpenyewaan) }}" class="btn detail">Detail</a>
             </div>
         </div>
     </div>

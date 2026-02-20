@@ -101,8 +101,9 @@ Route::get('/riwayat-penyewaan', [PenyewaanController::class, 'riwayat'])
         ->name('riwayat_penyewaan');
 
     // Detail penyewaan
-    Route::get('/penyewaan/{id}', [PenyewaanController::class, 'detail'])
-        ->name('penyewaan.detail');
+Route::get('/penyewaan/{id}', 
+    [PenyewaanController::class, 'detailPenyewa']
+)->name('detail_sewa');
 
 // Upload Bukti Bayar
 // Halaman upload bukti bayar
@@ -113,14 +114,28 @@ Route::get('/penyewaan', [PenyewaanController::class, 'riwayat'])->name('penyewa
 
 Route::get('/data_penyewaan', [PenyewaanController::class, 'adminIndex'])
     ->name('data_penyewaan');
+Route::get('/admin/penyewaan/{id}',
+    [PenyewaanController::class, 'adminDetail']
+)->name('admin.penyewaan.detail');
      // Konfirmasi pembayaran (untuk status menunggu_pembayaran)
     // Konfirmasi pembayaran (POST) → hanya untuk status menunggu_pembayaran
 Route::post('/admin/penyewaan/konfirmasi/{id}', [PenyewaanController::class, 'konfirmasiBayar'])
     ->name('admin.konfirmasi_bayar');
+Route::post('/admin/penyewaan/selesai/{id}',
+    [PenyewaanController::class, 'selesaiAdmin']
+)->name('admin.penyewaan.selesai');
+
+Route::get('/admin/riwayat', 
+    [PenyewaanController::class, 'adminRiwayat']
+)->name('data_riwayat');
 
 // Cancel penyewaan (POST) → hanya untuk status menunggu_pembayaran
 Route::post('/admin/penyewaan/{id}/cancel', [PenyewaanController::class, 'cancel'])
     ->name('admin.penyewaan.cancel');
+
+Route::get('/laporan', [PenyewaanController::class, 'laporan'])
+    ->middleware('auth')
+    ->name('laporan');
 
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
     ->middleware('auth');
