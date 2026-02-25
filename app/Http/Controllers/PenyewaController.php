@@ -66,8 +66,8 @@ class PenyewaController extends Controller
 
         // ================= SIMPAN PENYEWA =================
         DB::table('penyewa')->insert([
-            'users_idusers' => $user, // ✅ SUDAH BENAR
-            'gambar_identitas' => $filename,
+            'users_idusers'    => $userId,
+            'gambar_identitas' => $path,
             'status_penyewa'     => 'pending',
             'created_at' => now(),
             'updated_at' => now(),
