@@ -14,7 +14,8 @@ class Penyewa extends Model
 
     protected $fillable = [
         'users_idusers',
-        'gambar_identitas'
+        'gambar_identitas',
+        'status_penyewa'
     ];
 
     /* ================= RELATIONS ================= */

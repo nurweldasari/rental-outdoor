@@ -13,15 +13,23 @@ return new class extends Migration
     {
         Schema::create('laporan_cabang', function (Blueprint $table) {
             $table->id('idlaporan_cabang');
-            $table->string('total_pendapatan',45);
-            $table->string('periode_bulan',45);
-        
+
+            $table->decimal('total_pendapatan',15,2); // wajib decimal
+            $table->string('periode_bulan',7); // format: 2025-06
+
             $table->unsignedBigInteger('cabang_idcabang');
-            $table->unsignedBigInteger('bagi_hasil_idbagi_hasil');
-        
-            $table->foreign('cabang_idcabang')->references('idcabang')->on('cabang');
-            $table->foreign('bagi_hasil_idbagi_hasil')->references('idbagi_hasil')->on('bagi_hasil');
-        
+            $table->unsignedBigInteger('bagi_hasil_idbagi_hasil')->nullable();
+
+            $table->foreign('cabang_idcabang')
+                ->references('idcabang')
+                ->on('cabang')
+                ->onDelete('cascade');
+
+            $table->foreign('bagi_hasil_idbagi_hasil')
+                ->references('idbagi_hasil')
+                ->on('bagi_hasil')
+                ->nullOnDelete();
+
             $table->timestamps();
         });
         

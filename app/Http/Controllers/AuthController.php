@@ -13,60 +13,80 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     /* ================= LOGIN ================= */
-    public function login(Request $request)
-    {
-        $request->validate([
-            'username' => 'required',
-            'password' => 'required'
+   public function login(Request $request)
+{
+    $request->validate([
+        'username' => 'required',
+        'password' => 'required'
+    ]);
+
+    if (!Auth::attempt($request->only('username', 'password'))) {
+        return back()->withErrors([
+            'username' => 'Username atau password salah'
         ]);
-
-        if (!Auth::attempt($request->only('username', 'password'))) {
-            return back()->withErrors([
-                'username' => 'Username atau password salah'
-            ]);
-        }
-
-        $request->session()->regenerate();
-        $user = Auth::user();
-
-        /* ===== CEK KHUSUS ADMIN CABANG ===== */
-        if ($user->status === 'admin_cabang') {
-
-            $adminCabang = AdminCabang::with('cabang')
-                ->where('users_idusers', $user->idusers)
-                ->first();
-
-            if (!$adminCabang || !$adminCabang->cabang) {
-                Auth::logout();
-                return back()->withErrors('Data cabang tidak ditemukan');
-            }
-
-            $status = $adminCabang->cabang->status_cabang;
-
-            if ($status === 'pending') {
-                Auth::logout();
-                return back()->withErrors(
-                    'Akun cabang menunggu konfirmasi owner'
-                );
-            }
-
-            if ($status === 'ditolak') {
-                Auth::logout();
-                return back()->withErrors(
-                    'Pengajuan cabang Anda ditolak'
-                );
-            }
-
-            if ($status === 'nonaktif') {
-                Auth::logout();
-                return back()->withErrors(
-                    'Akun cabang dinonaktifkan'
-                );
-            }
-        }
-
-        return redirect()->route('dashboard');
     }
+
+    $request->session()->regenerate();
+    $user = Auth::user();
+
+    /* ===== CEK KHUSUS ADMIN CABANG ===== */
+    if ($user->status === 'admin_cabang') {
+
+        $adminCabang = AdminCabang::with('cabang')
+            ->where('users_idusers', $user->idusers)
+            ->first();
+
+        if (!$adminCabang || !$adminCabang->cabang) {
+            Auth::logout();
+            return back()->withErrors('Data cabang tidak ditemukan');
+        }
+
+        $status = $adminCabang->cabang->status_cabang;
+
+        if ($status === 'pending') {
+            Auth::logout();
+            return back()->withErrors('Akun cabang menunggu konfirmasi owner');
+        }
+
+        if ($status === 'ditolak') {
+            Auth::logout();
+            return back()->withErrors('Pengajuan cabang Anda ditolak');
+        }
+
+        if ($status === 'nonaktif') {
+            Auth::logout();
+            return back()->withErrors('Akun cabang dinonaktifkan');
+        }
+    }
+
+    /* ===== CEK KHUSUS PENYEWA ===== */
+    if ($user->status === 'penyewa') {
+
+        $penyewa = Penyewa::where('users_idusers', $user->idusers)->first();
+
+        if (!$penyewa) {
+            Auth::logout();
+            return back()->withErrors('Data penyewa tidak ditemukan');
+        }
+
+        if ($penyewa->status_penyewa === 'pending') {
+            Auth::logout();
+            return back()->withErrors('Akun Anda menunggu konfirmasi owner');
+        }
+
+        if ($penyewa->status_penyewa === 'ditolak') {
+            Auth::logout();
+            return back()->withErrors('Pengajuan Anda ditolak');
+        }
+
+        if ($penyewa->status_penyewa === 'nonaktif') {
+            Auth::logout();
+            return back()->withErrors('Akun Anda dinonaktifkan');
+        }
+    }
+
+    return redirect()->route('dashboard');
+}
 
     /* ================= REGISTER PENYEWA ================= */
     public function registerPenyewa(Request $request)
@@ -95,7 +115,9 @@ class AuthController extends Controller
 
         Penyewa::create([
             'users_idusers'    => $user->idusers,
-            'gambar_identitas' => $filename
+            'gambar_identitas' => $filename,
+            'status_penyewa'    => 'pending'
+
         ]);
 
         return redirect('/login')

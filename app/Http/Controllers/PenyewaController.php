@@ -18,7 +18,8 @@ class PenyewaController extends Controller
             ->where('users.status', 'penyewa')
             ->select(
                 'users.*',
-                'penyewa.gambar_identitas'
+                'penyewa.gambar_identitas',
+                'penyewa.status_penyewa'
             )
             ->get();
 
@@ -57,7 +58,7 @@ class PenyewaController extends Controller
             'status'     => 'penyewa',
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ],'idusers');
 
         // ================= UPLOAD GAMBAR =================
         $file = $request->file('gambar_identitas');
@@ -68,6 +69,7 @@ class PenyewaController extends Controller
         DB::table('penyewa')->insert([
             'users_idusers' => $user, // ✅ SUDAH BENAR
             'gambar_identitas' => $filename,
+            'status_penyewa'     => 'pending',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -84,4 +86,51 @@ class PenyewaController extends Controller
         return back()->with('error', $e->getMessage());
     }
 }
+ /* ================= KONFIRMASI TERIMA ================= */
+    public function terima($id)
+    {
+        DB::transaction(function () use ($id) {
+
+            $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
+
+            $penyewa->update([
+                'status_penyewa' => 'aktif'
+            ]);
+        });
+
+        return back()->with('success', 'penyewa disetujui');
+    }
+
+    /* ================= KONFIRMASI TOLAK ================= */
+    public function tolak($id)
+    {
+        DB::transaction(function () use ($id) {
+
+            $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
+
+            $penyewa->update([
+                'status_penyewa' => 'ditolak'
+            ]);
+        });
+
+        return back()->with('success', 'penyewa ditolak');
+    }
+
+    /* ================= TOGGLE STATUS ================= */
+    public function toggleStatus($id)
+    {
+        DB::transaction(function () use ($id) {
+
+            $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
+
+            $penyewa->status_penyewa =
+                $penyewa->status_penyewa === 'aktif'
+                ? 'nonaktif'
+                : 'aktif';
+
+            $penyewa->save();
+        });
+
+        return back()->with('success', 'Status penyewa diubah');
+    }
 }

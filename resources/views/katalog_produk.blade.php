@@ -119,10 +119,9 @@
         <p class="catatan-bayar" id="catatanBayar"></p>
 
         <div class="info-transfer" id="infoTransfer" style="display:none;">
-            <div class="bank-box"><strong>Bank Negara Indonesia (BNI)</strong></div>
-            <p class="rekening">No. rekening: <strong>489755489287</strong></p>
+            <div class="bank-box"><strong>{{ $rekening->nama_bank }}</strong></div>
+            <p class="rekening">No. Rekening : {{ $rekening->no_rekening }} ({{ $rekening->atas_nama }})</p>
         </div>
-
         <button class="btn-konfirmasi">Konfirmasi</button>
     </div>
 </div>
@@ -331,19 +330,28 @@ document.addEventListener('click',function(e){
 });
 
 /* ================= INFO METODE ================= */
-document.getElementById('metodeBayar')?.addEventListener('change',function(){
+document.addEventListener('DOMContentLoaded', function(){
+
+    const metodeSelect = document.getElementById('metodeBayar');
     const catatan = document.getElementById('catatanBayar');
     const info = document.getElementById('infoTransfer');
 
-    if(this.value === 'cash'){
-        catatan.textContent = 'Bayar ke toko (batas waktu 2 jam)';
-        info.style.display = 'none';
-    }else if(this.value === 'transfer'){
-        catatan.textContent = 'Transfer ke rekening (batas waktu 2 jam)';
-        info.style.display = 'block';
-    }else{
-        catatan.textContent = '';
-        info.style.display = 'none';
-    }
+    metodeSelect.addEventListener('change', function(){
+
+        if(this.value === 'cash'){
+            catatan.textContent = 'Bayar ke toko (batas waktu 2 jam)';
+            info.style.display = 'none';
+        }
+        else if(this.value === 'transfer'){
+            catatan.textContent = 'Transfer ke rekening (batas waktu 2 jam)';
+            info.style.display = 'block';
+        }
+        else{
+            catatan.textContent = '';
+            info.style.display = 'none';
+        }
+
+    });
+
 });
 </script>

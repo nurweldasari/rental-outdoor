@@ -4,7 +4,7 @@
     $active = 'laporan';
 @endphp
 
-@section('title','Laporan Pendapatam')
+@section('title','Laporan Pendapatan')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/laporan.css') }}">

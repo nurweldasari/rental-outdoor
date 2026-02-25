@@ -26,7 +26,7 @@
         </div>
 
         <div class="right">
-            <input type="text" placeholder="Pencarian...">
+            <input type="text" id="searchInput" placeholder="Pencarian...">
             <button type="button" class="btn-tambah" onclick="openTambahModal()">
                 <i class="fa-solid fa-plus"></i> Tambah
             </button>
@@ -119,6 +119,21 @@
 
 @push('scripts')
 <script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('.table-kategori tbody tr');
+
+        rows.forEach(function(row) {
+            let namaKategori = row.children[1].textContent.toLowerCase();
+
+            if (namaKategori.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
     function openTambahModal() {
         document.getElementById('modalTambah').style.display = 'flex';
     }

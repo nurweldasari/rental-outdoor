@@ -20,7 +20,9 @@ class DashboardController extends Controller
         if ($user->status === 'penyewa') {
 
             $cabang = Cabang::all();
-            $adminpusat = User::where('status', 'admin_pusat')->first();
+            $adminpusat = User::where('status', 'admin_pusat')
+            ->select('idusers', 'nama', 'no_telepon', 'alamat')
+            ->first();
 
             return view('/dashboard_penyewa', compact('cabang', 'adminpusat'));
         }
@@ -34,7 +36,7 @@ class DashboardController extends Controller
         /* ================= ADMIN PUSAT ================= */
         if ($user->status === 'admin_pusat') {
 
-            return view('/dashboard_cabang');
+            return view('/dashboard_pusat');
         }
 
         /* ================= OWNER ================= */

@@ -15,7 +15,7 @@ return new class extends Migration
     $table->id('idpenyewa');
 
     $table->string('gambar_identitas', 45)->nullable();
-
+    $table->string('status_penyewa',45);
     $table->unsignedBigInteger('users_idusers');
 
     $table->foreign('users_idusers')

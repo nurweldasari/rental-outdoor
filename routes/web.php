@@ -17,6 +17,7 @@ use App\Http\Controllers\PermintaanProdukController;
 use App\Http\Controllers\ProdukCabangController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\RekeningController;
+use App\Http\Controllers\BagiHasilController;
 use App\Models\Cabang; 
 
 
@@ -60,7 +61,7 @@ Route::get('/pilih-cabang/{id}',
 )->name('pilih.cabang');
 
 Route::get('/pilih-pusat/{id}', 
-    [KatalogController::class, 'pilihpusat']
+    [KatalogController::class, 'pilihPusat']
 )->name('pilih.pusat');
 
 // halaman katalog produk
@@ -71,21 +72,21 @@ Route::get('/katalog-cabang',
 // Katalog produk berdasarkan cabang
 Route::get('/katalog/{cabang}', [App\Http\Controllers\PenyewaController::class, 'katalog'])
      ->name('katalog_produk');
- 
-// halaman katalog produk
-Route::get('/katalog-cabang', 
-    [KatalogController::class, 'katalogCabang']
-)->name('katalog_produk');
 
-// Katalog produk berdasarkan cabang
-Route::get('/katalog/{cabang}', [App\Http\Controllers\PenyewaController::class, 'katalog'])
-     ->name('katalog_produk');
-     
+// halaman katalog produk
+Route::get('/katalog-pusat', 
+    [KatalogController::class, 'katalogPusat']
+)->name('katalog_pusat');
+
 // tambah ke keranjang
 // routes/web.php
 Route::post('/cart/add', [CartController::class, 'add']);
 Route::post('/cart/update', [CartController::class, 'update']);
 Route::post('/cart/delete', [CartController::class, 'delete']);
+
+Route::post('/cart/add-pusat', [CartController::class, 'addPusat']);
+Route::post('/cart/update-pusat', [CartController::class, 'updatePusat']);
+Route::post('/cart/delete-pusat', [CartController::class, 'deletePusat']);
 
 Route::post('/penyewaan/store', [PenyewaanController::class, 'store'])
     ->name('penyewaan.store');
@@ -136,6 +137,10 @@ Route::post('/admin/penyewaan/{id}/cancel', [PenyewaanController::class, 'cancel
 Route::get('/laporan', [PenyewaanController::class, 'laporan'])
     ->middleware('auth')
     ->name('laporan');
+
+Route::get('/laporan-cabang', [PenyewaanController::class, 'laporan'])
+    ->middleware('auth')
+    ->name('laporan_cabang');
 
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
     ->middleware('auth');
@@ -255,6 +260,13 @@ Route::post('/cabang/tolak/{id}', [CabangController::class, 'tolak'])->name('cab
 // Toggle status (reload page)
 Route::post('/cabang/toggle/{id}', [CabangController::class, 'toggleStatus'])->name('cabang.toggle');
 
+// Konfirmasi
+Route::post('/penyewa/terima/{id}', [PenyewaController::class, 'terima'])->name('penyewa.terima');
+Route::post('/penyewa/tolak/{id}', [PenyewaController::class, 'tolak'])->name('penyewa.tolak');
+
+// Toggle status (reload page)
+Route::post('/penyewa/toggle/{id}', [PenyewaController::class, 'toggleStatus'])->name('penyewa.toggle');
+
 Route::get('/tambah_rekening', function () {
    return view('tambah_rekening');
 });
@@ -284,3 +296,13 @@ Route::get('/cek-waktu', function () {
         now()->timezoneName
     );
 });
+
+//Bagi Hasil
+
+Route::get('/bagi-hasil', [BagiHasilController::class, 'index'])->name('bagi_hasil_owner');
+
+Route::post('/bagi-hasil/store', [BagiHasilController::class, 'store'])->name('bagi_hasil.store');
+
+Route::post('/bagi-hasil/upload/{id}', [BagiHasilController::class, 'uploadBukti'])->name('bagi_hasil.upload');
+
+Route::get('/bagi-hasil/{id}', [BagiHasilController::class, 'show'])->name('bagi_hasil');

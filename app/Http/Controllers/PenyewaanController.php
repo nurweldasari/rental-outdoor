@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Penyewaan;
 use App\Models\ItemPenyewaan;
 use App\Models\StokCabang;
+use App\Models\Produk;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -13,113 +14,135 @@ use Carbon\Carbon;
 class PenyewaanController extends Controller
 {
     public function store(Request $request)
-    {
-        $user = Auth::user();
-        $penyewa = $user->penyewa ?? null;
+{
+    $user = Auth::user();
+    $penyewa = $user->penyewa ?? null;
 
-        if (!$user || !$penyewa) {
-            abort(403, 'Akun ini bukan penyewa');
+    if (!$user || !$penyewa) {
+        abort(403, 'Akun ini bukan penyewa');
+    }
+
+    $request->validate([
+        'tanggal_sewa'    => 'required|date',
+        'tanggal_selesai' => 'required|date|after_or_equal:tanggal_sewa',
+        'metode_bayar'    => 'required|in:cash,transfer',
+        'produk_cabang'   => 'required|array',
+        'qty'             => 'required|array',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+
+        /* ================= AMBIL SESSION TOKO ================= */
+        $tipe   = session('tipe_toko'); // cabang / pusat
+        $tokoId = session('toko_id');
+
+        /* ================= TANGGAL ================= */
+        $tanggalSewa    = Carbon::parse($request->tanggal_sewa)->startOfDay();
+        $tanggalSelesai = Carbon::parse($request->tanggal_selesai)->endOfDay();
+
+        $durasiHari = Carbon::parse($request->tanggal_sewa)
+            ->startOfDay()
+            ->diffInDays(
+                Carbon::parse($request->tanggal_selesai)->startOfDay()
+            );
+
+        if ($durasiHari < 1) {
+            $durasiHari = 1;
         }
 
-        $request->validate([
-            'tanggal_sewa'    => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_sewa',
-            'metode_bayar'    => 'required|in:cash,transfer',
-            'produk_cabang'   => 'required|array',
-            'qty'             => 'required|array',
+        /* ================= TENTUKAN ASAL TOKO ================= */
+        if ($tipe === 'cabang') {
+            $cabangIdFinal = $tokoId;
+            $adminPusatId  = null;
+        } else {
+            $cabangIdFinal = null;
+            $adminPusatId  = $tokoId;
+        }
+
+        /* ================= SIMPAN PENYEWAAN ================= */
+        $penyewaan = Penyewaan::create([
+            'tanggal_sewa'    => $tanggalSewa,
+            'tanggal_selesai' => $tanggalSelesai,
+            'total'           => 0,
+            'total_produk'    => 0,
+            'status_penyewaan'=> 'menunggu_pembayaran',
+            'metode_bayar'    => $request->metode_bayar,
+            'batas_pembayaran'=> now()->addHours(2),
+
+            'penyewa_idpenyewa' => $penyewa->idpenyewa,
+            'cabang_idcabang'   => $cabangIdFinal,
+            'admin_pusat_idadmin_pusat' => $adminPusatId,
         ]);
 
-        DB::beginTransaction();
+        /* ================= ITEM ================= */
+        $total = 0;
+        $totalProduk = 0;
 
-        try {
-            /* ================= TANGGAL ================= */
-            $tanggalSewa    = Carbon::parse($request->tanggal_sewa)->startOfDay();
-            $tanggalSelesai = Carbon::parse($request->tanggal_selesai)->endOfDay();
-           $durasiHari = Carbon::parse($request->tanggal_sewa)
-    ->startOfDay()
-    ->diffInDays(
-        Carbon::parse($request->tanggal_selesai)->startOfDay()
-    );
+        foreach ($request->produk_cabang as $i => $id) {
 
+            $qty = (int) ($request->qty[$i] ?? 0);
+            if ($qty < 1) continue;
 
-            /* ================= TENTUKAN CABANG ================= */
-            $cabangIdFinal = null;
+            if ($tipe === 'cabang') {
 
-            foreach ($request->produk_cabang as $idstok) {
-                $stok = StokCabang::findOrFail($idstok);
+                // 🔥 CABANG
+                $stok = StokCabang::findOrFail($id);
 
-                // kalau produk dari cabang → ambil cabangnya
-                if ($stok->cabang_idcabang) {
-                    $cabangIdFinal = $stok->cabang_idcabang;
-                    break;
-                }
-            }
-
-            /* ================= SIMPAN PENYEWAAN ================= */
-            $penyewaan = Penyewaan::create([
-                'tanggal_sewa'    => $tanggalSewa,
-                'tanggal_selesai' => $tanggalSelesai,
-                'total'           => 0,
-                'total_produk'    => 0,
-                'status_penyewaan'=> 'menunggu_pembayaran',
-                'metode_bayar'    => $request->metode_bayar,
-                'batas_pembayaran'=> now()->addHours(2),
-
-                'penyewa_idpenyewa' => $penyewa->idpenyewa,
-                'cabang_idcabang'     => $cabangIdFinal, // ✅ null = pusat
-                'admin_pusat_idadmin_pusat' => null,
-            ]);
-
-            /* ================= ITEM PENYEWAAN ================= */
-            $total = 0;
-            $totalProduk = 0;
-
-            foreach ($request->produk_cabang as $i => $idstok) {
-                $qty = (int) ($request->qty[$i] ?? 0);
-                if ($qty < 1) continue;
-
-                $stokCabang = StokCabang::findOrFail($idstok);
-
-                if ($qty > $stokCabang->jumlah) {
-                    throw new \Exception('Stok tidak mencukupi');
+                if ($qty > $stok->jumlah) {
+                    throw new \Exception('Stok cabang tidak mencukupi');
                 }
 
-                $harga    = $stokCabang->produk->harga;
-                $subtotal = $harga * $qty * $durasiHari;
+                $harga = $stok->produk->harga;
+                $stok->decrement('jumlah', $qty);
+                $produkId = $stok->produk_idproduk;
 
-                ItemPenyewaan::create([
-    'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
-    'produk_idproduk'       => $stokCabang->produk_idproduk,
-    'harga'                 => $harga,
-    'qty'                   => $qty,
-    'subtotal'              => $subtotal,
-]);
+            } else {
 
-// 🔥 KURANGI STOK CABANG
-$stokCabang->decrement('jumlah', $qty);
+                // 🔥 PUSAT
+                $produk = Produk::findOrFail($id);
 
+                if ($qty > $produk->stok_pusat) {
+                    throw new \Exception('Stok pusat tidak mencukupi');
+                }
 
-                $total += $subtotal;
-                $totalProduk += $qty;
+                $harga = $produk->harga;
+                $produk->decrement('stok_pusat', $qty);
+                $produkId = $produk->idproduk;
             }
 
-            /* ================= UPDATE TOTAL ================= */
-            $penyewaan->update([
-                'total'        => $total,
-                'total_produk' => $totalProduk,
+            $subtotal = $harga * $qty * $durasiHari;
+
+            ItemPenyewaan::create([
+                'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+                'produk_idproduk'       => $produkId,
+                'harga'                 => $harga,
+                'qty'                   => $qty,
+                'subtotal'              => $subtotal,
             ]);
 
-            DB::commit();
-
-            return redirect()
-                ->route('item_penyewaan', $penyewaan->idpenyewaan);
-
-        }  catch (\Exception $e) {
-    DB::rollBack();
-    dd($e->getMessage());
-
+            $total += $subtotal;
+            $totalProduk += $qty;
         }
+
+        /* ================= UPDATE TOTAL ================= */
+        $penyewaan->update([
+            'total'        => $total,
+            'total_produk' => $totalProduk,
+        ]);
+
+        DB::commit();
+
+        return redirect()
+            ->route('item_penyewaan', $penyewaan->idpenyewaan);
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+        dd($e->getMessage());
     }
+}
 
 public function detailPenyewa($id)
 {
@@ -446,5 +469,4 @@ public function laporan(Request $request)
         'totalPendapatan'
     ));
 }
-
 }

@@ -244,7 +244,8 @@
         <span>Laporan Cabang</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'bagi_hasil' ? 'active' : '' }}">
+    <a href="/bagi-hasil"
+    class="{{ ($active ?? '') === 'bagi_hasil' ? 'active' : '' }}">
         <i class="fa-solid fa-sack-dollar"></i>
         <span>Bagi Hasil</span>
     </a>

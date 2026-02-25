@@ -39,33 +39,79 @@
                     <th>Nama</th>
                     <th>Alamat</th>
                     <th>Telepon</th>
+                    <th>Status</th>
+                    <th>Konfirmasi</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
+<tbody>
+@foreach ($penyewa as $i => $p)
+<tr>
+    <td>{{ $i + 1 }}</td>
+    <td>{{ $p->nama }}</td>
+    <td>{{ $p->alamat }}</td>
+    <td>{{ $p->no_telepon }}</td>
 
-            <tbody>
-                @foreach ($penyewa as $i => $p)
-                <tr>
-                    <td>{{ $i + 1 }}</td>
-                    <td>{{ $p->nama }}</td>
-                    <td>{{ $p->alamat }}</td>
-                    <td>{{ $p->no_telepon }}</td>
-                    <td class="aksi">
-                        <button class="btn-green">Reservasi</button>
+    {{-- STATUS --}}
+    <td class="status-col">
+        @if (in_array($p->status_penyewa, ['aktif','nonaktif']))
+            <form action="{{ route('penyewa.toggle', $p->idusers) }}" method="POST">
+                @csrf
+                <button class="btn-toggle">
+                    @if ($p->status_penyewa === 'aktif')
+                        <i class="fa-solid fa-toggle-on text-success"></i>
+                    @else
+                        <i class="fa-solid fa-toggle-off text-danger"></i>
+                    @endif
+                </button>
+            </form>
+        @elseif ($p->status_penyewa === 'pending')
+            <i class="fa-solid fa-toggle-off text-muted"></i>
+        @elseif ($p->status_penyewa === 'ditolak')
+            <i class="fa-solid fa-toggle-off text-danger"></i>
+        @endif
+    </td>
 
-                        <button
-                            class="btn-yellow btn-detail"
-                            data-nama="{{ $p->nama }}"
-                            data-username="{{ $p->username }}"
-                            data-telepon="{{ $p->no_telepon }}"
-                            data-alamat="{{ $p->alamat }}"
-                            data-foto="{{ asset('assets/uploads/identitas/'.$p->gambar_identitas) }}">
-                            Detail
-                        </button>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
+    {{-- KONFIRMASI --}}
+    <td class="confirm-col">
+        @if ($p->status_penyewa === 'pending')
+            <form action="{{ route('penyewa.tolak', $p->idusers) }}" method="POST">
+                @csrf
+                <button type="submit" class="icon-btn">
+                    <i class="fa-solid fa-circle-xmark text-danger"></i>
+                </button>
+            </form>
+
+            <form action="{{ route('penyewa.terima', $p->idusers) }}" method="POST">
+                @csrf
+                <button type="submit" class="icon-btn">
+                    <i class="fa-solid fa-circle-check text-success"></i>
+                </button>
+            </form>
+        @elseif ($p->status_penyewa === 'aktif')
+            <i class="fa-solid fa-circle-check text-success"></i>
+        @elseif ($p->status_penyewa === 'ditolak')
+            <i class="fa-solid fa-circle-xmark text-danger"></i>
+        @endif
+    </td>
+
+    {{-- AKSI --}}
+    <td class="aksi">
+        <button class="btn-green">Reservasi</button>
+
+        <button
+            class="btn-yellow btn-detail"
+            data-nama="{{ $p->nama }}"
+            data-username="{{ $p->username }}"
+            data-telepon="{{ $p->no_telepon }}"
+            data-alamat="{{ $p->alamat }}"
+            data-foto="{{ asset('assets/uploads/identitas/'.$p->gambar_identitas) }}">
+            Detail
+        </button>
+    </td>
+</tr>
+@endforeach
+</tbody>
         </table>
 
     </div>

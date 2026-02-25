@@ -12,12 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bagi_hasil', function (Blueprint $table) {
-            $table->id('idbagi_hasil');
-            $table->string('presentase_owner',45);
-            $table->string('presentase_cabang',45);
-            $table->string('bukti_fee',45);
-            $table->timestamps();
-        });
+        $table->id('idbagi_hasil');
+
+        $table->decimal('presentase_owner',5,2);
+        $table->decimal('presentase_cabang',5,2);
+
+        $table->decimal('nominal_owner',15,2)->nullable();
+        $table->decimal('nominal_cabang',15,2)->nullable();
+
+        $table->string('bukti_fee')->nullable();
+
+        $table->timestamps();
+    });
         
     }
 

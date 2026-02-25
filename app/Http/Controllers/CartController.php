@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\StokCabang;
+use App\Models\Produk;
 
 class CartController extends Controller
 {
@@ -65,6 +66,66 @@ class CartController extends Controller
     {
         $cart = session('cart');
         unset($cart[$request->idstok]);
+
+        session(['cart' => $cart]);
+
+        return response()->json($cart);
+    }
+
+   public function addPusat(Request $request)
+{
+    $produk = Produk::findOrFail($request->idproduk);
+
+    $cart = session()->get('cart', []);
+
+    $currentQty = $cart[$produk->idproduk]['qty'] ?? 0;
+
+    // cek stok pusat
+    if ($currentQty >= $produk->stok_pusat) {
+        return response()->json([
+            'error' => 'Stok tidak mencukupi'
+        ], 422);
+    }
+
+    $cart[$produk->idproduk] = [
+        'idproduk' => $produk->idproduk,
+        'nama'     => $produk->nama_produk,
+        'harga'    => $produk->harga,
+        'qty'      => $currentQty + 1
+    ];
+
+    session(['cart' => $cart]);
+
+    return response()->json($cart);
+}
+
+    public function updatePusat(Request $request)
+{
+    $produk = Produk::findOrFail($request->idproduk);
+    $cart = session('cart', []);
+
+    if ($request->qty <= 0) {
+        unset($cart[$request->idproduk]);
+        session(['cart' => $cart]);
+        return response()->json($cart);
+    }
+
+    if ($request->qty > $produk->stok_pusat) {
+        return response()->json([
+            'error' => 'Qty melebihi stok'
+        ], 422);
+    }
+
+    $cart[$request->idproduk]['qty'] = $request->qty;
+    session(['cart' => $cart]);
+
+    return response()->json($cart);
+}
+
+    public function deletePusat(Request $request)
+    {
+        $cart = session('cart');
+        unset($cart[$request->idproduk]);
 
         session(['cart' => $cart]);
 
