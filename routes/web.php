@@ -143,6 +143,7 @@ Route::get('/laporan-cabang', [PenyewaanController::class, 'laporan'])
     ->name('laporan_cabang');
 
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
+->name('data_penyewa')
     ->middleware('auth');
 
 // tampilkan form tambah penyewa
@@ -171,6 +172,7 @@ Route::get('/rekening', [AkunController::class, 'editrekening'])
     ->name('rekening');
 
 Route::post('/rekening', [AkunController::class, 'updateRekening'])
+->middleware(['auth', 'status:adminCabang'])
     ->name('rekening.update');
 
 /* ========== Kategori ========== */

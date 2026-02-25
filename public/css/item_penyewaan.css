@@ -217,3 +217,11 @@
 
     white-space: nowrap;      /* ⬅️ INI YANG HENTIKAN MEMANJANG */
 }
+
+.no-click {
+    cursor: not-allowed;
+}
+
+.no-click a {
+    pointer-events: none;
+}

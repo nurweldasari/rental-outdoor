@@ -175,15 +175,16 @@ public function riwayat()
 
     // ⏳ BELUM BAYAR
     $belumBayar = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
-        ->where('status_penyewaan', 'menunggu_pembayaran')
-        ->orderBy('created_at', 'desc')
-        ->get();
+    ->whereIn('status_penyewaan', ['menunggu_pembayaran'])
+    ->with(['cabang', 'cabang.adminCabang.user', 'penyewa.user'])
+    ->orderBy('created_at', 'desc')
+    ->get();
 
-    // ✅ SEDANG / SUDAH DISEWA
-    $penyewaanAktif = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
-        ->whereIn('status_penyewaan', ['sedang_disewa'])
-        ->orderBy('created_at', 'desc')
-        ->get();
+$penyewaanAktif = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
+    ->whereIn('status_penyewaan', ['sedang_disewa'])
+    ->with(['cabang', 'cabang.adminCabang.user', 'penyewa.user'])
+    ->orderBy('created_at', 'desc')
+    ->get();
 
     return view('item_penyewaan', compact('belumBayar', 'penyewaanAktif'));
 }

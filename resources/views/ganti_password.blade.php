@@ -42,45 +42,54 @@
 
 
     <!-- FORM GANTI PASSWORD -->
-    <form
-        class="profile-form"
-        method="POST"
-        action="{{ route('ganti.password.update') }}"
-    >
-        @csrf
+<form
+    class="profile-form"
+    method="POST"
+    action="{{ route('ganti.password.update') }}"
+>
+    @csrf
 
-        <div class="form-row full">
-            <input
-                type="password"
-                name="password_lama"
-                placeholder="Password Lama"
-                required
-            >
+    <div class="form-row full">
+        <input
+            type="password"
+            name="password_lama"
+            placeholder="Password Lama"
+            required
+        >
+    </div>
+
+    <div class="form-row full">
+        <input
+            type="password"
+            name="password_baru"
+            placeholder="Password Baru"
+            required
+        >
+    </div>
+
+    <div class="form-row full">
+        <input
+            type="password"
+            name="password_baru_confirmation"
+            placeholder="Konfirmasi Password Baru"
+            required
+        >
+    </div>
+
+    {{-- ERROR DITAMPILKAN DI SINI --}}
+    @if ($errors->any())
+        <div style="color: red; margin-top: 10px; font-size: 14px;">
+            @foreach ($errors->all() as $error)
+                <div>{{ $error }}</div>
+            @endforeach
         </div>
+    @endif
 
-        <div class="form-row full">
-            <input
-                type="password"
-                name="password_baru"
-                placeholder="Password Baru"
-                required
-            >
-        </div>
+    <button type="submit" class="btn-simpan">
+        Simpan Password
+    </button>
 
-        <div class="form-row full">
-            <input
-                type="password"
-                name="password_baru_confirmation"
-                placeholder="Konfirmasi Password Baru"
-                required
-            >
-        </div>
-
-        <button type="submit" class="btn-simpan">
-            Simpan Password
-        </button>
-
-    </form>
+</form>
 
 </div>
 

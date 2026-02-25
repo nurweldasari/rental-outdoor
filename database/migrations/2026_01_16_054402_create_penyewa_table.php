@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('penyewa', function (Blueprint $table) {
     $table->id('idpenyewa');
 
-    $table->string('gambar_identitas', 45)->nullable();
+    $table->string('gambar_identitas', 255)->nullable();
     $table->string('status_penyewa',45);
     $table->unsignedBigInteger('users_idusers');
 

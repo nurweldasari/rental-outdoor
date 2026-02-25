@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class AkunController extends Controller
 {
@@ -113,7 +114,7 @@ public function updatePassword(Request $request)
 {
     $request->validate([
         'password_lama' => 'required',
-        'password_baru' => 'required|min:6|confirmed',
+        'password_baru' => ['required', 'confirmed', Password::defaults()]
     ]);
 
     $user = Auth::user();
@@ -136,6 +137,10 @@ public function editrekening()
     {
         $user = Auth::user();
 
+        if (!$user->adminCabang) {
+            abort(403, 'User tidak terhubung ke cabang');
+        }
+
         $cabangId = DB::table('admin_cabang')
             ->where('users_idusers', $user->idusers)
             ->value('cabang_idcabang');
@@ -148,14 +153,19 @@ public function editrekening()
     }
 
     public function updateRekening(Request $request)
-    {
-        $request->validate([
-            'nama_bank'   => 'required|max:45',
-            'no_rekening' => 'required|max:45',
-            'atas_nama'   => 'required|max:45',
-        ]);
+{
+    $request->validate([
+        'nama_bank'   => 'required|max:45',
+        'no_rekening' => 'required|max:45',
+        'atas_nama'   => 'required|max:45',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
 
         $user = Auth::user();
+
         $cabangId = DB::table('admin_cabang')
             ->where('users_idusers', $user->idusers)
             ->value('cabang_idcabang');
@@ -165,6 +175,7 @@ public function editrekening()
             ->first();
 
         if ($rekening) {
+
             DB::table('rekening')
                 ->where('idrekening', $rekening->idrekening)
                 ->update([
@@ -173,7 +184,9 @@ public function editrekening()
                     'atas_nama'   => $request->atas_nama,
                     'updated_at'  => now(),
                 ]);
+
         } else {
+
             DB::table('rekening')->insert([
                 'nama_bank'       => $request->nama_bank,
                 'no_rekening'     => $request->no_rekening,
@@ -184,6 +197,17 @@ public function editrekening()
             ]);
         }
 
+        DB::commit();
+
         return back()->with('success', 'Rekening berhasil diperbarui');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->withErrors([
+            'error' => 'Terjadi kesalahan saat memperbarui rekening. Silakan coba lagi.'
+        ]);
     }
+}
 }

@@ -29,6 +29,18 @@
 
             <div class="card-riwayat">
                 <div class="card-left">
+                    <p>
+                <strong>Cabang</strong> : {{ $item->cabang->nama_cabang ?? '-' }}
+
+<p>
+    <strong>Admin Cabang</strong> :
+    @php
+        $admins = $item->cabang->adminCabang ?? collect();
+    @endphp
+    @foreach ($admins as $admin)
+        {{ $admin->user->nama ?? '-' }}@if (!$loop->last), @endif
+    @endforeach
+</p>
                     <p><strong>Nama</strong> : {{ auth()->user()->nama }}</p>
                     <p><strong>No. Telephone</strong> : {{ auth()->user()->no_telepon ?? '-' }}</p>
                     <p>
@@ -55,17 +67,21 @@
 
                     <div class="action">
                         @if ($item->metode_bayar === 'transfer')
-                            @if ($item->bukti_bayar)
-                                <button class="btn waiting">Menunggu Konfirmasi Admin</button>
-                            @else
-                                <a href="{{ route('penyewaan.upload_pembayaran', $item->idpenyewaan) }}"
-                                   class="btn upload">
-                                    Upload Bukti Transfer
-                                </a>
-                            @endif
-                        @else
-                            <button class="btn waiting">Menunggu Pembayaran di toko</button>
-                        @endif
+    @if ($item->bukti_bayar)
+        <span class="btn waiting no-click">
+            Menunggu Konfirmasi Admin
+        </span>
+    @else
+        <a href="{{ route('penyewaan.upload_pembayaran', $item->idpenyewaan) }}"
+           class="btn upload">
+            Upload Bukti Transfer
+        </a>
+    @endif
+@else
+    <span class="btn waiting no-click">
+        Menunggu Pembayaran di toko
+    </span>
+@endif
 
                         <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
                            class="btn detail">
@@ -86,6 +102,18 @@
         @forelse ($penyewaanAktif as $item)
             <div class="card-riwayat aktif">
                 <div class="card-left">
+                    <p>
+                <strong>Cabang</strong> : {{ $item->cabang->nama_cabang ?? '-' }}
+
+<p>
+    <strong>Admin Cabang</strong> :
+    @php
+        $admins = $item->cabang->adminCabang ?? collect();
+    @endphp
+    @foreach ($admins as $admin)
+        {{ $admin->user->nama ?? '-' }}@if (!$loop->last), @endif
+    @endforeach
+</p>
                     <p><strong>Nama</strong> : {{ auth()->user()->nama }}</p>
                     <p><strong>No. Telephone</strong> : {{ auth()->user()->no_telepon ?? '-' }}</p>
                     <p>
