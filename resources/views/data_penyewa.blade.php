@@ -105,7 +105,7 @@
             data-username="{{ $p->username }}"
             data-telepon="{{ $p->no_telepon }}"
             data-alamat="{{ $p->alamat }}"
-            data-foto="{{ asset('assets/uploads/identitas/'.$p->gambar_identitas) }}">
+            data-foto="{{ asset('storage/' . $p->gambar_identitas) }}">
             Detail
         </button>
     </td>

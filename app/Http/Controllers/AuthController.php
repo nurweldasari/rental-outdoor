@@ -9,6 +9,7 @@ use App\Models\Cabang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -89,16 +90,20 @@ class AuthController extends Controller
 }
 
     /* ================= REGISTER PENYEWA ================= */
-    public function registerPenyewa(Request $request)
-    {
-        $request->validate([
-            'nama' => 'required',
-            'username' => 'required|unique:users,username',
-            'password' => 'required|min:6',
-            'no_telepon' => 'required',
-            'alamat' => 'required',
-            'gambar_identitas' => 'required|image|mimes:jpg,jpeg,png|max:2048'
-        ]);
+   public function registerPenyewa(Request $request)
+{
+    $request->validate([
+        'nama' => 'required',
+        'username' => 'required|unique:users,username',
+        'password' => 'required|min:6',
+        'no_telepon' => 'required',
+        'alamat' => 'required',
+        'gambar_identitas' => 'required|image|mimes:jpg,jpeg,png|max:2048'
+    ]);
+
+    DB::beginTransaction();
+
+    try {
 
         $user = User::create([
             'nama'        => $request->nama,
@@ -109,21 +114,29 @@ class AuthController extends Controller
             'status'      => 'penyewa'
         ]);
 
-        $file = $request->file('gambar_identitas');
-        $filename = time().'_'.$file->getClientOriginalName();
-        $file->move(public_path('assets/uploads/identitas'), $filename);
+        // ✅ SIMPAN KE STORAGE
+        $path = $request->file('gambar_identitas')
+                        ->store('identitas', 'public');
 
         Penyewa::create([
             'users_idusers'    => $user->idusers,
-            'gambar_identitas' => $filename,
-            'status_penyewa'    => 'pending'
-
+            'gambar_identitas' => $path, // simpan path, bukan filename saja
+            'status_penyewa'   => 'pending'
         ]);
+
+        DB::commit();
 
         return redirect('/login')
             ->with('success', 'Registrasi berhasil, silakan login');
-    }
 
+    } catch (\Exception $e) {
+
+        DB::rollback();
+
+        return back()->withInput()
+            ->with('error', 'Terjadi kesalahan saat registrasi');
+    }
+}
     /* ================= REGISTER ADMIN CABANG ================= */
     public function registerAdminCabang(Request $request)
     {
