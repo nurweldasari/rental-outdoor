@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@php
-    $active = 'produk.cabang';
-@endphp
-
 @section('title','Ajukan Permintaan Produk')
 
 @push('styles')
@@ -53,29 +49,36 @@
             <div id="daftar-permintaan">
                 <div class="form-item">
 
-                    <!-- Produk -->
-                    <select name="produk_id[]" class="produk-dropdown" required>
-                        <option value="">Pilih Produk</option>
-                        @foreach($produkList as $produk)
-                            <option value="{{ $produk->idproduk }}">
-                                {{ $produk->nama_produk }}
-                            </option>
-                        @endforeach
-                    </select>
+    <!-- Produk -->
+    <select name="produk_id[]" class="produk-dropdown" required>
+        <option value="">Pilih Produk</option>
+        @foreach($produkList as $produk)
+            <option 
+                value="{{ $produk->idproduk }}"
+                data-stok="{{ $produk->stok_pusat }}">
+                {{ $produk->nama_produk }}
+            </option>
+        @endforeach
+    </select>
 
-                    <!-- Jumlah -->
-                    <input type="number"
-                           name="jumlah_diminta[]"
-                           placeholder="Jumlah"
-                           min="1"
-                           required>
+    <!-- BOX STOK -->
+    <div class="stok-box">
+        Stok pusat: <span class="stok-value">-</span>
+    </div>
 
-                    <!-- Hapus -->
-                    <button type="button" class="btn-delete">
-                        <i class="fa fa-trash"></i>
-                    </button>
+    <!-- Jumlah -->
+    <input type="number"
+           name="jumlah_diminta[]"
+           placeholder="Jumlah diminta"
+           min="1"
+           required>
 
-                </div>
+    <!-- Hapus -->
+    <button type="button" class="btn-delete">
+        <i class="fa fa-trash"></i>
+    </button>
+
+</div>
             </div>
 
             <!-- CATATAN (PUTIH) -->
@@ -108,6 +111,7 @@ btnTambah.addEventListener('click', function() {
 
     newItem.querySelector('.produk-dropdown').selectedIndex = 0;
     newItem.querySelector('input[type=number]').value = '';
+    newItem.querySelector('.stok-value').innerText = '-';
 
     container.appendChild(newItem);
 });
@@ -142,6 +146,26 @@ btnReset.addEventListener('click', function(e) {
 
     const textarea = document.querySelector('textarea[name="keterangan"]');
     if(textarea) textarea.value = '';
+});
+
+// =====================
+// Update stok saat produk dipilih
+// =====================
+container.addEventListener('change', function(e){
+    if(e.target.classList.contains('produk-dropdown')) {
+
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const stok = selectedOption.getAttribute('data-stok');
+
+        const formItem = e.target.closest('.form-item');
+        const stokValue = formItem.querySelector('.stok-value');
+
+        if(stok){
+            stokValue.innerText = stok;
+        } else {
+            stokValue.innerText = '-';
+        }
+    }
 });
 </script>
 @endpush

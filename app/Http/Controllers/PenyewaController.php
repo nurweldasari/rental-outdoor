@@ -34,13 +34,13 @@ class PenyewaController extends Controller
     // SIMPAN
     public function store(Request $request)
 {
-    $request->validate([
-        'nama' => 'required',
-        'username' => 'required|unique:users,username',
-        'password' => 'required|min:6',
-        'no_telepon' => 'required',
-        'alamat' => 'required',
-        'gambar_identitas' => 'required|image|mimes:jpg,jpeg,png|max:2048'
+    $validated = $request->validate([
+        'nama'              => 'required|string|max:100',
+        'username'          => 'required|string|max:50|unique:users,username',
+        'password'          => 'required|string|min:6|max:255',
+        'no_telepon'        => 'required|string|max:20',
+        'alamat'            => 'required|string|max:255',
+        'gambar_identitas'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
     ]);
 
     DB::beginTransaction();
@@ -48,40 +48,41 @@ class PenyewaController extends Controller
     try {
 
         // ================= SIMPAN USERS =================
-        $user = DB::table('users')->insertGetId([
-            'nama'       => $request->nama,
-            'username'   => $request->username,
-            'password'   => Hash::make($request->password),
-            'no_telepon' => $request->no_telepon,
-            'alamat'     => $request->alamat,
+        $userId = DB::table('users')->insertGetId([
+            'nama'       => $validated['nama'],
+            'username'   => $validated['username'],
+            'password'   => Hash::make($validated['password']),
+            'no_telepon' => $validated['no_telepon'],
+            'alamat'     => $validated['alamat'],
             'status'     => 'penyewa',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         // ================= UPLOAD GAMBAR =================
-        $file = $request->file('gambar_identitas');
-        $filename = time().'_'.$file->getClientOriginalName();
-        $file->move(public_path('assets/uploads/identitas'), $filename);
+        $path = $request->file('gambar_identitas')
+                        ->store('identitas', 'public');
 
         // ================= SIMPAN PENYEWA =================
         DB::table('penyewa')->insert([
-            'users_idusers' => $user, // ✅ SUDAH BENAR
-            'gambar_identitas' => $filename,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'users_idusers'    => $userId,
+            'gambar_identitas' => $path,
+            'created_at'       => now(),
+            'updated_at'       => now(),
         ]);
 
         DB::commit();
 
-        return redirect('/data_penyewa')
+        return redirect()->route('data_penyewa')
             ->with('success', 'Penyewa berhasil ditambahkan');
 
     } catch (\Exception $e) {
 
         DB::rollback();
 
-        return back()->with('error', $e->getMessage());
+        return back()
+            ->withInput()
+            ->with('error', 'Terjadi kesalahan saat menyimpan data');
     }
 }
 }

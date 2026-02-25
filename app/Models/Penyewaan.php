@@ -48,6 +48,7 @@ class Penyewaan extends Model
     {
         return $this->belongsTo(Cabang::class, 'cabang_idcabang');
     }
+    
 
     public function itemPenyewaan()
 {
