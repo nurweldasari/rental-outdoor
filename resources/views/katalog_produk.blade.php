@@ -49,9 +49,9 @@
                     @php
                         $produk = $pc->produk;
                         $stok = $pc->jumlah ?? 0;
-                        $gambarPath = 'assets/uploads/produk/' . $produk->gambar_produk;
-                        $gambar = $produk->gambar_produk && file_exists(public_path($gambarPath))
-                            ? asset($gambarPath)
+
+                        $gambar = $produk->gambar_produk
+                            ? asset('storage/'.$produk->gambar_produk)
                             : asset('images/placeholder.png');
                     @endphp
 

@@ -24,4 +24,8 @@ class Cabang extends Model
     {
         return $this->hasMany(AdminCabang::class, 'cabang_idcabang');
     }
+    public function rekening()
+    {
+        return $this->hasOne(Rekening::class, 'cabang_idcabang');
+    }
 }

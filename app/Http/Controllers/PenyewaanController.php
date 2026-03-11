@@ -7,6 +7,8 @@ use App\Models\Penyewaan;
 use App\Models\ItemPenyewaan;
 use App\Models\StokCabang;
 use App\Models\Produk;
+use App\Models\Rekening;
+use App\Models\Cabang;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -209,8 +211,9 @@ public function uploadPage($id)
     if ($penyewaan->status_penyewaan !== 'menunggu_pembayaran') {
         return back()->with('error', 'Penyewaan ini tidak bisa diupload bukti bayar');
     }
+    $rekening = $penyewaan->cabang->rekening ?? null;
 
-    return view('upload_pembayaran', compact('penyewaan'));
+    return view('upload_pembayaran', compact('penyewaan','rekening'));
 }
 
 public function uploadBuktiBayar(Request $request, $idpenyewaan)
@@ -442,32 +445,5 @@ public function cancel($id)
             'message' => 'Gagal membatalkan penyewaan'
         ]);
     }
-}
-
-public function laporan(Request $request)
-{
-    $query = Penyewaan::with([
-        'penyewa.user',
-        'itemPenyewaan.produk'
-    ])
-    ->where('status_penyewaan', 'selesai')
-    ->orderBy('tanggal_sewa', 'desc');
-
-    // FILTER PERIODE
-    if ($request->start && $request->end) {
-        $query->whereBetween('tanggal_sewa', [
-            $request->start,
-            $request->end
-        ]);
-    }
-
-    $penyewaan = $query->get();
-
-    $totalPendapatan = $penyewaan->sum('total');
-
-    return view('laporan', compact(
-        'penyewaan',
-        'totalPendapatan'
-    ));
 }
 }

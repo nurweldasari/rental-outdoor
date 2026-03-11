@@ -13,7 +13,7 @@
 @section('content')
 <div class="container-kontrak">
     <div class="card-kontrak">
-        <a href="{{ asset('assets/uploads/mou/' . $adminCabang->gambar_mou) }}" target="_blank" class="btn-mou">
+        <a href="{{ asset('storage/' . $adminCabang->gambar_mou) }}" target="_blank" class="btn-mou">
             <i class="fa-solid fa-eye"></i> Lihat MoU
         </a>
     </div>

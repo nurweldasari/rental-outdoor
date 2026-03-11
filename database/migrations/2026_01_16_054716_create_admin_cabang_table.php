@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('admin_cabang', function (Blueprint $table) {
     $table->id('idadmin_cabang');
-    $table->string('gambar_mou',45)->nullable();
+    $table->string('gambar_mou',255)->nullable();
 
     $table->foreignId('users_idusers')
           ->references('idusers')->on('users')

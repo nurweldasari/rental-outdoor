@@ -26,15 +26,23 @@
             </div>
 
             <div class="info-right">
-                <span class="badge bank">Bank Negara Indonesia (BNI)</span>
-                <span class="badge rekening">No. rekening : 4897654289087</span>
+                @if($rekening)
+                    <span class="badge bank">
+                        {{ $rekening->nama_bank }}
+                    </span>
+
+                    <span class="badge rekening">
+                        No. rekening : {{ $rekening->no_rekening }}
+                        ({{ $rekening->atas_nama }})
+                    </span>
+                @endif
             </div>
         </div>
 
         <label class="upload-box">
             <input type="file" name="bukti_bayar" hidden>
             <div class="upload-content">
-                <i class="icon-upload">☁</i>
+                <i class="icon-upload"><i class="fa-solid fa-cloud"></i></i>
                 <p>upload bukti bayar</p>
             </div>
         </label>

@@ -105,7 +105,8 @@
     </a>
 
 
-    <a class="{{ ($active ?? '') === 'bagi_hasil' ? 'active' : '' }}">
+    <a href="{{ route('bagi_hasil.cabang') }}"
+    class="{{ ($active ?? '') === 'bagi_hasil' ? 'active' : '' }}">
         <i class="fa-solid fa-sack-dollar"></i>
         <span>Bagi Hasil</span>
     </a>
