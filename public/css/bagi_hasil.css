@@ -1,0 +1,547 @@
+/* ===============================
+   GLOBAL CONTAINER
+=================================*/
+.bagi-container{
+    padding:0 0 40px 0;
+}
+
+
+/* ===============================
+   GRID CABANG
+=================================*/
+.cabang-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:25px;
+}
+
+.cabang-card{
+    background:#fff;
+    border-radius:14px;
+    padding:25px 15px;
+    text-align:center;
+    text-decoration:none;
+    color:#333;
+    box-shadow:0 4px 15px rgba(0,0,0,0.06);
+    transition:.2s ease;
+    display:block;
+}
+
+.cabang-card:hover{
+    transform:translateY(-4px);
+}
+
+.cabang-card i{
+    font-size:22px;
+    margin-bottom:10px;
+}
+
+.cabang-card h6{
+    font-weight:600;
+    margin-bottom:15px;
+    font-size:15px;
+}
+
+
+/* ===============================
+   BUTTONS
+=================================*/
+.btn{
+    height:40px;
+    padding:0 20px;
+    border-radius:10px;
+    border:none;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.btn-dark{
+    background:#9a4d00;
+    color:#fff;
+}
+.btn-riwayat{
+    background:#d97706;
+    color:#fff;
+}
+.btn-orange{
+    display: inline-block;
+    background: #e68a00;
+    color: #fff;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.btn-green-full{
+    width:100%;
+    background:#0f6b24;
+    color:#fff;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    margin-top:20px;
+}
+
+.btn-back{
+    height:40px;
+    padding:0 18px;
+    border-radius:10px;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    cursor:pointer;
+    gap:8px;
+    background:#dc2626;
+    color:#fff;
+}
+
+.btn-back-red{
+    display:inline-block;
+    background:#DB2C00;
+    color:#fff;
+    padding:10px 20px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+
+/* ===============================
+   HEADER DETAIL
+=================================*/
+.detail-header{
+    max-width:100%;
+    margin:0 0 20px 0;
+}
+
+.back-row{
+    margin-bottom:20px;
+    display:flex;
+}
+
+.action-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.action-left{
+    display:flex;
+    gap:10px;
+}
+
+
+/* ===============================
+   DETAIL CARD
+=================================*/
+.detail-wrapper{
+    margin-top:10px;
+}
+
+.detail-card-custom{
+    background:#fff;
+    border:2px solid #333;
+    border-radius:16px;
+    padding:28px 32px;
+}
+
+.detail-title-center{
+    text-align:center;
+    font-weight:700;
+    font-size:20px;
+    margin-bottom:25px;
+}
+
+
+/* ===============================
+   REKENING
+=================================*/
+.rekening-pill{
+    background:#5b577a;
+    color:#fff;
+    padding:18px 20px;
+    border-radius:14px;
+    width:200px;
+    font-size:14px;
+    line-height:1.6;
+    margin-bottom:30px;
+}
+
+
+/* ===============================
+   TOTAL PILL
+=================================*/
+.total-pill{
+    border:2px solid #333;
+    border-radius:50px;
+    padding:14px 22px;
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:25px;
+    font-size:15px;
+}
+
+
+/* ===============================
+   HASIL BOX
+=================================*/
+.hasil-box{
+    border:2px dashed #aaa;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:20px;
+}
+
+.hasil-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+}
+
+.row-between{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.hasil-box hr{
+    border:none;
+    border-top:1px solid #ccc;
+    margin:12px 0;
+}
+
+
+/* ===============================
+   RIWAYAT
+=================================*/
+.riwayat-container{
+    background:#fff;
+    border:2px solid #000;
+    font-size:20px;
+    padding:25px 30px;
+    border-radius:10px;
+}
+
+.riwayat-title{
+    text-align:center;
+    font-weight:600;
+    margin-bottom:20px;
+}
+
+.table-riwayat{
+    width:100%;
+    border-collapse:collapse;
+    text-align:center;
+    font-size:14px;
+}
+
+.table-riwayat th,
+.table-riwayat td{
+    padding:14px 10px;
+}
+
+.table-riwayat thead{
+    border-top:2px solid #333;
+    border-bottom:2px solid #333;
+}
+
+.table-riwayat tbody tr{
+    border-bottom:1px solid #ddd;
+}
+
+.btn-eye{
+    width:36px;
+    height:36px;
+    background:#8B5E3C;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    text-decoration:none;
+}
+
+.status-text{
+    font-weight:500;
+}
+
+
+/* ===============================
+   MODAL UPLOAD CABANG
+=================================*/
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.4);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:white;
+    width:500px;
+    padding:25px;
+    border-radius:10px;
+    position:relative;
+}
+
+.modal-close{
+    position:absolute;
+    top:15px;
+    right:18px;
+    font-size:22px;
+    cursor:pointer;
+}
+
+.modal-header{
+    margin-bottom:20px;
+}
+
+.upload-box{
+    border:2px dashed #bbb;
+    padding:35px;
+    text-align:center;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.upload-label{
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+}
+
+.upload-icon{
+    font-size:28px;
+    color:#333;
+}
+
+.upload-box input[type="file"]{
+    display:none;
+}
+
+.btn-simpan{
+    width:100%;
+    padding:12px;
+    background:#0f7b2d;
+    color:white;
+    border:none;
+    border-radius:8px;
+}
+
+.tanggal-upload{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:35px;
+}
+
+.tanggal-info{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.tanggal-title{
+    font-weight:700;
+}
+
+.tanggal-date{
+    font-size:14px;
+}
+
+.badge-menunggu{
+    background:#f59e0b;
+    color:white;
+    padding:5px 12px;
+    border-radius:20px;
+}
+
+
+/* ===============================
+   MODAL OWNER
+=================================*/
+.modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.modal-box{
+    background:#fff;
+    width:450px;
+    max-width:90%;
+    padding:25px;
+    border-radius:14px;
+    position:relative;
+}
+
+.bukti-box{
+    width:700px !important;
+    max-width:95%;
+}
+
+.bukti-title{
+    font-weight:600;
+    margin-bottom:20px;
+}
+
+.bukti-table{
+    width:100%;
+    border-collapse:collapse;
+    text-align:center;
+    font-size:14px;
+}
+
+.bukti-table th,
+.bukti-table td{
+    padding:14px 8px;
+}
+
+.bukti-table thead{
+    border-top:2px solid #333;
+    border-bottom:2px solid #333;
+}
+
+.lihat-bukti{
+    background:#8B5E3C;
+    color:#fff;
+    padding:8px 16px;
+    border-radius:6px;
+    font-size:13px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    cursor:pointer;
+}
+
+.status-menunggu{
+    background:#FF9501;
+    color:#fff;
+    padding:8px 16px;
+    border-radius:6px;
+    font-size:13px;
+}
+
+.konfirmasi-btns{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+
+.btn-bulat{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    cursor:pointer;
+}
+
+.btn-bulat.merah{
+    background:#DB2C00;
+}
+
+.btn-bulat.hijau{
+    background:#056A28;
+}
+
+
+/* ===============================
+   MODAL SKALA
+=================================*/
+.modal-title{
+    font-weight:600;
+}
+
+.skala-nb{
+    font-size:13px;
+    color:#dc2626;
+    margin-bottom:18px;
+}
+
+.skala-wrapper{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:20px 0;
+}
+
+.skala-box{
+    width:45%;
+    text-align:center;
+}
+
+.skala-title{
+    font-weight:600;
+    font-size:12px;
+}
+
+.skala-percent{
+    font-size:14px;
+    font-weight:600;
+}
+
+.skala-range{
+    width:100%;
+    margin-top:10px;
+}
+
+.modal-btn-group{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    margin-top:30px;
+}
+
+.btn-save{
+    background:#056A28;
+    color:#fff;
+    border:none;
+    padding:10px 28px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.btn-cancel{
+    background:#DB2C00;
+    color:#fff;
+    border:none;
+    padding:10px 28px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+
+/* ===============================
+   RESPONSIVE
+=================================*/
+@media(max-width:768px){
+
+    .action-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+}
