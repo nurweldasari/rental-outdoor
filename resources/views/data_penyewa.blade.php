@@ -97,7 +97,9 @@
 
     {{-- AKSI --}}
     <td class="aksi">
-        <button class="btn-green">Reservasi</button>
+       <a href="{{ route('reservasi', $p->idusers) }}" class="btn-green">
+    Reservasi
+</a>
 
         <button
             class="btn-yellow btn-detail"

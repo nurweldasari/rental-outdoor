@@ -154,6 +154,15 @@ Route::get('/tambah_penyewa', [PenyewaController::class, 'create'])
 Route::post('/tambah_penyewa', [PenyewaController::class, 'store'])
     ->name('tambah_penyewa.store');
 
+  Route::get('/admin/reservasi/{idpenyewa}', 
+        [PenyewaanController::class, 'createReservasi']
+    )->name('reservasi');
+
+    // 🔥 SIMPAN RESERVASI (POST)
+    Route::post('/admin/reservasi/{idpenyewa}', 
+        [PenyewaanController::class, 'reservasi']
+    )->name('reservasi.store');
+
 Route::get('/profil_cabang', [AkunController::class, 'editcabang'])
     ->name('profil_cabang');
 
@@ -172,7 +181,6 @@ Route::get('/rekening', [AkunController::class, 'editrekening'])
     ->name('rekening');
 
 Route::post('/rekening', [AkunController::class, 'updateRekening'])
-->middleware(['auth', 'status:adminCabang'])
     ->name('rekening.update');
 
 /* ========== Kategori ========== */

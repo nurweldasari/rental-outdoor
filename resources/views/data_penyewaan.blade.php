@@ -74,30 +74,39 @@
             </div>
 
             <div class="confirm">
-@if($p->status_penyewaan === 'menunggu_pembayaran')
-    <!-- Tombol aktif untuk konfirmasi dan cancel -->
-    <button 
-        class="icon ok" 
-        data-url="{{ route('admin.konfirmasi_bayar', $p->idpenyewaan) }}"
-    >✔</button>
 
-    <button 
-        class="icon cancel" 
-        data-url="{{ route('admin.penyewaan.cancel', $p->idpenyewaan) }}"
-    >✖</button>
+@if($p->status_penyewaan === 'menunggu_pembayaran')
+
+    <div class="confirm-wrap">
+
+        {{-- Cancel --}}
+    <form action="{{ route('admin.penyewaan.cancel', $p->idpenyewaan) }}" method="POST">
+        @csrf
+        <button type="submit" class="icon-btn cancel-btn">
+            ✖
+        </button>
+    </form>
+
+    {{-- Konfirmasi --}}
+    <form action="{{ route('admin.konfirmasi_bayar', $p->idpenyewaan) }}" method="POST">
+        @csrf
+        <button type="submit" class="icon-btn ok-btn">
+            ✔
+        </button>
+    </form>
+
+    </div>
 
 @elseif($p->status_penyewaan === 'sedang_disewa')
-    <!-- Hanya ikon ✔ non-klik -->
     <span class="icon ok">✔</span>
 
 @elseif($p->status_penyewaan === 'dibatalkan')
-    <!-- Hanya ikon ❌ non-klik -->
     <span class="icon cancel">✖</span>
 
 @elseif($p->status_penyewaan === 'selesai')
-    <!-- Hanya ikon ✔ non-klik -->
     <span class="icon ok">✔</span>
 @endif
+
 </div>
             <div>
                 <div>
@@ -143,76 +152,4 @@
 </div>
 @endsection
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', () => {
 
-    // Hanya tombol OK untuk menunggu
-    document.querySelectorAll('.icon.ok[data-url]').forEach(el => {
-        el.addEventListener('click', function() {
-            const url = this.dataset.url;
-            const row = this.closest('.table-row');
-            const cancelEl = row.querySelector('.icon.cancel');
-            const statusEl = row.querySelector('.status');
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            }).then(res => res.json())
-              .then(data => {
-                  if(data.success){
-                      statusEl.textContent = 'Sedang Disewa';
-                      statusEl.className = 'status active';
-                      // hilangkan tombol cancel
-                      if(cancelEl) cancelEl.remove();
-                      // ganti tombol ok menjadi span supaya tidak bisa diklik lagi
-                      this.outerHTML = '<span class="icon ok">✔</span>';
-                  } else {
-                      alert(data.message || 'Gagal konfirmasi');
-                  }
-              });
-        });
-    });
-
-    // Hanya tombol Cancel untuk menunggu
-    document.querySelectorAll('.icon.cancel[data-url]').forEach(el => {
-        el.addEventListener('click', function() {
-            const url = this.dataset.url;
-            const row = this.closest('.table-row');
-            const okEl = row.querySelector('.icon.ok');
-            const statusEl = row.querySelector('.status');
-
-            if(confirm('Yakin ingin membatalkan penyewaan ini?')) {
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                }).then(res => res.json())
-                  .then(data => {
-                      if(data.success){
-                          statusEl.textContent = 'Dibatalkan';
-                          statusEl.className = 'status cancel';
-                          // hilangkan tombol ok
-                          if(okEl) okEl.remove();
-                          // ganti tombol cancel menjadi span
-                          this.outerHTML = '<span class="icon cancel">✖</span>';
-                      } else {
-                          alert(data.message || 'Gagal membatalkan');
-                      }
-                  });
-            }
-        });
-    });
-
-});
-
-</script>
-
-@endpush

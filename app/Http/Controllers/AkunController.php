@@ -11,17 +11,21 @@ use Illuminate\Validation\Rules\Password;
 class AkunController extends Controller
 {
     public function editcabang()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $cabang = DB::table('admin_cabang')
-            ->join('cabang', 'admin_cabang.cabang_idcabang', '=', 'cabang.idcabang')
-            ->where('admin_cabang.users_idusers', $user->idusers)
-            ->select('cabang.*')
-            ->first();
-
-        return view('profil_cabang', compact('user', 'cabang'));
+    if (!$user) {
+        return redirect()->route('login');
     }
+
+    $cabang = DB::table('admin_cabang')
+        ->join('cabang', 'admin_cabang.cabang_idcabang', '=', 'cabang.idcabang')
+        ->where('admin_cabang.users_idusers', $user->idusers)
+        ->select('cabang.*')
+        ->first();
+
+    return view('profil_cabang', compact('user', 'cabang'));
+}
 
     public function profilcabang(Request $request)
     {
@@ -75,6 +79,10 @@ class AkunController extends Controller
 
     public function edit()
 {
+    if (!Auth::check()) {
+        return redirect()->route('login');
+    }
+
     $user = Auth::user();
 
     return view('profil', compact('user'));
@@ -101,6 +109,8 @@ public function profil(Request $request)
                 'alamat'     => $request->alamat,
                 'updated_at' => now(),
             ]);
+
+            
 
         return back()->with('success', 'Profil berhasil diperbarui');
 

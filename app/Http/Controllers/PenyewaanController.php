@@ -7,6 +7,9 @@ use App\Models\Penyewaan;
 use App\Models\ItemPenyewaan;
 use App\Models\StokCabang;
 use App\Models\Produk;
+use App\Models\Penyewa;
+use App\Models\Kategori;
+use App\Models\Cabang;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -189,7 +192,7 @@ $penyewaanAktif = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
     return view('item_penyewaan', compact('belumBayar', 'penyewaanAktif'));
 }
 public function selesai() {
-    $user = auth()->user();
+    $user = Auth::user();
     $penyewa = $user->penyewa ?? null;
     if (!$penyewa) abort(403, 'Akun ini bukan penyewa');
 
@@ -236,7 +239,7 @@ public function uploadBuktiBayar(Request $request, $idpenyewaan)
 
 public function adminIndex(Request $request)
 {
-    $user = auth()->user();
+    $user = Auth::user();
 
     // Ambil relasi adminCabang
     $adminCabang = $user->adminCabang;
@@ -271,7 +274,7 @@ public function adminIndex(Request $request)
 
 public function adminDetail($id)
 {
-    $user = auth()->user();
+    $user = Auth::user();
     $adminCabang = $user->adminCabang;
 
     if (!$adminCabang) {
@@ -292,7 +295,7 @@ public function adminDetail($id)
 
 public function konfirmasiBayar($id)
 {
-    $user = auth()->user();
+    $user = Auth::user();
     $adminCabang = $user->adminCabang;
 
     if (!$adminCabang) {
@@ -320,7 +323,7 @@ public function konfirmasiBayar($id)
 }
 public function selesaiAdmin($id)
 {
-    $user = auth()->user();
+    $user = Auth::user();
     $adminCabang = $user->adminCabang;
 
     if (!$adminCabang) {
@@ -374,7 +377,7 @@ public function selesaiAdmin($id)
 
 public function adminRiwayat(Request $request)
 {
-    $user = auth()->user();
+    $user = Auth::user();
     $adminCabang = $user->adminCabang;
 
     if (!$adminCabang) {
@@ -443,7 +446,128 @@ public function cancel($id)
         ]);
     }
 }
+public function createReservasi($id)
+{
+    $user = Auth::user();
+    $adminCabang = $user->adminCabang;
 
+    if (!$adminCabang) {
+        abort(403, 'Bukan admin cabang');
+    }
+
+    $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
+
+    $cabangId = $adminCabang->cabang_idcabang;
+
+    session(['cabang_id' => $cabangId]);
+
+    $kategoriList = Kategori::all();
+
+    $produkList = StokCabang::with('produk.kategori')
+        ->where('cabang_idcabang', $cabangId)
+        ->paginate(12);
+
+    return view('reservasi', compact(
+        'penyewa',
+        'kategoriList',
+        'produkList'
+    ));
+}
+
+public function reservasi(Request $request, $idpenyewa)
+{
+    $user = Auth::user();
+    $adminCabang = $user->adminCabang;
+
+    if (!$adminCabang) {
+        abort(403, 'Bukan admin cabang');
+    }
+
+    $penyewa = Penyewa::where('users_idusers', $idpenyewa)->firstOrFail();
+
+    $request->validate([
+        'tanggal_sewa'    => 'required|date',
+        'tanggal_selesai' => 'required|date|after_or_equal:tanggal_sewa',
+        'metode_bayar'    => 'required|in:cash,transfer',
+        'produk_cabang'   => 'required|array',
+        'qty'             => 'required|array',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+
+        $tanggalSewa    = Carbon::parse($request->tanggal_sewa)->startOfDay();
+        $tanggalSelesai = Carbon::parse($request->tanggal_selesai)->endOfDay();
+
+        $durasiHari = $tanggalSewa->diffInDays($tanggalSelesai);
+        if ($durasiHari < 1) $durasiHari = 1;
+
+        // 🔥 Buat penyewaan
+        $penyewaan = Penyewaan::create([
+            'tanggal_sewa'    => $tanggalSewa,
+            'tanggal_selesai' => $tanggalSelesai,
+            'total'           => 0,
+            'total_produk'    => 0,
+            'status_penyewaan'=> 'sedang_disewa', // admin langsung aktif
+            'metode_bayar'    => $request->metode_bayar,
+            'batas_pembayaran'=> null,
+
+            'penyewa_idpenyewa' => $penyewa->idpenyewa,
+            'cabang_idcabang'   => $adminCabang->cabang_idcabang,
+            'admin_pusat_idadmin_pusat' => null,
+        ]);
+
+        $total = 0;
+        $totalProduk = 0;
+
+        foreach ($request->produk_cabang as $i => $idstok) {
+
+            $qty = (int) ($request->qty[$i] ?? 0);
+            if ($qty < 1) continue;
+
+            $stok = StokCabang::where('idstok', $idstok)
+                ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
+                ->firstOrFail();
+
+            if ($qty > $stok->jumlah) {
+                throw new \Exception('Stok tidak mencukupi');
+            }
+
+            $harga = $stok->produk->harga;
+            $stok->decrement('jumlah', $qty);
+
+            $subtotal = $harga * $qty * $durasiHari;
+
+            ItemPenyewaan::create([
+                'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+                'produk_idproduk'       => $stok->produk_idproduk,
+                'harga'                 => $harga,
+                'qty'                   => $qty,
+                'subtotal'              => $subtotal,
+            ]);
+
+            $total += $subtotal;
+            $totalProduk += $qty;
+        }
+
+        $penyewaan->update([
+            'total'        => $total,
+            'total_produk' => $totalProduk,
+        ]);
+
+        DB::commit();
+
+        return redirect()
+            ->route('data_penyewaan')
+            ->with('success', 'Reservasi berhasil dibuat');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
+    }
+}
 public function laporan(Request $request)
 {
     $query = Penyewaan::with([
