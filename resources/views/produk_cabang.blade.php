@@ -56,16 +56,11 @@
         @forelse($produkList as $produk)
 
             @php
-    // ambil stok cabang milik cabang login
     $stokCabang = $produk->stokCabang->first();
-
     $stok = $stokCabang->jumlah ?? 0;
 
-    $gambarPath = 'assets/uploads/produk/'.$produk->gambar_produk;
-
-    $gambar = $produk->gambar_produk &&
-              file_exists(public_path($gambarPath))
-        ? asset($gambarPath)
+    $gambar = $produk->gambar_produk
+        ? asset('storage/'.$produk->gambar_produk)
         : asset('images/placeholder.png');
 @endphp
 

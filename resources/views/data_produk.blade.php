@@ -86,8 +86,8 @@
 
                 {{-- Gambar --}}
                 <img src="{{ $item->gambar_produk
-                    ? asset('assets/uploads/produk/'.$item->gambar_produk)
-                    : asset('images/no-image.png') }}"
+                        ? asset('storage/'.$item->gambar_produk)
+                        : asset('images/no-image.png') }}"
                     alt="{{ $item->nama_produk }}"
                     class="img-produk">
 

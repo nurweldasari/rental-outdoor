@@ -14,8 +14,17 @@ class BagiHasil extends Model
     protected $primaryKey = 'idbagi_hasil';
 
     protected $fillable = [
-        'presentase_owner',
-        'presentase_cabang',
-        'bukti_fee'
-    ];
+    'cabang_idcabang',
+    'bulan',
+    'presentase_owner',
+    'presentase_cabang',
+    'nominal_owner',
+    'nominal_cabang',
+    'bukti_fee',
+    'status'
+];
+public function cabang()
+{
+    return $this->belongsTo(Cabang::class,'cabang_idcabang','idcabang');
+}
 }

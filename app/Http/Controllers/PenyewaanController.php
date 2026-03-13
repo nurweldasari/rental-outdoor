@@ -9,6 +9,7 @@ use App\Models\StokCabang;
 use App\Models\Produk;
 use App\Models\Penyewa;
 use App\Models\Kategori;
+use App\Models\Rekening;
 use App\Models\Cabang;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -212,8 +213,9 @@ public function uploadPage($id)
     if ($penyewaan->status_penyewaan !== 'menunggu_pembayaran') {
         return back()->with('error', 'Penyewaan ini tidak bisa diupload bukti bayar');
     }
+    $rekening = $penyewaan->cabang->rekening ?? null;
 
-    return view('upload_pembayaran', compact('penyewaan'));
+    return view('upload_pembayaran', compact('penyewaan','rekening'));
 }
 
 public function uploadBuktiBayar(Request $request, $idpenyewaan)
@@ -446,6 +448,7 @@ public function cancel($id)
         ]);
     }
 }
+
 public function createReservasi($id)
 {
     $user = Auth::user();
@@ -595,3 +598,4 @@ public function laporan(Request $request)
     ));
 }
 }
+

@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Produk;
 use App\Models\Kategori;
-use Illuminate\Http\Request;     
+use Illuminate\Http\Request; 
+use Illuminate\Support\Facades\Storage;    
 
 class ProdukController extends Controller
 {
@@ -48,11 +49,11 @@ class ProdukController extends Controller
     ]);
 
     // Upload gambar ke folder public/assets/uploads/produk
-    $filename = null;
+    $path = null;
+
     if ($request->hasFile('gambar_produk')) {
-        $file = $request->file('gambar_produk');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('assets/uploads/produk'), $filename);
+        $path = $request->file('gambar_produk')
+                        ->store('produk', 'public');
     }
 
     // Simpan ke database
@@ -62,7 +63,7 @@ class ProdukController extends Controller
         'harga'       => $request->harga,
         'jenis_skala' => $request->jenis_skala,
         'kategori_idkategori' => $request->kategori_idkategori,
-        'gambar_produk' => $filename, // simpan nama file
+        'gambar_produk' => $path, 
         'admin_pusat_idadmin_pusat' => $request->admin_pusat_idadmin_pusat,
     ]);
 
@@ -94,16 +95,17 @@ public function update(Request $request, $id)
 
     // Handle upload gambar baru
     if ($request->hasFile('gambar_produk')) {
-        // Hapus file lama jika ada
-        if ($produk->gambar_produk && file_exists(public_path('assets/uploads/produk/'.$produk->gambar_produk))) {
-            unlink(public_path('assets/uploads/produk/'.$produk->gambar_produk));
-        }
 
-        $file = $request->file('gambar_produk');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('assets/uploads/produk'), $filename);
-        $produk->gambar_produk = $filename;
+    // hapus file lama kalau ada
+    if ($produk->gambar_produk) {
+        Storage::disk('public')->delete($produk->gambar_produk);
     }
+
+    $path = $request->file('gambar_produk')
+                    ->store('produk', 'public');
+
+    $produk->gambar_produk = $path;
+}
 
     // Update field lain
     $produk->nama_produk = $request->nama_produk;
@@ -124,9 +126,9 @@ public function destroy($id)
     $produk = Produk::findOrFail($id);
 
     // Hapus gambar lama jika ada
-    if ($produk->gambar_produk && file_exists(public_path('assets/uploads/produk/'.$produk->gambar_produk))) {
-        unlink(public_path('assets/uploads/produk/'.$produk->gambar_produk));
-    }
+    if ($produk->gambar_produk) {
+    Storage::disk('public')->delete($produk->gambar_produk);
+}
 
     $produk->delete();
 

@@ -130,7 +130,7 @@
                         data-alamat="{{ $admin?->user?->alamat ?? '-' }}"
                         data-cabang="{{ $c->nama_cabang }}"
                         data-lokasi="{{ $c->lokasi }}"
-                        data-mou="{{ $admin?->gambar_mou ? asset('assets/uploads/mou/'.$admin->gambar_mou) : '' }}">
+                        data-mou="{{ $admin?->gambar_mou ? asset('storage/'.$admin->gambar_mou) : '' }}">
                         Detail
                         </button>
                     </td>

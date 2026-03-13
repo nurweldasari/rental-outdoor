@@ -167,14 +167,13 @@ class AuthController extends Controller
             'status'     => 'admin_cabang'
         ]);
 
-        $file = $request->file('gambar_mou');
-        $filename = time().'_'.$file->getClientOriginalName();
-        $file->move(public_path('assets/uploads/mou'), $filename);
+        $path = $request->file('gambar_mou')
+                ->store('mou', 'public');
 
         AdminCabang::create([
             'users_idusers'   => $user->idusers,
             'cabang_idcabang' => $cabang->idcabang,
-            'gambar_mou'      => $filename
+            'gambar_mou'      => $path
         ]);
 
         return redirect('/login')

@@ -18,6 +18,7 @@ use App\Http\Controllers\ProdukCabangController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\RekeningController;
 use App\Http\Controllers\BagiHasilController;
+use App\Http\Controllers\LaporanController;
 use App\Models\Cabang; 
 
 
@@ -134,16 +135,20 @@ Route::get('/admin/riwayat',
 Route::post('/admin/penyewaan/{id}/cancel', [PenyewaanController::class, 'cancel'])
     ->name('admin.penyewaan.cancel');
 
-Route::get('/laporan', [PenyewaanController::class, 'laporan'])
-    ->middleware('auth')
-    ->name('laporan');
 
-Route::get('/laporan-cabang', [PenyewaanController::class, 'laporan'])
-    ->middleware('auth')
-    ->name('laporan_cabang');
+Route::middleware('auth')->group(function () {
+
+    // ADMIN CABANG
+    Route::get('/laporan', [LaporanController::class, 'index'])
+        ->name('laporan');
+
+    // OWNER
+    Route::get('/laporan-cabang', [LaporanController::class, 'index'])
+        ->name('laporan_cabang');
+
+});
 
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
-->name('data_penyewa')
     ->middleware('auth');
 
 // tampilkan form tambah penyewa
@@ -307,12 +312,31 @@ Route::get('/cek-waktu', function () {
     );
 });
 
-//Bagi Hasil
+// ===== OWNER BAGI HASIL =====
 
-Route::get('/bagi-hasil', [BagiHasilController::class, 'index'])->name('bagi_hasil_owner');
+// Halaman utama + menu view (list / bukti / riwayat / pengaturan)
+Route::get('/bagi-hasil', [BagiHasilController::class, 'index'])
+    ->name('bagi_hasil');
 
-Route::post('/bagi-hasil/store', [BagiHasilController::class, 'store'])->name('bagi_hasil.store');
+// Detail hitung per cabang
+Route::get('/bagi-hasil/detail/{id}', [BagiHasilController::class, 'show'])
+    ->name('bagi_hasil.detail');
 
-Route::post('/bagi-hasil/upload/{id}', [BagiHasilController::class, 'uploadBukti'])->name('bagi_hasil.upload');
+// Simpan hasil perhitungan
+Route::post('/bagi-hasil/store', [BagiHasilController::class, 'store'])
+    ->name('bagi_hasil.store');
 
-Route::get('/bagi-hasil/{id}', [BagiHasilController::class, 'show'])->name('bagi_hasil');
+// ================= ADMIN CABANG =================
+Route::get('/bagi-hasil-cabang', [BagiHasilController::class,'cabangIndex'])
+    ->name('bagi_hasil.cabang');
+
+Route::post('/bagi-hasil/upload/{id}', [BagiHasilController::class,'uploadBukti'])
+    ->name('bagi_hasil.upload');
+
+Route::post('/bagi-hasil/{id}/konfirmasi',
+[BagiHasilController::class,'konfirmasi'])
+->name('bagi_hasil.konfirmasi');
+
+Route::post('/bagi-hasil/{id}/tolak',
+[BagiHasilController::class,'tolak'])
+->name('bagi_hasil.tolak');
