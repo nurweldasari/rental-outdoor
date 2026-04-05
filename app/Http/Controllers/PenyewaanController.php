@@ -261,12 +261,10 @@ public function adminIndex(Request $request)
     ->orderBy('tanggal_sewa', 'desc');
 
     // Filter pencarian nama / no telepon penyewa
-    if ($request->search) {
-        $query->whereHas('penyewa', function($q) use ($request) {
-            $q->where('nama', 'like', '%' . $request->search . '%')
-              ->orWhere('no_telepon', 'like', '%' . $request->search . '%');
-        });
-    }
+    $query->whereHas('penyewa.user', function ($q) use ($request) {
+    $q->where('nama', 'like', '%' . $request->search . '%')
+      ->orWhere('no_telepon', 'like', '%' . $request->search . '%');
+});
 
     $penyewaanList = $query->paginate($request->get('per_page', 10))
                             ->withQueryString();
@@ -454,10 +452,6 @@ public function createReservasi($id)
     $user = Auth::user();
     $adminCabang = $user->adminCabang;
 
-    if (!$adminCabang) {
-        abort(403, 'Bukan admin cabang');
-    }
-
     $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
 
     $cabangId = $adminCabang->cabang_idcabang;
@@ -571,31 +565,6 @@ public function reservasi(Request $request, $idpenyewa)
         return back()->with('error', $e->getMessage());
     }
 }
-public function laporan(Request $request)
-{
-    $query = Penyewaan::with([
-        'penyewa.user',
-        'itemPenyewaan.produk'
-    ])
-    ->where('status_penyewaan', 'selesai')
-    ->orderBy('tanggal_sewa', 'desc');
 
-    // FILTER PERIODE
-    if ($request->start && $request->end) {
-        $query->whereBetween('tanggal_sewa', [
-            $request->start,
-            $request->end
-        ]);
-    }
-
-    $penyewaan = $query->get();
-
-    $totalPendapatan = $penyewaan->sum('total');
-
-    return view('laporan', compact(
-        'penyewaan',
-        'totalPendapatan'
-    ));
-}
 }
 

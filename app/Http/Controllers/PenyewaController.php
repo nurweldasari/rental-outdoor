@@ -13,6 +13,7 @@ class PenyewaController extends Controller
 {
     public function index()
     {
+        
         $penyewa = DB::table('users')
             ->join('penyewa', 'penyewa.users_idusers', '=', 'users.idusers')
             ->where('users.status', 'penyewa')
@@ -22,6 +23,8 @@ class PenyewaController extends Controller
                 'penyewa.status_penyewa'
             )
             ->get();
+
+            
 
         return view('data_penyewa', compact('penyewa'));
     }

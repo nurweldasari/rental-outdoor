@@ -23,6 +23,7 @@ return new class extends Migration
             // pembayaran
             $table->enum('status_penyewaan', ['menunggu_pembayaran', 'sedang_disewa', 'selesai', 'dibatalkan'])
                   ->default('menunggu_pembayaran');
+            $table->boolean('sudah_diingatkan')->default(false); // ✅ INI
             $table->enum('metode_bayar', ['cash', 'transfer'])->nullable();
             $table->dateTime('batas_pembayaran')->nullable(); // untuk 2 jam limit
             $table->string('bukti_bayar', 100)->nullable();

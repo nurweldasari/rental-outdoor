@@ -26,11 +26,12 @@ class LaporanController extends Controller
         $cabang = Cabang::findOrFail($request->cabang);
 
         $penyewaan = Penyewaan::where('cabang_idcabang', $cabang->idcabang)
-            ->when($request->bulan, function ($q) use ($request) {
-                $q->whereMonth('tanggal_sewa', date('m', strtotime($request->bulan)))
-                  ->whereYear('tanggal_sewa', date('Y', strtotime($request->bulan)));
-            })
-            ->get();
+    ->where('status_penyewaan', 'selesai') // 🔥 INI YANG KURANG
+    ->when($request->bulan, function ($q) use ($request) {
+        $q->whereMonth('tanggal_sewa', date('m', strtotime($request->bulan)))
+          ->whereYear('tanggal_sewa', date('Y', strtotime($request->bulan)));
+    })
+    ->get();
 
         $totalPendapatan = $penyewaan->sum('total');
 
@@ -53,11 +54,12 @@ class LaporanController extends Controller
     $cabang = Cabang::findOrFail($adminCabang->cabang_idcabang);
 
     $penyewaan = Penyewaan::where('cabang_idcabang', $cabang->idcabang)
-        ->when($request->bulan, function ($q) use ($request) {
-            $q->whereMonth('tanggal_sewa', date('m', strtotime($request->bulan)))
-              ->whereYear('tanggal_sewa', date('Y', strtotime($request->bulan)));
-        })
-        ->get();
+    ->where('status_penyewaan', 'selesai') // 🔥 INI JUGA
+    ->when($request->bulan, function ($q) use ($request) {
+        $q->whereMonth('tanggal_sewa', date('m', strtotime($request->bulan)))
+          ->whereYear('tanggal_sewa', date('Y', strtotime($request->bulan)));
+    })
+    ->get();
 
     $totalPendapatan = $penyewaan->sum('total');
 

@@ -10,6 +10,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
 {
     $schedule->command('penyewaan:cancel-expired')->everyMinute();
+    $schedule->command('kirim:pengingat-wa')->everyMinute();
 }
     protected function commands()
     {

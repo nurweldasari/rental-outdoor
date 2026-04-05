@@ -13,22 +13,30 @@
 @section('content')
 <div class="container-data">
 
-    <!-- TOP BAR -->
     <div class="top-bar">
-        <div class="left">
-            <form id="filterForm" method="GET">
-                <select class="per-page" name="per_page" onchange="this.form.submit()">
-                    <option value="10" {{ request('per_page')==10?'selected':'' }}>10</option>
-                    <option value="25" {{ request('per_page')==25?'selected':'' }}>25</option>
-                    <option value="50" {{ request('per_page')==50?'selected':'' }}>50</option>
-                    <option value="100" {{ request('per_page')==100?'selected':'' }}>100</option>
-                </select>
-                <span>Data Per Halaman</span>
+    <form id="filterForm" method="GET" style="width:100%; display:flex; justify-content:space-between; align-items:center;">
 
-                <input type="text" class="search" name="search" placeholder="Pencarian..." value="{{ request('search') }}">
-            </form>
+        <div class="left">
+            <select class="per-page" name="per_page" onchange="this.form.submit()">
+                <option value="10" {{ request('per_page')==10?'selected':'' }}>10</option>
+                <option value="25" {{ request('per_page')==25?'selected':'' }}>25</option>
+                <option value="50" {{ request('per_page')==50?'selected':'' }}>50</option>
+                <option value="100" {{ request('per_page')==100?'selected':'' }}>100</option>
+            </select>
+            <span>Data Per Halaman</span>
         </div>
-    </div>
+
+        <div class="right">
+            <input type="text" 
+                   id="searchInput"
+                   class="search" 
+                   name="search" 
+                   placeholder="Pencarian..." 
+                   value="{{ request('search') }}">
+        </div>
+
+    </form>
+</div>
 
     <!-- HEADER -->
     <div class="table-header">
@@ -151,5 +159,16 @@
 
 </div>
 @endsection
+@push('scripts')
+<script>
+let timeout = null;
 
+document.getElementById('searchInput').addEventListener('keyup', function () {
+    clearTimeout(timeout);
 
+    timeout = setTimeout(() => {
+        document.getElementById('filterForm').submit();
+    }, 500); // delay biar ga spam
+});
+</script>
+@endpush

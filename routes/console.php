@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 
 Schedule::command('penyewaan:cancel-expired')
     ->everyMinute();
+Schedule::command('kirim:pengingat-wa')
+    ->everyMinute();
