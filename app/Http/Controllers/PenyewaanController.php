@@ -371,7 +371,7 @@ public function selesaiAdmin($id)
 
         // 🔥 3. Redirect ke halaman RIWAYAT (bukan back lagi)
         return redirect()
-            ->route('admin.data_riwayat')
+            ->route('data_riwayat')
             ->with('success', 'Penyewaan berhasil diselesaikan');
 
     } catch (\Exception $e) {
