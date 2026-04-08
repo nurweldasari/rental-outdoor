@@ -11,20 +11,23 @@ use Illuminate\Support\Facades\Hash;
 
 class PenyewaController extends Controller
 {
-    public function index()
-    {
-        $penyewa = DB::table('users')
-            ->join('penyewa', 'penyewa.users_idusers', '=', 'users.idusers')
-            ->where('users.status', 'penyewa')
-            ->select(
-                'users.*',
-                'penyewa.gambar_identitas',
-                'penyewa.status_penyewa'
-            )
-            ->get();
+   public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 10); // optional (biar bisa dinamis)
 
-        return view('data_penyewa', compact('penyewa'));
-    }
+    $penyewa = DB::table('users')
+        ->join('penyewa', 'penyewa.users_idusers', '=', 'users.idusers')
+        ->where('users.status', 'penyewa')
+        ->select(
+            'users.*',
+            'penyewa.gambar_identitas',
+            'penyewa.status_penyewa'
+        )
+        ->paginate($perPage) // 🔥 INI YANG PENTING
+        ->withQueryString(); // biar parameter tetap kebawa
+
+    return view('data_penyewa', compact('penyewa'));
+}
 
     // FORM
     public function create()

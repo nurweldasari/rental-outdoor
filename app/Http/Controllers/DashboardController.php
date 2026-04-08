@@ -12,20 +12,27 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
+   
+public function index(Request $request)
+{
+    $user = Auth::user();
 
-        /* ================= PENYEWA ================= */
-        if ($user->status === 'penyewa') {
+    /* ================= PENYEWA ================= */
+    if ($user->status === 'penyewa') {
 
-            $cabang = Cabang::all();
-            $adminpusat = User::where('status', 'admin_pusat')
+        $perPage = $request->get('per_page', 6); // jumlah card per halaman
+
+        $cabang = Cabang::where('status_cabang', 'aktif')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $adminpusat = User::where('status', 'admin_pusat')
             ->select('idusers', 'nama', 'no_telepon', 'alamat')
             ->first();
 
-            return view('/dashboard_penyewa', compact('cabang', 'adminpusat'));
-        }
+        return view('dashboard_penyewa', compact('cabang', 'adminpusat'));
+    }
+
 
         /* ================= ADMIN CABANG ================= */
         if ($user->status === 'admin_cabang') {

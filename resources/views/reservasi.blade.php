@@ -12,15 +12,24 @@
 
 @section('content')
 
-<div class="info-penyewa" style="margin-bottom:20px;">
-    <h3>Buat Reservasi Untuk:</h3>
-    <p><strong>{{ $penyewa->user->nama }}</strong></p>
-<p>No HP: {{ $penyewa->user->no_telepon }}</p>
-</div>
+
 <div class="container-produk katalog-produk">
 
     {{-- ================= HEADER ================= --}}
     <div class="header-produk">
+        <div class="card-penyewa">
+    <div class="card-body">
+    <div class="avatar">
+        <i class="fa-solid fa-user"></i>
+    </div>
+
+    <div class="info">
+        <h4>Buat Reservasi:</h4>
+        <h4>{{ $penyewa->user->nama }}</h4>
+        <p><i class="fa-solid fa-phone"></i> {{ $penyewa->user->no_telepon }}</p>
+    </div>
+</div>
+</div>
         <form method="GET" id="searchForm">
     <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -54,10 +63,9 @@
                     @php
                         $produk = $pc->produk;
                         $stok = $pc->jumlah ?? 0;
-                        $gambarPath = 'assets/uploads/produk/' . $produk->gambar_produk;
-                        $gambar = $produk->gambar_produk && file_exists(public_path($gambarPath))
-                            ? asset($gambarPath)
-                            : asset('images/placeholder.png');
+                        $gambar = $produk->gambar_produk
+        ? asset('storage/'.$produk->gambar_produk)
+        : asset('images/placeholder.png');
                     @endphp
 
                     <div class="card-produk">

@@ -198,6 +198,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
+->name('data_penyewa')
     ->middleware('auth');
 
 // tampilkan form tambah penyewa

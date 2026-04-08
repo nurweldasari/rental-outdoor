@@ -13,6 +13,7 @@ class Penyewaan extends Model
         'tanggal_sewa',
         'tanggal_selesai',
         'tanggal_kembali',
+        'sudah_diingatkan',
         'total',
         'total_produk',
         'bukti_bayar',
