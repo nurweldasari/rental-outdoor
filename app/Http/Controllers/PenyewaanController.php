@@ -60,9 +60,13 @@ class PenyewaanController extends Controller
         if ($tipe === 'cabang') {
             $cabangIdFinal = $tokoId;
             $adminPusatId  = null;
-        } else {
+
+        } elseif ($tipe === 'pusat') {
             $cabangIdFinal = null;
             $adminPusatId  = $tokoId;
+
+        } else {
+            throw new \Exception('Tipe toko tidak valid');
         }
 
         /* ================= SIMPAN PENYEWAAN ================= */
@@ -195,9 +199,13 @@ $penyewaanAktif = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
 public function selesai() {
     $user = Auth::user();
     $penyewa = $user->penyewa ?? null;
-    if (!$penyewa) abort(403, 'Akun ini bukan penyewa');
 
-    $penyewaanSelesai = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
+    if (!$penyewa) {
+        abort(403, 'Akun ini bukan penyewa');
+    }
+
+    $penyewaanSelesai = Penyewaan::with(['penyewa.user'])
+        ->where('penyewa_idpenyewa', $penyewa->idpenyewa) // ✅ FIX DI SINI
         ->where('status_penyewaan', 'selesai')
         ->orderBy('created_at', 'desc')
         ->get();
@@ -596,6 +604,140 @@ public function laporan(Request $request)
         'penyewaan',
         'totalPendapatan'
     ));
+}
+
+public function pusatIndex(Request $request)
+{
+    $query = Penyewaan::with(['penyewa.user'])
+        ->whereNotNull('admin_pusat_idadmin_pusat')
+        ->whereIn('status_penyewaan', [
+            'menunggu_pembayaran',
+            'sedang_disewa',
+            'dibatalkan'
+        ])
+        ->orderBy('tanggal_sewa', 'desc');
+
+    if ($request->search) {
+        $query->whereHas('penyewa.user', function($q) use ($request) {
+            $q->where('nama', 'like', '%' . $request->search . '%')
+              ->orWhere('no_telepon', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    $penyewaanList = $query->paginate($request->get('per_page', 10))
+                            ->withQueryString();
+
+    return view('data_penyewaan_pusat', compact('penyewaanList'));
+}
+public function pusatDetail($id)
+{
+    $penyewaan = Penyewaan::with([
+        'penyewa.user',
+        'itemPenyewaan.produk'
+    ])
+    ->where('idpenyewaan', $id)
+    ->whereNotNull('admin_pusat_idadmin_pusat') // 🔥 hanya pusat
+    ->whereHas('penyewa.user', function ($q) {
+        $q->where('idusers', auth()->user()->idusers);
+    })
+    ->firstOrFail();
+
+    return view('detail_penyewaan_pusat', compact('penyewaan'));
+}
+
+public function konfirmasiPusat($id)
+{
+    $penyewaan = Penyewaan::where('idpenyewaan', $id)
+        ->whereNotNull('admin_pusat_idadmin_pusat')
+        ->firstOrFail();
+
+    if ($penyewaan->status_penyewaan === 'menunggu_pembayaran') {
+        $penyewaan->update([
+            'status_penyewaan' => 'sedang_disewa'
+        ]);
+    }
+
+    return back()->with('success', 'Berhasil dikonfirmasi');
+}
+public function pusatRiwayat(Request $request)
+{
+    $query = Penyewaan::with(['penyewa.user'])
+        ->whereNotNull('admin_pusat_idadmin_pusat')
+        ->where('status_penyewaan', 'selesai');
+
+    if ($request->search) {
+        $query->whereHas('penyewa.user', function($q) use ($request) {
+            $q->where('nama', 'like', '%' . $request->search . '%')
+              ->orWhere('no_telepon', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    $riwayatList = $query->orderBy('tanggal_kembali', 'desc')
+                         ->paginate(10)
+                         ->withQueryString();
+
+    return view('data_riwayat_pusat', compact('riwayatList'));
+}
+public function cancelPusat($id)
+{
+    $penyewaan = Penyewaan::with('itemPenyewaan')->findOrFail($id);
+
+    if ($penyewaan->status_penyewaan !== 'menunggu_pembayaran') {
+        return back()->with('error', 'Tidak bisa dibatalkan');
+    }
+
+    DB::beginTransaction();
+
+    try {
+
+        foreach ($penyewaan->itemPenyewaan as $item) {
+            Produk::where('idproduk', $item->produk_idproduk)
+                ->increment('stok_pusat', $item->qty);
+        }
+
+        $penyewaan->update([
+            'status_penyewaan' => 'dibatalkan'
+        ]);
+
+        DB::commit();
+
+        return back()->with('success', 'Dibatalkan');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Gagal');
+    }
+}
+public function selesaiPusat($id)
+{
+    $penyewaan = Penyewaan::with('itemPenyewaan')->findOrFail($id);
+
+    if ($penyewaan->status_penyewaan !== 'sedang_disewa') {
+        return back()->with('error', 'Tidak bisa diselesaikan');
+    }
+
+    DB::beginTransaction();
+
+    try {
+
+        foreach ($penyewaan->itemPenyewaan as $item) {
+            Produk::where('idproduk', $item->produk_idproduk)
+                ->increment('stok_pusat', $item->qty);
+        }
+
+        $penyewaan->update([
+            'status_penyewaan' => 'selesai',
+            'tanggal_kembali'  => now(),
+        ]);
+
+        DB::commit();
+
+        return back()->with('success', 'Selesai');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Gagal');
+    }
 }
 }
 

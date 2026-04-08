@@ -24,7 +24,7 @@
 
         {{-- Filter Skala --}}
         <select name="skala" form="filterForm" onchange="document.getElementById('filterForm').submit()">
-            <option value="">Semua Skala</option>
+            <option value="">Pilih Jenis Skala</option>
             <option value="Skala Besar" {{ request('skala') == 'Skala Besar' ? 'selected' : '' }}>Skala Besar</option>
             <option value="Skala Kecil" {{ request('skala') == 'Skala Kecil' ? 'selected' : '' }}>Skala Kecil</option>
         </select>

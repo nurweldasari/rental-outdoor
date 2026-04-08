@@ -94,24 +94,38 @@ Route::post('/penyewaan/store', [PenyewaanController::class, 'store'])
 
 Route::get('/penyewaan/{id}', [PenyewaanController::class, 'detail'])
     ->name('penyewaan.detail');
-Route::get('/riwayat-penyewaan', [PenyewaanController::class, 'riwayat'])
+// CABANG
+Route::get('/penyewaan', [PenyewaanController::class, 'riwayat'])
     ->name('item_penyewaan');
 
+// PUSAT
+Route::get('/penyewaan-pusat', [PenyewaanController::class, 'riwayat'])
+    ->name('item_penyewaan_pusat');
 
 // Halaman penyewaan selesai
-    Route::get('/riwayat', [PenyewaanController::class, 'selesai'])
-        ->name('riwayat_penyewaan');
+   // CABANG / UMUM
+Route::get('/riwayat-penyewaan', [PenyewaanController::class, 'selesai'])
+    ->name('riwayat_penyewaan');
+
+// (kalau mau pisah pusat, opsional)
+Route::get('/riwayat-penyewaan-pusat', [PenyewaanController::class, 'selesai'])
+    ->name('riwayat_penyewaan_pusat');
 
     // Detail penyewaan
-Route::get('/penyewaan/{id}', 
+Route::get('/detail-sewa/{id}', 
     [PenyewaanController::class, 'detailPenyewa']
 )->name('detail_sewa');
+
+Route::get('/detail-sewa-pusat/{id}', 
+    [PenyewaanController::class, 'pusatDetail']
+)->name('detail_sewa_pusat');
 
 // Upload Bukti Bayar
 // Halaman upload bukti bayar
 Route::get('/penyewaan/{id}/upload', [PenyewaanController::class, 'uploadPage'])->name('penyewaan.upload_pembayaran');
 Route::post('/penyewaan/{id}/upload', [PenyewaanController::class, 'uploadBuktiBayar'])->name('penyewaan.upload_bukti');
-Route::get('/penyewaan', [PenyewaanController::class, 'riwayat'])->name('penyewaan.riwayat');
+Route::get('/penyewaan/{id}', [PenyewaanController::class, 'detail'])
+    ->name('penyewaan.detail');
 
 
 Route::get('/data_penyewaan', [PenyewaanController::class, 'adminIndex'])
@@ -135,6 +149,37 @@ Route::get('/admin/riwayat',
 Route::post('/admin/penyewaan/{id}/cancel', [PenyewaanController::class, 'cancel'])
     ->name('admin.penyewaan.cancel');
 
+// ================= PUSAT =================
+
+// halaman data penyewaan pusat
+Route::get('/pusat/data_penyewaan_pusat', [PenyewaanController::class, 'pusatIndex'])
+    ->name('data_penyewaan_pusat');
+
+// detail penyewaan pusat
+Route::get('/pusat/penyewaan/{id}',
+    [PenyewaanController::class, 'pusatDetail']
+)->name('pusat.penyewaan.detail');
+
+// konfirmasi pembayaran pusat
+Route::post('/pusat/penyewaan/konfirmasi/{id}', 
+    [PenyewaanController::class, 'konfirmasiPusat']
+)->name('pusat.konfirmasi_bayar');
+
+// selesai penyewaan pusat
+Route::post('/pusat/penyewaan/selesai/{id}',
+    [PenyewaanController::class, 'selesaiPusat']
+)->name('pusat.penyewaan.selesai');
+
+// riwayat pusat
+Route::get('/pusat/riwayat', 
+    [PenyewaanController::class, 'pusatRiwayat']
+)->name('data_riwayat_pusat');
+
+// cancel pusat
+Route::post('/pusat/penyewaan/{id}/cancel', 
+    [PenyewaanController::class, 'cancelPusat']
+)->name('pusat.penyewaan.cancel');
+
 
 Route::middleware('auth')->group(function () {
 
@@ -145,6 +190,10 @@ Route::middleware('auth')->group(function () {
     // OWNER
     Route::get('/laporan-cabang', [LaporanController::class, 'index'])
         ->name('laporan_cabang');
+
+     // ADMIN CABANG
+    Route::get('/laporan-pusat', [LaporanController::class, 'index'])
+        ->name('laporan_pusat');
 
 });
 
@@ -340,3 +389,16 @@ Route::post('/bagi-hasil/{id}/konfirmasi',
 Route::post('/bagi-hasil/{id}/tolak',
 [BagiHasilController::class,'tolak'])
 ->name('bagi_hasil.tolak');
+
+Route::get('/landingpage_cabang', function () {
+    return view('landingpage_cabang');
+});
+
+Route::post('/kirim-otp', [AuthController::class, 'kirimOtp']);
+Route::post('/verifikasi-otp', [AuthController::class, 'verifikasiOtp']);
+
+Route::get('/reset-password', function () {
+    return view('login');
+});
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);

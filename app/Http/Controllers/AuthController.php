@@ -179,4 +179,120 @@ class AuthController extends Controller
         return redirect('/login')
             ->with('success', 'Registrasi berhasil, silakan login');
     }
+
+public function kirimOtp(Request $request)
+{
+    $otp = rand(100000, 999999);
+
+    $input = $request->no_wa;
+
+    // format untuk WA (62)
+    $noWa = $input;
+    if (substr($noWa, 0, 1) == "0") {
+        $noWa = "62" . substr($noWa, 1);
+    }
+
+    // format untuk DB (08)
+    $noDb = $input;
+    if (substr($noDb, 0, 2) == "62") {
+        $noDb = "0" . substr($noDb, 2);
+    }
+
+    // cari user
+    $user = User::where('no_telepon', $noDb)->first();
+
+    if (!$user) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Nomor tidak terdaftar'
+        ]);
+    }
+
+    $nama = $user->nama;
+
+    // simpan session + expired
+    session([
+        'otp' => $otp,
+        'user_id' => $user->idusers,
+        'otp_expired' => now()->addMinutes(5)
+    ]);
+
+    // format pesan 
+    $message = "Halo $nama,\n\n"
+             . "Kode OTP untuk reset password akun Outdoorkriss kamu adalah:\n\n"
+             . "$otp\n\n"
+             . "Jangan berikan kode ini kepada siapa pun.\n\n"
+             . "Terima kasih.";
+
+    // kirim WA
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => "https://api.fonnte.com/send",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => [
+            'target' => $noWa,
+            'message' => $message
+        ],
+        CURLOPT_HTTPHEADER => [
+            "Authorization: " . env('FONNTE_TOKEN')
+        ],
+    ]);
+
+    curl_exec($curl);
+    curl_close($curl);
+
+    return response()->json(['status' => 'success']);
 }
+public function verifikasiOtp(Request $request)
+{
+    // cek expired
+    if (now()->gt(session('otp_expired'))) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'OTP sudah kadaluarsa'
+        ]);
+    }
+
+    // cek kosong
+    if (!$request->otp) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'OTP wajib diisi'
+        ]);
+    }
+
+    // cek benar
+    if ($request->otp == session('otp')) {
+        return response()->json([
+            'status' => 'success'
+        ]);
+    }
+
+    return response()->json([
+        'status' => 'error',
+        'message' => 'OTP salah'
+    ]);
+}
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'password' => 'required|min:6|confirmed'
+    ]);
+
+    $user = User::find(session('user_id'));
+
+    if (!$user) {
+        return back()->with('error', 'User tidak ditemukan');
+    }
+
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    // hapus session
+    session()->forget(['otp', 'user_id', 'otp_expired']);
+
+    return redirect('/login')->with('success', 'Password berhasil diubah');
+}
+}
+

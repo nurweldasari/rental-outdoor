@@ -76,7 +76,7 @@ public function pilihPusat($id)
 
     return redirect()->route('katalog_pusat');
 }
-public function katalogPusat()
+public function katalogPusat(Request $request)
 {
     if (!session()->has('pusat_id')) {
         return redirect()->route('dashboard');
@@ -84,10 +84,24 @@ public function katalogPusat()
 
     $pusatId = session('pusat_id');
 
-    $produkList = \App\Models\Produk::where(
-        'admin_pusat_idadmin_pusat',
-        $pusatId
-    )->get();
+    $produkList = Produk::where('admin_pusat_idadmin_pusat', $pusatId)
+
+        // 🔍 SEARCH
+        ->when($request->search, function ($q) use ($request) {
+            $q->where('nama_produk', 'like', '%' . $request->search . '%');
+        })
+
+        // 📂 FILTER KATEGORI
+        ->when($request->kategori, function ($q) use ($request) {
+            $q->where('kategori_idkategori', $request->kategori);
+        })
+
+        // 🔥 FILTER SKALA (INI YANG KAMU BUTUH)
+        ->when($request->skala, function ($q) use ($request) {
+            $q->where('jenis_skala', $request->skala);
+        })
+
+        ->paginate(8); // pakai paginate biar rapi
 
     $kategoriList = Kategori::all();
 

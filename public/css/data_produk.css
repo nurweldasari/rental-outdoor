@@ -920,3 +920,39 @@ select option:checked {
     border-radius: 8px;
     font-size: 13px;
 }
+
+
+/* HEADER KHUSUS PENYEWA */
+.katalog-produk .header-produk {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* KIRI */
+.left-header {
+    display: flex;
+    align-items: center;
+}
+
+/* KANAN */
+.right-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* BIAR SELECT SKALA JADI ORANGE BUTTON */
+.right-header select[name="skala"] {
+    background: #D17A00;
+    color: #fff;
+    border-radius: 20px;
+    padding: 0 16px;
+}
+
+/* KATEGORI NORMAL */
+.right-header select[name="kategori"] {
+    border-radius: 20px;
+}
