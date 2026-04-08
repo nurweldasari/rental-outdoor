@@ -295,4 +295,3 @@ public function resetPassword(Request $request)
     return redirect('/login')->with('success', 'Password berhasil diubah');
 }
 }
-
