@@ -182,23 +182,25 @@ class AuthController extends Controller
 
 public function kirimOtp(Request $request)
 {
-    $otp = rand(100000, 999999);
+    $request->validate([
+        'no_wa' => 'required'
+    ]);
 
+    $otp = rand(100000, 999999);
     $input = $request->no_wa;
 
-    // format untuk WA (62)
+    // format WA (62)
     $noWa = $input;
     if (substr($noWa, 0, 1) == "0") {
         $noWa = "62" . substr($noWa, 1);
     }
 
-    // format untuk DB (08)
+    // format DB (08)
     $noDb = $input;
     if (substr($noDb, 0, 2) == "62") {
         $noDb = "0" . substr($noDb, 2);
     }
 
-    // cari user
     $user = User::where('no_telepon', $noDb)->first();
 
     if (!$user) {
@@ -208,45 +210,63 @@ public function kirimOtp(Request $request)
         ]);
     }
 
-    $nama = $user->nama;
-
-    // simpan session + expired
+    // simpan session
     session([
         'otp' => $otp,
         'user_id' => $user->idusers,
         'otp_expired' => now()->addMinutes(5)
     ]);
 
-    // format pesan 
-    $message = "Halo $nama,\n\n"
-             . "Kode OTP untuk reset password akun Outdoorkriss kamu adalah:\n\n"
+    $message = "Halo {$user->nama},\n\n"
+             . "Kode OTP reset password:\n\n"
              . "$otp\n\n"
-             . "Jangan berikan kode ini kepada siapa pun.\n\n"
-             . "Terima kasih.";
+             . "Jangan berikan ke siapa pun.";
 
-    // kirim WA
-    $curl = curl_init();
-    curl_setopt_array($curl, [
-        CURLOPT_URL => "https://api.fonnte.com/send",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => [
-            'target' => $noWa,
-            'message' => $message
-        ],
-        CURLOPT_HTTPHEADER => [
-            "Authorization: " . env('FONNTE_TOKEN')
-        ],
-    ]);
+    try {
+        $curl = curl_init();
 
-    curl_exec($curl);
-    curl_close($curl);
+        curl_setopt_array($curl, [
+            CURLOPT_URL => env('FONTE_URL'), // 🔥 pakai env
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => [
+                'target' => $noWa,
+                'message' => $message
+            ],
+            CURLOPT_HTTPHEADER => [
+                "Authorization: " . env('FONTE_TOKEN')
+            ],
+        ]);
 
-    return response()->json(['status' => 'success']);
+        $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            throw new \Exception(curl_error($curl));
+        }
+
+        curl_close($curl);
+
+        return response()->json([
+            'status' => 'success',
+            'otp_debug' => $otp // 🔥 hapus ini nanti kalau production
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Gagal kirim OTP'
+        ]);
+    }
 }
 public function verifikasiOtp(Request $request)
 {
-    // cek expired
+    if (!session('otp')) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'OTP belum dibuat'
+        ]);
+    }
+
     if (now()->gt(session('otp_expired'))) {
         return response()->json([
             'status' => 'error',
@@ -254,7 +274,6 @@ public function verifikasiOtp(Request $request)
         ]);
     }
 
-    // cek kosong
     if (!$request->otp) {
         return response()->json([
             'status' => 'error',
@@ -262,8 +281,10 @@ public function verifikasiOtp(Request $request)
         ]);
     }
 
-    // cek benar
     if ($request->otp == session('otp')) {
+
+        session(['otp_verified' => true]); // 🔥 tambahan keamanan
+
         return response()->json([
             'status' => 'success'
         ]);
@@ -276,9 +297,15 @@ public function verifikasiOtp(Request $request)
 }
 public function resetPassword(Request $request)
 {
+    
     $request->validate([
         'password' => 'required|min:6|confirmed'
     ]);
+
+    // 🔥 pastikan OTP sudah diverifikasi
+    if (!session('otp_verified')) {
+        return back()->with('error', 'OTP belum diverifikasi');
+    }
 
     $user = User::find(session('user_id'));
 
@@ -289,8 +316,7 @@ public function resetPassword(Request $request)
     $user->password = Hash::make($request->password);
     $user->save();
 
-    // hapus session
-    session()->forget(['otp', 'user_id', 'otp_expired']);
+    session()->forget(['otp', 'user_id', 'otp_expired', 'otp_verified']);
 
     return redirect('/login')->with('success', 'Password berhasil diubah');
 }
