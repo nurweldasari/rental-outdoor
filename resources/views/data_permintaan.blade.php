@@ -18,29 +18,38 @@
         <!-- ================= HEADER ================= -->
         <div class="data-header">
 
-            <div class="data-left">
-                <select class="per-page" id="perPage">
-                    <option value="10">10</option>
-                    <option value="20" selected>20</option>
-                    <option value="50">50</option>
-                </select>
-                <span class="per-page-text">Data per halaman</span>
-            </div>
+    <!-- kiri -->
+    <div class="data-left">
+        <form method="GET">
+            <select class="per-page" name="per_page" onchange="this.form.submit()">
+                <option value="10" {{ request('per_page')==10?'selected':'' }}>10</option>
+                <option value="25" {{ request('per_page')==25?'selected':'' }}>25</option>
+                <option value="50" {{ request('per_page')==50?'selected':'' }}>50</option>
+                <option value="100" {{ request('per_page')==100?'selected':'' }}>100</option>
+            </select>
+        </form>
+        <span class="per-page-text">Data per halaman</span>
+    </div>
 
-            <div class="data-right">
-                <input
-                    type="text"
-                    id="searchInput"
-                    class="search-table"
-                    placeholder="Cari tanggal..."
-                >
+    <!-- kanan -->
+    <div class="data-right">
+        <form method="GET">
+            <input
+                type="text"
+                id="searchInput"
+                name="search"
+                class="search-table"
+                placeholder="Cari tanggal..."
+                value="{{ request('search') }}"
+            >
+        </form>
 
-                <a href="{{ route('permintaan_produk.create') }}" class="btn btn-orange">
-                    <i class="fa-solid fa-plus"></i> Ajukan
-                </a>
-            </div>
+        <a href="{{ route('permintaan_produk.create') }}" class="btn btn-orange">
+            <i class="fa-solid fa-plus"></i> Ajukan
+        </a>
+    </div>
 
-        </div>
+</div>
 
         <!-- ================= TABLE ================= -->
         <div class="table-wrapper">
@@ -156,7 +165,30 @@
 
             </div>
         </div>
+<div class="pagination-simple">
+    {{-- Prev --}}
+    @if ($permintaan->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $permintaan->previousPageUrl() }}" class="nav">«</a>
+    @endif
 
+    {{-- Nomor halaman --}}
+    @foreach ($permintaan->getUrlRange(1, $permintaan->lastPage()) as $page => $url)
+        @if ($page == $permintaan->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+    @endforeach
+
+    {{-- Next --}}
+    @if ($permintaan->hasMorePages())
+        <a href="{{ $permintaan->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+</div>
     </div>
 </div>
 
@@ -166,28 +198,21 @@
 <script>
 /* ================= SEARCH + LIMIT ================= */
 const searchInput = document.getElementById('searchInput');
-const perPage = document.getElementById('perPage');
 
-function renderTable() {
-    const rows = Array.from(document.querySelectorAll('.table-row'));
-    const keyword = searchInput.value.toLowerCase();
-    const limit = parseInt(perPage.value);
-    let shown = 0;
+searchInput.addEventListener('input', function () {
+    const keyword = this.value.toLowerCase();
+    const rows = document.querySelectorAll('.table-row');
 
     rows.forEach(row => {
-        const tanggal = row.querySelector('.tanggal')?.innerText.toLowerCase() || '';
-        if(tanggal.includes(keyword) && shown < limit){
+        const text = row.innerText.toLowerCase(); // 🔥 cari semua isi row
+
+        if (text.includes(keyword)) {
             row.style.display = 'grid';
-            shown++;
         } else {
             row.style.display = 'none';
         }
     });
-}
-
-searchInput.addEventListener('keyup', renderTable);
-perPage.addEventListener('change', renderTable);
-renderTable();
+});
 
 /* ================= MODAL ================= */
 document.querySelectorAll('.btn-detail').forEach(btn => {

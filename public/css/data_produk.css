@@ -920,3 +920,73 @@ select option:checked {
     border-radius: 8px;
     font-size: 13px;
 }
+
+/* info penyewa */
+.card-penyewa {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 8px 10px;
+    border: 1px solid #b4aeae;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+     position: relative;
+    left: -300px; /* geser ke kiri */
+    min-width: 335px; 
+}
+
+/* header */
+.card-penyewa .card-header {
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #555;
+}
+
+/* body */
+.card-penyewa .card-body {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ubah jadi horizontal */
+.card-penyewa .info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* kecilkan & rapikan */
+.card-penyewa .info h4 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* hilangkan jarak bawah bawaan */
+.card-penyewa .info p {
+    margin: 0;
+    font-size: 11px;
+    color: #555;
+}
+
+/* biar "Buat Reservasi" lebih soft */
+.card-penyewa .info h4:first-child {
+    color: #777;
+    font-weight: 500;
+}
+
+/* kasih pemisah otomatis */
+.card-penyewa .info h4:not(:last-child)::after {
+    content: ":";
+    margin-left: 4px;
+}
+
+.card-penyewa .info h4:nth-child(2)::after {
+    content: "|";
+    margin-left: 8px;
+    color: #ccc;
+}

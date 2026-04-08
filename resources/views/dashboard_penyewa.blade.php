@@ -88,14 +88,30 @@
 
 
     <!-- PAGINATION -->
-    <div class="pagination">
-        <span>&laquo;</span>
-        <span class="active">1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span>&raquo;</span>
-    </div>
+    <div class="pagination-simple">
+    {{-- Prev --}}
+    @if ($cabang->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $cabang->previousPageUrl() }}" class="nav">«</a>
+    @endif
+
+    {{-- Nomor halaman --}}
+    @foreach ($cabang->getUrlRange(1, $cabang->lastPage()) as $page => $url)
+        @if ($page == $cabang->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+    @endforeach
+
+    {{-- Next --}}
+    @if ($cabang->hasMorePages())
+        <a href="{{ $cabang->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+</div>
 </div>
 
 <script>

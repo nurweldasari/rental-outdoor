@@ -29,77 +29,79 @@ class KirimPengingatWA extends Command
      * @return void
      */
     public function handle()
-    {
-        $this->info("=== Command Kirim WA dijalankan ===");
+{
+    $this->info("=== Command Kirim WA dijalankan ===");
 
-        // Ambil semua penyewaan yang sedang disewa dan belum diingatkan
-        $data = Penyewaan::where('status_penyewaan', 'sedang_disewa')
-            ->where('sudah_diingatkan', 0)
-            ->get();
+    $data = Penyewaan::where('status_penyewaan', 'sedang_disewa')
+        ->where('sudah_diingatkan', 0)
+        ->get();
 
-        $this->info("Jumlah penyewaan yang perlu diingatkan: " . $data->count());
+    $this->info("Jumlah penyewaan yang perlu diingatkan: " . $data->count());
 
-        if ($data->isEmpty()) {
-            $this->info("Tidak ada penyewaan yang perlu diingatkan.");
-            return;
+    if ($data->isEmpty()) {
+        $this->info("Tidak ada penyewaan yang perlu diingatkan.");
+        return;
+    }
+
+    foreach ($data as $item) {
+
+        if (!$item->penyewa || !$item->penyewa->user || !$item->penyewa->user->no_telepon) {
+            $this->info("Penyewa atau nomor telepon kosong, ID: {$item->idpenyewaan}, dilewati.");
+            continue;
         }
 
-        foreach ($data as $item) {
+        $now = Carbon::now();
+        $waktu_selesai = Carbon::parse($item->tanggal_selesai)
+            ->setHour(18)->setMinute(0)->setSecond(0);
 
-    if (!$item->penyewa || !$item->penyewa->user || !$item->penyewa->user->no_telepon) {
-        $this->info("Penyewa atau nomor telepon kosong, ID: {$item->idpenyewaan}, dilewati.");
-        continue;
-    }
+        $waktu_pengingat = $waktu_selesai->copy()->subHours(3);
 
-    $now = Carbon::now();
-    $waktu_selesai = Carbon::parse($item->tanggal_selesai)->setHour(18)->setMinute(0)->setSecond(0); // deadline jam 18:00
-    $waktu_pengingat = Carbon::parse($item->tanggal_selesai)->subHours(3); // 3 jam sebelum selesai
-
-    if ($now->lt($waktu_pengingat)) {
-        $this->info("Belum waktunya mengingatkan, ID Penyewaan: {$item->idpenyewaan}");
-        continue;
-    }
-
-    if ($now->gt($waktu_selesai)) {
-        $this->info("Sudah lewat jam 18:00, ID Penyewaan: {$item->idpenyewaan}");
-        continue;
-    }
-
-    $nomor = preg_replace('/[^0-9]/', '', $item->penyewa->user->no_telepon);
-    if (substr($nomor, 0, 1) == '0') $nomor = '62' . substr($nomor, 1);
-
-    $pesan = "Halo {$item->penyewa->user->nama},\n\n"
-        ."Pengingat ya, penyewaan Anda akan berakhir hari ini.\n"
-        ."Silakan melakukan pengembalian mulai pukul 16:00\n"
-        ."dan maksimal sebelum jam 18:00.\n\n"
-        ."Terima kasih 🙏";
-
-    try {
-        $response = Http::withHeaders([
-            'Authorization' => env('FONTE_TOKEN')
-        ])->asForm()->post(env('FONTE_URL'), [
-            'target' => $nomor,
-            'message' => $pesan,
-        ]);
-
-        $responseData = $response->json();
-
-        if (!empty($responseData['status']) && $responseData['status'] === true) {
-            $item->update(['sudah_diingatkan' => 1]);
-            $this->info("✅ WA berhasil dikirim ke: $nomor (ID Penyewaan: {$item->idpenyewaan})");
-        } else {
-            $this->error("❌ Gagal kirim WA ke: $nomor (ID Penyewaan: {$item->idpenyewaan})");
-            $this->info("Response: " . json_encode($responseData));
+        if ($now->lt($waktu_pengingat)) {
+            $this->info("Belum waktunya mengingatkan, ID: {$item->idpenyewaan}");
+            continue;
         }
-    } catch (\Exception $e) {
-        $this->error("❌ Exception kirim WA: " . $e->getMessage());
-        \Log::error('Exception kirim WA', [
-            'id_penyewaan' => $item->idpenyewaan,
-            'nomor' => $nomor,
-            'exception' => $e->getMessage()
-        ]);
+
+        if ($now->gt($waktu_selesai)) {
+            $this->info("Sudah lewat jam 18:00, ID: {$item->idpenyewaan}");
+            continue;
+        }
+
+        $nomor = preg_replace('/[^0-9]/', '', $item->penyewa->user->no_telepon);
+        if (substr($nomor, 0, 1) == '0') {
+            $nomor = '62' . substr($nomor, 1);
+        }
+
+        $pesan = "Halo {$item->penyewa->user->nama},\n\n"
+            ."Pengingat ya, penyewaan Anda akan berakhir hari ini.\n"
+            ."Silakan melakukan pengembalian mulai pukul 16:00\n"
+            ."dan maksimal sebelum jam 18:00.\n\n"
+            ."Terima kasih 🙏";
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => env('FONTE_TOKEN')
+            ])->asForm()->post(env('FONTE_URL'), [
+                'target' => $nomor,
+                'message' => $pesan,
+            ]);
+
+            $responseData = $response->json();
+
+            if (!empty($responseData['status']) && $responseData['status'] === true) {
+                $this->info("✅ WA berhasil ke: $nomor");
+            } else {
+                $this->error("❌ Gagal ke: $nomor");
+                $this->info("Response: " . json_encode($responseData));
+            }
+
+        } catch (\Exception $e) {
+            $this->error("❌ Exception: " . $e->getMessage());
+        }
+
+        // 🔥 tandai sudah diproses (anti spam)
+        $item->update(['sudah_diingatkan' => 1]);
     }
+
+    $this->info("=== Proses kirim pengingat selesai ===");
 }
-        $this->info("=== Proses kirim pengingat selesai ===");
-    }
 }

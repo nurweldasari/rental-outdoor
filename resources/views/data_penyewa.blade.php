@@ -115,7 +115,30 @@
 @endforeach
 </tbody>
         </table>
+<div class="pagination-simple">
+    {{-- Prev --}}
+    @if ($penyewa->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $penyewa->previousPageUrl() }}" class="nav">«</a>
+    @endif
 
+    {{-- Nomor halaman --}}
+    @foreach ($penyewa->getUrlRange(1, $penyewa->lastPage()) as $page => $url)
+        @if ($page == $penyewa->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+    @endforeach
+
+    {{-- Next --}}
+    @if ($penyewa->hasMorePages())
+        <a href="{{ $penyewa->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+</div>
     </div>
 </div>
 

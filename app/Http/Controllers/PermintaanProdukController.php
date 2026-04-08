@@ -70,20 +70,29 @@ public function store(Request $request)
     }
 }
 
-public function riwayat()
+
+public function riwayat(Request $request)
 {
     $adminCabang = AdminCabang::where('users_idusers', Auth::user()->idusers)->first();
+
     if (!$adminCabang) {
         abort(403, 'Anda bukan admin cabang');
     }
 
-    // Ambil semua permintaan cabang (header)
-    $permintaan = Permintaan::with('produkDetail.produk')
-    ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
-    ->orderBy('idpermintaan','desc')
-    ->get();
+    $perPage = $request->get('per_page', 10);
+
+    $query = Permintaan::with('produkDetail.produk')
+        ->where('cabang_idcabang', $adminCabang->cabang_idcabang);
+
+    // optional search dari backend (tidak ganggu JS)
+    if ($request->search) {
+        $query->where('tanggal_permintaan', 'like', '%' . $request->search . '%');
+    }
+
+    $permintaan = $query
+        ->orderBy('idpermintaan', 'desc')
+        ->paginate($perPage)
+        ->withQueryString();
 
     return view('data_permintaan', compact('permintaan'));
-}
-
-}
+}}
