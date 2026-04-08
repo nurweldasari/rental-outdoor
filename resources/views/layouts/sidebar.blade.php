@@ -23,26 +23,51 @@
 {{-- ================================================= --}}
 @if(auth()->user()->status === 'penyewa')
 
-    <a href="{{ route('katalog_produk') }}"
-       class="{{ ($active ?? '') === 'katalog' ? 'active' : '' }}">
-        <i class="fa-solid fa-store"></i>
-        <span>Katalog Produk</span>
-    </a>
+    {{-- kalau lagi di pusat --}}
+    @if(request()->is('katalog-pusat*'))
 
-    <a href="{{ route('item_penyewaan') }}"
-       class="{{ ($active ?? '') === 'penyewaan' ? 'active' : '' }}">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span>Penyewaan</span>
-    </a>
+        <a href="{{ route('katalog_pusat') }}"
+           class="{{ ($active ?? '') === 'katalog' ? 'active' : '' }}">
+            <i class="fa-solid fa-store"></i>
+            <span>Katalog Produk</span>
+        </a>
 
-    <a href="{{ route('riwayat_penyewaan') }}"
-       class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        <span>Riwayat Penyewaan</span>
-    </a>
+        <a href="{{ route('item_penyewaan_pusat') }}"
+           class="{{ ($active ?? '') === 'penyewaan' ? 'active' : '' }}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Penyewaan</span>
+        </a>
+
+        <a href="{{ route('riwayat_penyewaan_pusat') }}"
+           class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Riwayat Penyewaan</span>
+        </a>
+
+    {{-- kalau di cabang --}}
+    @else
+
+        <a href="{{ route('katalog_produk') }}"
+           class="{{ ($active ?? '') === 'katalog' ? 'active' : '' }}">
+            <i class="fa-solid fa-store"></i>
+            <span>Katalog Produk</span>
+        </a>
+
+        <a href="{{ route('item_penyewaan_pusat') }}"
+           class="{{ ($active ?? '') === 'penyewaan' ? 'active' : '' }}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Penyewaan</span>
+        </a>
+
+        <a href="{{ route('riwayat_penyewaan_pusat') }}"
+           class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Riwayat Penyewaan</span>
+        </a>
+
+    @endif
 
 @endif
-
 {{-- ================================================= --}}
 {{-- ================= ADMIN CABANG ================= --}}
 {{-- ================================================= --}}
@@ -134,17 +159,20 @@
         Manajemen Penyewaan <i class="fa-solid fa-chevron-down"></i>
     </div>
 
-    <a class="{{ ($active ?? '') === 'sewa' ? 'active' : '' }}">
+    <a href="{{ route('data_penyewaan_pusat') }}" 
+    class="{{ ($active ?? '') === 'sewa' ? 'active' : '' }}">
         <i class="fa-solid fa-cart-shopping"></i>
         <span>Penyewaan</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
+    <a href="{{ route('data_riwayat_pusat') }}" 
+    class="{{ ($active ?? '') === 'riwayat' ? 'active' : '' }}">
         <i class="fa-solid fa-clock-rotate-left"></i>
         <span>Riwayat Penyewaan</span>
     </a>
 
-    <a class="{{ ($active ?? '') === 'laporan_pendataan' ? 'active' : '' }}">
+    <a href="{{ route('laporan_pusat') }}"  
+    class="{{ ($active ?? '') === 'laporan_pendataan' ? 'active' : '' }}">
         <i class="fa-solid fa-print"></i>
         <span>Laporan Pendataan</span>
     </a>

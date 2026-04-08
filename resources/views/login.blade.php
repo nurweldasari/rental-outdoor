@@ -51,6 +51,10 @@
                     <input type="password" name="password" placeholder="Password" id="password" required>
                 </div>
 
+                <div class="lupa-password">
+                    <button type="button" class="lupa-pswd" onclick="openModal()">Lupa Password?</button>
+                </div>
+
                 <button type="submit" class="btn-login">Login</button>
             </form>
 
@@ -61,6 +65,121 @@
             </div>
         </div>
     </div>
+<!-- MODAL -->
+ <div id="modalOtp" class="modal">
+    <div class="modal-content">
 
+        <!-- LOGO (SELALU ADA) -->
+        <img src="assets/images/logo.png" class="modal-logo">
+
+        <h3 id="modalTitle">Lupa Password</h3>
+
+        <!-- STEP 1 -->
+        <div id="step1">
+            <div class="input-group modal-input">
+                <i class="fa-solid fa-key"></i>
+                <input type="text" id="no_wa" placeholder="Masukkan Nomor Whatsapp">
+            </div>
+            <div class="btn-group">
+                <button onclick="kirimOtp()" class="btn-green">Kirim OTP</button>
+                <button onclick="closeModal()" class="btn-red">Tutup</button>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div id="step2" style="display:none;">
+           <div class="input-group modal-input">
+                <i class="fa-solid fa-key"></i>
+                <input type="text" id="otp" placeholder="Masukkan Kode OTP">
+            </div>
+            <div class="btn-group">
+                <button onclick="verifikasiOtp()" class="btn-green">Verifikasi OTP</button>
+                <button onclick="closeModal()" class="btn-red">Tutup</button>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div id="step3" style="display:none;">
+
+            <form method="POST" action="/reset-password">
+                @csrf
+
+                <div class="reset-group">
+                    <input type="password" name="password" placeholder="Password Baru" required>
+                </div>
+
+                <div class="reset-group">
+                    <input type="password" name="password_confirmation" placeholder="Konfirmasi Password" required>
+                </div>
+
+                <button type="submit" class="btn-green reset-btn">Simpan</button>
+            </form>
+        </div>
+
+    </div>
+</div>
 </body>
 </html>
+<script>
+function setTitle(text) {
+    document.getElementById('modalTitle').innerText = text;
+}
+function openModal() {
+    let modal = document.getElementById('modalOtp');
+    modal.style.display = 'flex'; // 🔥 penting
+    setTitle('Lupa Password');
+    document.getElementById('step1').style.display = 'block';
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step3').style.display = 'none';
+}
+
+function closeModal() {
+    document.getElementById('modalOtp').style.display = 'none';
+}
+
+// STEP 1
+function kirimOtp() {
+    let no_wa = document.getElementById('no_wa').value;
+
+    fetch('/kirim-otp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ no_wa: no_wa })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        }
+    });
+}
+
+// STEP 2
+function verifikasiOtp() {
+    let otp = document.getElementById('otp').value;
+
+    fetch('/verifikasi-otp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ otp: otp })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // ❌ jangan redirect
+            setTitle('Reset Password');
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+        } else {
+            alert('OTP salah!');
+        }
+    });
+}
+</script>

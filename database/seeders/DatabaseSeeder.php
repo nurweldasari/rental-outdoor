@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
         'nama' => 'Owner',
         'username' => 'owner',
         'password' => Hash::make('owner123'),
-        'no_telepon'  => '081331623134',
+        'no_telepon'  => '081331623654',
         'alamat'      => 'Tegalsari',
         'status' => 'owner'
     ]);

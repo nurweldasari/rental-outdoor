@@ -16,28 +16,50 @@
 
     {{-- ================= HEADER ================= --}}
     <div class="header-produk">
-        <form method="GET" id="searchForm">
-    <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text"
-               id="searchInput"
-               name="search"
-               placeholder="Pencarian..."
-               value="{{ request('search') }}">
-    </div>
-</form>
 
+    {{-- LEFT: SEARCH --}}
+    <form method="GET" id="searchForm" class="left-header">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text"
+                   id="searchInput"
+                   name="search"
+                   placeholder="Pencarian..."
+                   value="{{ request('search') }}">
+        </div>
+    </form>
+
+    {{-- RIGHT: FILTER --}}
+    <div class="right-header">
+
+        {{-- SKALA --}}
+        <form method="GET" id="filterSkalaForm">
+            <select name="skala" onchange="this.form.submit()">
+                <option value="">Pilih Jenis Skala</option>
+                <option value="Skala Besar" {{ request('skala') == 'Skala Besar' ? 'selected' : '' }}>
+                    Skala Besar
+                </option>
+                <option value="Skala Kecil" {{ request('skala') == 'Skala Kecil' ? 'selected' : '' }}>
+                    Skala Kecil
+                </option>
+            </select>
+        </form>
+
+        {{-- KATEGORI --}}
         <form method="GET" id="filterForm">
             <select name="kategori" onchange="this.form.submit()">
                 <option value="">Filter Kategori</option>
                 @foreach($kategoriList as $kategori)
-                    <option value="{{ $kategori->idkategori }}" {{ request('kategori') == $kategori->idkategori ? 'selected' : '' }}>
+                    <option value="{{ $kategori->idkategori }}"
+                        {{ request('kategori') == $kategori->idkategori ? 'selected' : '' }}>
                         {{ $kategori->nama_kategori }}
                     </option>
                 @endforeach
             </select>
         </form>
+
     </div>
+</div>
 
     {{-- ================= KATALOG + KERANJANG ================= --}}
     <div class="katalog-wrapper" id="katalogWrapper">
@@ -246,10 +268,12 @@ function renderCart(cart){
                 <small>${subtotalText}</small>
             </div>
             <div class="item-aksi">
-                <button onclick="updateCart(${item.idproduk},${item.qty-1})">−</button>
+                <button onclick="updateCart(${item.idproduk},${item.qty-1})"><i class="fa-solid fa-minus"></i></button>
                 <span class="qty">${item.qty}</span>
-                <button onclick="updateCart(${item.idproduk},${item.qty+1})">+</button>
-                <button onclick="deleteCart(${item.idproduk})">🗑</button>
+                <button onclick="updateCart(${item.idproduk},${item.qty+1})"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn-hapus" onclick="deleteCart(${item.idproduk})">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
             </div>
         </div>`;
 

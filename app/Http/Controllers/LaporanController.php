@@ -69,5 +69,21 @@ class LaporanController extends Controller
         'cabang'
     ));
 }
+if ($user->status === 'admin_pusat') {
+
+    $penyewaan = Penyewaan::whereNotNull('admin_pusat_idadmin_pusat')
+        ->when($request->bulan, function ($q) use ($request) {
+            $q->whereMonth('tanggal_sewa', date('m', strtotime($request->bulan)))
+              ->whereYear('tanggal_sewa', date('Y', strtotime($request->bulan)));
+        })
+        ->get();
+
+    $totalPendapatan = $penyewaan->sum('total');
+
+    return view('laporan_pusat', compact(
+        'penyewaan',
+        'totalPendapatan'
+    ));
+}
 }
 }

@@ -60,9 +60,13 @@ class PenyewaanController extends Controller
         if ($tipe === 'cabang') {
             $cabangIdFinal = $tokoId;
             $adminPusatId  = null;
-        } else {
+
+        } elseif ($tipe === 'pusat') {
             $cabangIdFinal = null;
             $adminPusatId  = $tokoId;
+
+        } else {
+            throw new \Exception('Tipe toko tidak valid');
         }
 
         /* ================= SIMPAN PENYEWAAN ================= */
@@ -195,9 +199,13 @@ $penyewaanAktif = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
 public function selesai() {
     $user = Auth::user();
     $penyewa = $user->penyewa ?? null;
-    if (!$penyewa) abort(403, 'Akun ini bukan penyewa');
 
-    $penyewaanSelesai = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
+    if (!$penyewa) {
+        abort(403, 'Akun ini bukan penyewa');
+    }
+
+    $penyewaanSelesai = Penyewaan::with(['penyewa.user'])
+        ->where('penyewa_idpenyewa', $penyewa->idpenyewa) // ✅ FIX DI SINI
         ->where('status_penyewaan', 'selesai')
         ->orderBy('created_at', 'desc')
         ->get();
