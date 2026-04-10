@@ -133,6 +133,8 @@ Route::get('/data_penyewaan', [PenyewaanController::class, 'adminIndex'])
 Route::get('/admin/penyewaan/{id}',
     [PenyewaanController::class, 'adminDetail']
 )->name('admin.penyewaan.detail');
+
+
      // Konfirmasi pembayaran (untuk status menunggu_pembayaran)
     // Konfirmasi pembayaran (POST) → hanya untuk status menunggu_pembayaran
 Route::post('/admin/penyewaan/konfirmasi/{id}', [PenyewaanController::class, 'konfirmasiBayar'])
@@ -198,7 +200,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
-->name('data_penyewa')
     ->middleware('auth');
 
 // tampilkan form tambah penyewa
@@ -215,6 +216,27 @@ Route::post('/tambah_penyewa', [PenyewaController::class, 'store'])
 
     // 🔥 SIMPAN RESERVASI (POST)
     Route::post('/admin/reservasi/{idpenyewa}', 
+        [PenyewaanController::class, 'reservasi']
+    )->name('reservasi.store');
+
+//pusat
+Route::get('/data_penyewa_pusat', [PenyewaController::class, 'index'])
+    ->middleware('auth');
+
+// tampilkan form tambah penyewa
+Route::get('/tambah_penyewa_pusat', [PenyewaController::class, 'create'])
+    ->name('tambah.penyewa.form');
+
+// simpan data penyewa
+Route::post('/tambah_penyewa_pusat', [PenyewaController::class, 'store'])
+    ->name('tambah_penyewa.store');
+
+  Route::get('/admin/reservasi_pusat/{idpenyewa}', 
+        [PenyewaanController::class, 'createReservasi']
+    )->name('reservasi');
+
+    // 🔥 SIMPAN RESERVASI (POST)
+    Route::post('/admin/reservasi_pusat/{idpenyewa}', 
         [PenyewaanController::class, 'reservasi']
     )->name('reservasi.store');
 
