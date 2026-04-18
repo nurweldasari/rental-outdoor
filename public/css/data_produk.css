@@ -1027,3 +1027,135 @@ select option:checked {
     margin-left: 8px;
     color: #ccc;
 }
+
+
+.card-produk.paket .badge-kategori {
+    background: #38c172;
+}
+/* ================= BUTTON DETAIL ================= */
+.aksi-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+.btn-detail {
+    background: #44a205; /* abu soft */
+    color: #ffffff;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.btn-detail:hover {
+    background: #d1d5db;
+}
+
+/* ================= MODAL BACKDROP ================= */
+/* BACKDROP */
+.modal-paket {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+/* BOX */
+.modal-content {
+    background: #fff;
+    width: 400px;
+    max-width: 90%;
+    margin: 6% auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    animation: fadeUp 0.2s ease;
+    position: relative;
+}
+
+/* GAMBAR */
+.modal-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* CONTENT DALAM */
+.modal-body {
+    padding: 15px;
+}
+
+/* NAMA */
+.modal-body h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* HARGA */
+.modal-harga {
+    color: #16a34a;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* DETAIL LIST */
+#modalIsi div {
+    padding: 6px 0;
+    font-size: 13px;
+    color: #374151;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* CLOSE */
+.close {
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ANIMASI */
+@keyframes fadeUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.cart-paket {
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.cart-paket-header {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cart-item-sub {
+    font-size: 13px;
+    color: #555;
+    padding-left: 10px;
+}

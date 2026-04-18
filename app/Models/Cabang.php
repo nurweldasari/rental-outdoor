@@ -28,4 +28,8 @@ class Cabang extends Model
     {
         return $this->hasOne(Rekening::class, 'cabang_idcabang');
     }
+    public function paket()
+{
+    return $this->hasMany(Paket::class, 'cabang_id', 'idcabang');
+}
 }

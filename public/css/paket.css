@@ -1,0 +1,96 @@
+.section.paket {
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h3 {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.produk-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.produk-item select {
+    flex: 2;
+}
+
+.produk-item input {
+    flex: 1;
+}
+
+.btn-add {
+    background: #3490dc;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-submit {
+    background: #38c172;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-remove {
+    background: #e3342f;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    width: 400px;
+    border-radius: 10px;
+}
+
+.close {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.btn-detail {
+    background: #3490dc;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}

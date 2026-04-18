@@ -38,6 +38,7 @@ class LaporanController extends Controller
         return view('laporan', compact(
             'penyewaan',
             'totalPendapatan',
+            'itemPenyewaan.paket.detail.stokCabang.produk',
             'cabang'
         ));
     }

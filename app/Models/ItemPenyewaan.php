@@ -11,6 +11,8 @@ class ItemPenyewaan extends Model
 
     protected $fillable = [
         'produk_idproduk',
+        'paket_id',
+        'type',
         'harga',
         'penyewaan_idpenyewaan',
         'qty',
@@ -24,7 +26,13 @@ class ItemPenyewaan extends Model
     }
 
     public function produk()
-    {
-        return $this->belongsTo(Produk::class, 'produk_idproduk');
-    }
+{
+    return $this->belongsTo(Produk::class, 'produk_idproduk', 'idproduk');
 }
+
+public function paket()
+{
+    return $this->belongsTo(Paket::class, 'paket_id', 'id');
+}
+}
+

@@ -9,6 +9,7 @@ use App\Models\Kategori;
 use App\Models\StokCabang;
 use App\Models\Produk;
 use App\Models\User;
+use App\Models\Paket;
 use App\Models\Rekening;
 
 class KatalogController extends Controller
@@ -56,7 +57,11 @@ public function katalogCabang()
     $kategoriList = Kategori::all();
 
     $rekening = Rekening::where('cabang_idcabang', $cabangId)->first();
-    return view('katalog_produk', compact('produkList','kategoriList','rekening'));
+
+    $paketList = Paket::with('detail.stokCabang.produk')
+    ->where('cabang_id', $cabangId)
+    ->get();
+    return view('katalog_produk', compact('produkList','kategoriList','rekening', 'paketList'));
 }  
 public function pilihPusat($id)
 {

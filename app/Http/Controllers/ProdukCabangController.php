@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Produk;
 use App\Models\StokCabang;
 use App\Models\Kategori;
+use App\Models\Paket;
 use Illuminate\Support\Facades\Auth;
 
 class ProdukCabangController extends Controller
@@ -51,9 +52,13 @@ class ProdukCabangController extends Controller
         $produkList = $query->paginate(12);
         $kategoriList = Kategori::all();
 
+
+$paketList = Paket::where('cabang_id', $cabangId)
+    ->with('detail.stokCabang.produk')
+    ->get();
         return view(
             'produk_cabang',
-            compact('produkList', 'kategoriList')
+            compact('produkList', 'kategoriList', 'paketList')
         );
     }
 

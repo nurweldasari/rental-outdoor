@@ -19,9 +19,17 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\RekeningController;
 use App\Http\Controllers\BagiHasilController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PaketController;
 use App\Models\Cabang; 
 
 
+Route::get('/', function () {
+    return view('landing');
+})->name('landing');
+
+Route::get('/landing_page_cabang', function () {
+    return view('landing_page_cabang');
+})->name('landing_page_cabang');
 /* ========== AUTH ========== */
 Route::get('/login', function () {
     return view('login');
@@ -84,6 +92,9 @@ Route::get('/katalog-pusat',
 Route::post('/cart/add', [CartController::class, 'add']);
 Route::post('/cart/update', [CartController::class, 'update']);
 Route::post('/cart/delete', [CartController::class, 'delete']);
+
+Route::post('/cart/add-paket', [CartController::class, 'addPaket']);
+Route::post('/cart/delete-paket', [CartController::class, 'deletePaket']);
 
 Route::post('/cart/add-pusat', [CartController::class, 'addPusat']);
 Route::post('/cart/update-pusat', [CartController::class, 'updatePusat']);
@@ -413,9 +424,6 @@ Route::post('/bagi-hasil/{id}/tolak',
 [BagiHasilController::class,'tolak'])
 ->name('bagi_hasil.tolak');
 
-Route::get('/landingpage_cabang', function () {
-    return view('landingpage_cabang');
-});
 
 Route::post('/kirim-otp', [AuthController::class, 'kirimOtp']);
 Route::post('/verifikasi-otp', [AuthController::class, 'verifikasiOtp']);
@@ -425,3 +433,7 @@ Route::get('/reset-password', function () {
 });
 
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+
+Route::get('/paket_cabang', [PaketController::class, 'create'])->name('paket_cabang');
+Route::post('/paket/store', [PaketController::class, 'store'])->name('paket.store');

@@ -11,15 +11,35 @@ return new class extends Migration
         Schema::create('item_penyewaan', function (Blueprint $table) {
             $table->id('iditem_penyewaan');
 
-            $table->unsignedBigInteger('produk_idproduk');
+            // 🔥 produk biasa (nullable karena paket tidak pakai ini)
+            $table->unsignedBigInteger('produk_idproduk')->nullable();
+
+            // 🔥 paket (ini yang kamu butuhkan)
+            $table->unsignedBigInteger('paket_id')->nullable();
+
             $table->unsignedBigInteger('penyewaan_idpenyewaan');
 
-            $table->integer('harga'); // harga saat penyewaan
-            $table->integer('qty');   // jumlah produk disewa
+            $table->enum('type', ['produk', 'paket'])->default('produk');
+
+            $table->integer('harga');    // harga saat transaksi (paket / produk)
+            $table->integer('qty');      // jumlah (produk atau paket)
             $table->integer('subtotal');
 
-            $table->foreign('produk_idproduk')->references('idproduk')->on('produk');
-            $table->foreign('penyewaan_idpenyewaan')->references('idpenyewaan')->on('penyewaan');
+            // ================= RELASI =================
+            $table->foreign('produk_idproduk')
+                ->references('idproduk')
+                ->on('produk')
+                ->nullOnDelete();
+
+            $table->foreign('paket_id')
+    ->references('id')
+    ->on('paket')
+    ->nullOnDelete();
+
+            $table->foreign('penyewaan_idpenyewaan')
+                ->references('idpenyewaan')
+                ->on('penyewaan')
+                ->cascadeOnDelete();
 
             $table->timestamps();
         });

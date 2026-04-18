@@ -89,38 +89,62 @@
             </thead>
 
             <tbody>
-                @php $no = 1; @endphp
+    @php $no = 1; @endphp
 
-                @foreach($penyewaan->itemPenyewaan as $item)
-                <tr>
-                    <td>{{ $no++ }}</td>
-                    <td>{{ $item->produk->nama_produk }}</td>
-                    <td>{{ $item->qty }}</td>
+    @foreach($penyewaan->itemPenyewaan as $item)
+    <tr>
+        <td>{{ $no++ }}</td>
 
-                    <td>
-                        {{ \Carbon\Carbon::parse($penyewaan->tanggal_selesai)->format('d M Y') }}
-                    </td>
+        {{-- ================= NAMA ITEM ================= --}}
+        <td>
+            @if($item->type === 'produk')
+                {{ optional($item->produk)->nama_produk ?? '-' }}
 
-                    <td>
-                        @if($penyewaan->tanggal_kembali)
-                            {{ \Carbon\Carbon::parse($penyewaan->tanggal_kembali)->format('d M Y') }}
-                        @else
-                            -
-                        @endif
-                    </td>
+            @elseif($item->type === 'paket')
+                {{ optional($item->paket)->nama_paket ?? '-' }}
 
-                    <td>Rp {{ number_format($item->harga,0,',','.') }}</td>
-                    <td>Rp {{ number_format($item->subtotal,0,',','.') }}</td>
-                </tr>
-                @endforeach
+            @else
+                -
+            @endif
+        </td>
 
-                <tr class="total-row">
-                    <td colspan="6" class="total-label">Total</td>
-                    <td class="total-value">
-                        Rp {{ number_format($penyewaan->total,0,',','.') }}
-                    </td>
-                </tr>
-            </tbody>
+        {{-- ================= JUMLAH ================= --}}
+        <td>{{ $item->qty }}</td>
+
+        {{-- ================= TANGGAL SELESAI ================= --}}
+        <td>
+            {{ \Carbon\Carbon::parse($penyewaan->tanggal_selesai)->format('d M Y') }}
+        </td>
+
+        {{-- ================= TANGGAL KEMBALI ================= --}}
+        <td>
+            @if($penyewaan->tanggal_kembali)
+                {{ \Carbon\Carbon::parse($penyewaan->tanggal_kembali)->format('d M Y') }}
+            @else
+                -
+            @endif
+        </td>
+
+        {{-- ================= HARGA ================= --}}
+        <td>
+            Rp {{ number_format($item->harga,0,',','.') }}
+        </td>
+
+        {{-- ================= SUBTOTAL ================= --}}
+        <td>
+            Rp {{ number_format($item->subtotal,0,',','.') }}
+        </td>
+    </tr>
+    @endforeach
+
+    {{-- ================= TOTAL ================= --}}
+    <tr class="total-row">
+        <td colspan="6" class="total-label">Total</td>
+        <td class="total-value">
+            Rp {{ number_format($penyewaan->total,0,',','.') }}
+        </td>
+    </tr>
+</tbody>
         </table>
     </div>
 

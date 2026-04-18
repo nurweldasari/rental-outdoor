@@ -45,6 +45,48 @@
         {{-- ================= KATALOG ================= --}}
         <div class="katalog-area">
             <div class="grid-produk">
+                {{-- ================= PAKET ================= --}}
+@foreach($paketList as $paket)
+
+    @php
+        $gambar = $paket->gambar_paket
+            ? asset('paket/'.$paket->gambar_paket)
+            : asset('images/placeholder.png');
+    @endphp
+
+    <div class="card-produk paket">
+
+        <span class="badge-kategori">Paket</span>
+
+        <img src="{{ $gambar }}" class="img-produk">
+
+        <h4 class="nama-produk">{{ $paket->nama_paket }}</h4>
+
+        <p class="harga">
+            Rp {{ number_format($paket->harga_paket) }}
+        </p>
+<div class="aksi-wrapper">
+        <button class="btn-detail"
+            onclick="openModal(this)"
+            data-nama="{{ $paket->nama_paket }}"
+            data-harga="{{ $paket->harga_paket }}"
+            data-gambar="{{ $gambar }}"
+            data-detail="
+                @foreach($paket->detail as $item)
+                    {{ optional($item->stokCabang->produk)->nama_produk }} ({{ $item->qty }})|
+                @endforeach
+            ">
+            Detail
+        </button>
+
+        <button class="btn-keranjang"
+            onclick="addPaketToCart({{ $paket->id }})">
+            <i class="fa-solid fa-cart-plus"></i>
+        </button>
+</div>
+    </div>
+
+@endforeach
                 @forelse($produkList as $pc)
                     @php
                         $produk = $pc->produk;
@@ -123,6 +165,20 @@
             <p class="rekening">No. Rekening : {{ $rekening->no_rekening }} ({{ $rekening->atas_nama }})</p>
         </div>
         <button class="btn-konfirmasi">Konfirmasi</button>
+    </div>
+</div>
+<div id="modalDetail" class="modal-paket">
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <img id="modalGambar" style="width:100%; border-radius:10px; margin-bottom:10px;">
+
+        <h3 id="modalNama"></h3>
+        <p id="modalHarga" style="font-weight:bold;"></p>
+
+        <div id="modalIsi" style="margin-top:10px;"></div>
+
     </div>
 </div>
 
@@ -209,9 +265,48 @@ function deleteCart(idstok){
         renderCart(cartCache);
     });
 }
+function addPaketToCart(paketId){
+    openKeranjang();
 
-/* ================= RENDER CART ================= */
+    fetch('/cart/add-paket',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Accept':'application/json',
+            'X-CSRF-TOKEN':'{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ paket_id: paketId })
+    })
+    .then(r => r.json())
+    .then(res => {
+
+        if(res.error){
+            alert(res.error);
+            return;
+        }
+
+        cartCache = res;
+        renderCart(cartCache);
+    });
+}
+
+function deletePaket(paketId){
+    fetch('/cart/delete-paket',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'X-CSRF-TOKEN':'{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ paket_id: paketId })
+    })
+    .then(r=>r.json())
+    .then(cart=>{
+        cartCache = cart;
+        renderCart(cartCache);
+    });
+}
 function renderCart(cart){
+
     const body  = document.getElementById('cartBody');
     const items = document.getElementById('formItemsContainer');
 
@@ -225,49 +320,117 @@ function renderCart(cart){
 
     const tglSewa    = document.getElementById('cartTanggalSewa')?.value || '';
     const tglSelesai = document.getElementById('cartTanggalSelesai')?.value || '';
-
     const durasi = hitungDurasi(tglSewa, tglSelesai);
 
-    let html='', inputs='', totalItem=0, totalHarga=0;
+    let html = '';
+    let inputs = '';
 
-    Object.values(cart).forEach(item=>{
-        totalItem += item.qty;
+    let totalItem = 0;
+    let totalHarga = 0;
 
-        let subtotal = 0;
-        let subtotalText = '<em>Pilih tanggal sewa</em>';
+    Object.values(cart).forEach(item => {
 
-        if(durasi > 0){
-            subtotal = item.qty * item.harga * durasi;
-            totalHarga += subtotal;
-            subtotalText = `${item.qty} × ${durasi} hari = <strong>Rp ${subtotal.toLocaleString()}</strong>`;
+        // ================= PAKET =================
+        if(item.type === 'paket'){
+
+            totalItem += 1;
+
+            let subtotal = 0;
+            let subtotalText = '<em>Pilih tanggal</em>';
+
+            if(durasi > 0){
+                subtotal = item.harga * durasi;
+                totalHarga += subtotal;
+
+                subtotalText = `1 paket × ${durasi} hari = <b>Rp ${subtotal.toLocaleString()}</b>`;
+            }
+
+            html += `
+                <div class="item-keranjang">
+                    <div class="item-info">
+
+                        <span class="badge-paket">Paket</span>
+
+                        <strong>${item.nama}</strong>
+
+                        <p>Rp ${Number(item.harga).toLocaleString()} / paket</p>
+
+                        <small>${subtotalText}</small>
+
+                        <div class="paket-detail">
+                            ${Object.values(item.items || {}).map(i =>
+                                `<div class="detail-line">• ${i.nama} (${i.qty})</div>`
+                            ).join('')}
+                        </div>
+
+                    </div>
+
+                    <div class="item-aksi">
+                        <button onclick="deletePaket(${item.paket_id})">🗑</button>
+                    </div>
+                </div>
+            `;
+
+            // ✅ FIX PENTING: pakai item.paket_id (bukan undefined)
+            inputs += `
+                <input type="hidden" name="produk_cabang[]" value="${item.paket_id}">
+                <input type="hidden" name="qty[]" value="${item.qty}">
+                <input type="hidden" name="type[]" value="paket">
+            `;
         }
 
-        html += `
-        <div class="item-keranjang">
-            <div class="item-info">
-                <strong>${item.nama}</strong>
-                <p>Rp ${item.harga.toLocaleString()} / hari</p>
-                <small>${subtotalText}</small>
-            </div>
-            <div class="item-aksi">
-                <button onclick="updateCart(${item.idstok},${item.qty-1})">−</button>
-                <span class="qty">${item.qty}</span>
-                <button onclick="updateCart(${item.idstok},${item.qty+1})">+</button>
-                <button onclick="deleteCart(${item.idstok})">🗑</button>
-            </div>
-        </div>`;
+        // ================= PRODUK =================
+        else {
 
-        inputs += `
-        <input type="hidden" name="produk_cabang[]" value="${item.idstok}">
-        <input type="hidden" name="qty[]" value="${item.qty}">`;
+            totalItem += item.qty;
+
+            let subtotal = 0;
+            let subtotalText = '<em>Pilih tanggal</em>';
+
+            if(durasi > 0){
+                subtotal = item.qty * item.harga * durasi;
+                totalHarga += subtotal;
+
+                subtotalText = `${item.qty} × ${durasi} hari = <b>Rp ${subtotal.toLocaleString()}</b>`;
+            }
+
+            html += `
+                <div class="item-keranjang">
+                    <div class="item-info">
+
+                        <strong>${item.nama}</strong>
+
+                        <p>Rp ${Number(item.harga).toLocaleString()} / hari</p>
+
+                        <small>${subtotalText}</small>
+
+                    </div>
+
+                    <div class="item-aksi">
+                        <button onclick="updateCart(${item.idstok},${item.qty-1})">−</button>
+                        <span class="qty">${item.qty}</span>
+                        <button onclick="updateCart(${item.idstok},${item.qty+1})">+</button>
+                        <button onclick="deleteCart(${item.idstok})">🗑</button>
+                    </div>
+                </div>
+            `;
+
+            inputs += `
+                <input type="hidden" name="produk_cabang[]" value="${item.idstok}">
+                <input type="hidden" name="qty[]" value="${item.qty}">
+                <input type="hidden" name="type[]" value="produk">
+            `;
+        }
     });
 
     body.innerHTML = `
         ${html}
+
         <hr>
+
         <div class="ringkasan">
             <p>Total Item <span>${totalItem}</span></p>
-            <p>Durasi <span>${durasi > 0 ? durasi+' hari' : '-'}</span></p>
+            <p>Durasi <span>${durasi > 0 ? durasi + ' hari' : '-'}</span></p>
             <p>Total <strong>Rp ${totalHarga.toLocaleString()}</strong></p>
         </div>
 
@@ -282,14 +445,16 @@ function renderCart(cart){
             </div>
         </div>
 
-        <button class="btn-pesan" ${durasi === 0 ? 'disabled' : ''}>Pesan Sekarang</button>
+        <button class="btn-pesan" ${durasi === 0 ? 'disabled' : ''}>
+            Pesan Sekarang
+        </button>
     `;
 
     items.innerHTML = inputs;
+
     document.getElementById('totalItem').textContent = totalItem;
     document.getElementById('totalHarga').textContent = 'Rp ' + totalHarga.toLocaleString();
 }
-
 /* ================= CHANGE TANGGAL ================= */
 document.addEventListener('change',function(e){
     if(e.target.id === 'cartTanggalSewa' || e.target.id === 'cartTanggalSelesai'){
@@ -354,4 +519,38 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
 });
+
+function openModal(el) {
+    let nama = el.getAttribute('data-nama');
+    let harga = el.getAttribute('data-harga');
+    let gambar = el.getAttribute('data-gambar');
+    let detail = el.getAttribute('data-detail');
+
+    let list = detail.split('|');
+
+    let html = '';
+    list.forEach(item => {
+        if (item.trim() !== '') {
+            html += `<div>• ${item}</div>`;
+        }
+    });
+
+    document.getElementById('modalNama').innerText = nama;
+    document.getElementById('modalHarga').innerText = "Rp " + Number(harga).toLocaleString();
+    document.getElementById('modalGambar').src = gambar;
+    document.getElementById('modalIsi').innerHTML = html;
+
+    document.getElementById('modalDetail').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('modalDetail').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    let modal = document.getElementById('modalDetail');
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
 </script>

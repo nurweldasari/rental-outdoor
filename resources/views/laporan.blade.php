@@ -119,10 +119,27 @@
 
             <div class="produk-list">
                 @foreach($data->itemPenyewaan as $item)
-                    {{ $loop->iteration }}.
-                    {{ $item->produk->nama_produk }}
-                    ({{ $item->qty }}) <br>
-                @endforeach
+
+    {{-- ================= PRODUK ================= --}}
+    @if($item->type === 'produk' && $item->produk)
+        {{ $loop->iteration }}.
+        {{ $item->produk->nama_produk }}
+        ({{ $item->qty }}) <br>
+
+    {{-- ================= PAKET ================= --}}
+    @elseif($item->type === 'paket' && $item->paket)
+        {{ $loop->iteration }}.
+        <strong>{{ $item->paket->nama_paket }}</strong>
+        ({{ $item->qty }}) <br>
+
+        <small style="margin-left:10px;">
+            @foreach($item->paket->detail as $d)
+                • {{ optional($d->stokCabang->produk)->nama_produk }} ({{ $d->qty }})<br>
+            @endforeach
+        </small>
+    @endif
+
+@endforeach
             </div>
 
             <div>
