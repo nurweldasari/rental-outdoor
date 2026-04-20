@@ -559,7 +559,8 @@ public function createReservasi($id)
 {
     $user = Auth::user();
     $adminCabang = $user->adminCabang;
-     $rekening = $adminCabang->cabang->rekening ?? null;
+
+    $rekening = $adminCabang->cabang->rekening ?? null;
 
     $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
 
@@ -573,13 +574,26 @@ public function createReservasi($id)
         ->where('cabang_idcabang', $cabangId)
         ->paginate(12);
 
+    // ✅ FIX BAGIAN INI
+    $paketList = Paket::with('detail.stokCabang.produk')
+        ->where('cabang_id', $cabangId)
+        ->whereDoesntHave('detail', function ($q) {
+            $q->whereHas('stokCabang', function ($s) {
+                $s->whereColumn('stok_cabang.jumlah', '<', 'paket_detail.qty')
+                  ->orWhere('stok_cabang.is_active', 0);
+            });
+        })
+        ->get(); // 🔥 jangan lupa ini
+
     return view('reservasi', compact(
         'penyewa',
         'kategoriList',
         'produkList',
+        'paketList',
         'rekening'
     ));
 }
+
 
 public function reservasi(Request $request, $idpenyewa)
 {
@@ -628,35 +642,78 @@ public function reservasi(Request $request, $idpenyewa)
         $total = 0;
         $totalProduk = 0;
 
-        foreach ($request->produk_cabang as $i => $idstok) {
+        foreach ($request->produk_cabang as $i => $id) {
 
-            $qty = (int) ($request->qty[$i] ?? 0);
-            if ($qty < 1) continue;
+    $qty  = (int) ($request->qty[$i] ?? 0);
+    $type = $request->type[$i] ?? 'produk';
 
-            $stok = StokCabang::where('idstok', $idstok)
+    if ($qty < 1) continue;
+
+    /* ================= PAKET ================= */
+    if ($type === 'paket') {
+
+        $paket = Paket::with('detail.stokCabang.produk')
+            ->findOrFail($id);
+
+        $harga = $paket->harga_paket;
+
+        foreach ($paket->detail as $d) {
+
+            $stok = StokCabang::where('idstok', $d->stok_cabang_id)
                 ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
                 ->firstOrFail();
 
-            if ($qty > $stok->jumlah) {
-                throw new \Exception('Stok tidak mencukupi');
+            $jumlahPotong = $d->qty * $qty;
+
+            if ($stok->jumlah < $jumlahPotong) {
+                throw new \Exception('Stok paket tidak mencukupi');
             }
 
-            $harga = $stok->produk->harga;
-            $stok->decrement('jumlah', $qty);
-
-            $subtotal = $harga * $qty * $durasiHari;
-
-            ItemPenyewaan::create([
-                'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
-                'produk_idproduk'       => $stok->produk_idproduk,
-                'harga'                 => $harga,
-                'qty'                   => $qty,
-                'subtotal'              => $subtotal,
-            ]);
-
-            $total += $subtotal;
-            $totalProduk += $qty;
+            $stok->decrement('jumlah', $jumlahPotong);
         }
+
+        ItemPenyewaan::create([
+            'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+            'produk_idproduk' => null,
+            'paket_id' => $paket->id,
+            'type' => 'paket',
+            'harga' => $harga,
+            'qty' => $qty,
+            'subtotal' => $harga * $qty * $durasiHari,
+        ]);
+
+        $total += $harga * $qty * $durasiHari;
+        $totalProduk += $qty;
+    }
+
+    /* ================= PRODUK ================= */
+    else {
+
+        $stok = StokCabang::where('idstok', $id)
+            ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
+            ->firstOrFail();
+
+        if ($qty > $stok->jumlah) {
+            throw new \Exception('Stok tidak mencukupi');
+        }
+
+        $harga = $stok->produk->harga;
+        $stok->decrement('jumlah', $qty);
+
+        ItemPenyewaan::create([
+            'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+            'produk_idproduk'       => $stok->produk_idproduk,
+            'paket_id'              => null,
+            'type'                  => 'produk',
+            'harga'                 => $harga,
+            'qty'                   => $qty,
+            'subtotal'              => $harga * $qty * $durasiHari,
+        ]);
+
+        $total += $harga * $qty * $durasiHari;
+        $totalProduk += $qty;
+    }
+}
 
         $penyewaan->update([
             'total'        => $total,

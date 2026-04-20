@@ -34,13 +34,13 @@
 .nav-right {
     display: flex;
     align-items: center;
-    gap: 12px; /* makin rapat */
+    gap: 40px; /* makin rapat */
 }
 
 /* MENU */
 .nav-right ul {
     display: flex;
-    gap: 14px; /* ini kunci biar compact */
+    gap: 20px; /* ini kunci biar compact */
     list-style: none;
 }
 
@@ -48,7 +48,7 @@
 .nav-right a {
     text-decoration: none;
     color: black;
-    font-size: 13.5px;
+    font-size: 14px;
 }
 
 /* ACTIVE */
@@ -59,13 +59,18 @@
 
 /* LOGIN */
 .btn-login {
-    background: #A24400;
-    border: 1px solid #FE990C;
-    color: white;
+  background: #b45309;
+  color: #fff !important;  /* paksa putih */
+  padding: 8px 18px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-block;
+}
 
-    padding: 5px 12px; /* lebih kecil lagi */
-    border-radius: 20px;
-    font-size: 13px;
+.btn-login:hover {
+  background: #933c07;
+  color: #fff !important; /* hover tetap putih */
 }
 * {
     margin: 0;

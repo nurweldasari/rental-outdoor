@@ -10,6 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('css/landing_page_cabang.css') }}">
+    @stack('styles')
 </head>
 <body>
 
@@ -26,9 +27,9 @@
     <div class="nav-right">
         <ul>
             <li><a href="/" class="{{ request()->path() == '/' ? 'active' : '' }}">Home</a></li>
-            <li><a href="#">Profil</a></li>
-            <li><a href="#">Syarat</a></li>
-            <li><a href="#">Cabang</a></li>
+            <li><a href="#profil">Profil</a></li>
+            <li><a href="#syarat">Syarat</a></li>
+            <li><a href="#cabang">Cabang</a></li>
             <li>
                 <a href="/landing_page_cabang"
                    class="{{ request()->is('landing_page_cabang') ? 'active' : '' }}">

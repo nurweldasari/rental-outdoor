@@ -20,13 +20,12 @@ use App\Http\Controllers\RekeningController;
 use App\Http\Controllers\BagiHasilController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PaketController;
+use App\Http\Controllers\LandingController;
 use App\Models\Cabang; 
 
 
-Route::get('/', function () {
-    return view('landing');
-})->name('landing');
-
+Route::get('/', [LandingController::class, 'landing'])
+    ->name('landing_penyewa');
 Route::get('/landing_page_cabang', function () {
     return view('landing_page_cabang');
 })->name('landing_page_cabang');

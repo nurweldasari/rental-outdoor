@@ -1,72 +1,10 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+html {
+  scroll-behavior: smooth;
 }
-
-body {
-  background: #ffffff;
-}
-
-/* CONTAINER */
-.container {
-  width: 1100px;
-  margin: auto;
-}
-
-/* NAVBAR */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 60px;
-  background: #ffffff;
-  align-items: center;
-
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo-img {
-  width: 40px;
-}
-
-.nav-menu a {
-  margin: 0 15px;
-  color: #333;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.active {
-  color: #d97706;
-  font-weight: 600;
-}
-
-.btn-login {
-  background: #b45309;
-  color: white;
-  padding: 8px 18px;
-  border-radius: 20px;
-  text-decoration: none;
-  font-size: 14px;
-  display: inline-block;
-}
-
-.btn-login:hover {
-  background: #933c07;
-}
-
+/* ================= HERO ================= */
 /* HERO */
-.hero {
-  height: 100vh;
+.hero-penyewa {
+  height: 93vh;
   background: url('../assets/images/landing.png') center center / cover no-repeat;
   position: relative;
   display: flex;
@@ -74,7 +12,7 @@ body {
   justify-content: center;
 }
 
-.overlay {
+.overlay-penyewa {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -82,7 +20,7 @@ body {
   z-index: 1;
 }
 
-.hero-content {
+.hero-content-penyewa {
   position: relative;
   z-index: 2;
   color: white;
@@ -90,20 +28,28 @@ body {
   width: 700px;
 }
 
-.hero h1 {
+.hero-penyewa h1 {
   font-size: 28px;
 }
 
-.hero p {
+.hero-penyewa p {
   margin: 15px 0;
 }
 
-.hero-btn button {
+
+/* BUTTON */
+.hero-btn {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.hero-btn-penyewa a {
   margin: 5px;
   padding: 10px 20px;
   border-radius: 20px;
-  border: none;
-  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .btn-white {
@@ -116,41 +62,63 @@ body {
   color: white;
 }
 
-/* PROFIL */
+/* ================= PROFIL ================= */
 .profil {
   background: white;
-  padding: 60px 0;
+  padding: 80px 0;
 }
 
 .profil-wrap {
   display: flex;
   gap: 40px;
   align-items: center;
+  max-width: 1100px;
+  margin: auto;
+  align-items: center;
+  justify-content: center; /* biar posisi tengah */
 }
 
 .profil-img {
   width: 45%;
   height: 260px;
-  background: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee') center/cover;
+  background: url('../assets/images/lokasipusat.jpeg') center center / cover no-repeat;
   border-radius: 15px;
 }
 
 .profil-text {
   width: 55%;
+  text-align: center;
 }
 
-.line-title {
+.line-title,
+.title-line {
+  position: relative;
+  width: 200px;
+  height: 3px;
+  background: #e5e5e5; /* abu panjang */
+  margin: 10px auto 40px; /* center */
+  border-radius: 10px;
+}
+
+/* orange di tengah */
+.line-title::after,
+.title-line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 60px;
   height: 3px;
   background: #d97706;
-  margin: 10px 0;
+  border-radius: 10px;
 }
-
-/* CABANG */
+/* ================= CABANG ================= */
 .cabang {
   background: #c87300;
-  padding: 60px 0;
+  padding: 60px 40px;
   text-align: center;
+  min-height: auto;
 }
 
 .cabang h2 {
@@ -160,10 +128,23 @@ body {
 }
 
 .title-line {
-  width: 80px;
+  position: relative;
+  width: 200px;
   height: 3px;
-  background: white;
+  background: #e5e5e5;
   margin: 10px auto 40px;
+  border-radius: 10px;
+}
+
+.title-line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: #d97706;
   border-radius: 10px;
 }
 
@@ -176,45 +157,56 @@ body {
 .cabang-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
+  gap: 18px;
 }
 
-/* CARD */
 .card {
   background: #fff;
-  border-radius: 16px;
-  padding: 18px;
+  border-radius: 14px;
+  padding: 14px;
   display: flex;
-  gap: 15px;
+  gap: 10px;
   align-items: flex-start;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
   transition: 0.2s;
+  justify-content: flex-start; /* jangan center */
+
+  min-height: 85px; /* tambah tinggi vertikal */
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
+/* ICON */
 .icon {
-  background: #e58a00;
-  color: white;
-  min-width: 45px;
-  height: 45px;
+  background: #fff3e6;
+  color: #d97706;
+  min-width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  font-size: 18px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+/* TEXT */
+.text {
+  text-align: left; /* paksa semua ke kiri */
 }
 
 .text h4 {
-  font-size: 14px;
-  margin-bottom: 4px;
+  font-size: 13px;
+  margin-bottom: 3px;
+  text-align: left; /* nama cabang rata kiri */
 }
 
 .text p {
-  font-size: 12px;
+  font-size: 11px;
   color: #555;
+  text-align: justify; /* alamat kanan-kiri */
+  line-height: 1.4;
 }
 
 /* ARROW */
@@ -232,11 +224,10 @@ body {
 
 .left { left: -50px; }
 .right { right: -50px; }
-
-/* SYARAT */
+/* ================= SYARAT ================= */
 .syarat {
   background: #ffffff;
-  padding: 60px 0;
+  padding: 30px 0;
   text-align: center;
 }
 
@@ -297,58 +288,4 @@ body {
   justify-content: center;
   font-size: 12px;
   z-index: 2;
-}
-
-/* FOOTER */
-.footer {
-  background: #c87300;
-  padding: 30px 0;
-  color: white;
-}
-
-.footer-container {
-  width: 1100px;
-  margin: auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 30px;
-}
-
-/* KIRI */
-.footer-left {
-  display: flex;
-  align-items: flex-start;
-  gap: 15px;
-  width: 35%;
-}
-
-.footer-left img {
-  width: 70px;
-}
-
-.footer-left p {
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* TENGAH */
-.footer-middle {
-  width: 30%;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.8;
-}
-
-/* KANAN */
-.footer-right {
-  width: 30%;
-  text-align: right;
-  font-size: 14px;
-  line-height: 1.8;
-}
-
-.footer i {
-  margin-right: 8px;
-  font-size: 16px;
 }
