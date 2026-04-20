@@ -146,7 +146,7 @@ class AuthController extends Controller
             'nama'        => 'required|string|max:255',
             'username'    => 'required|unique:users,username',
             'password'    => 'required|min:6',
-            'no_telepon'  => 'required|string|max:20',
+            'no_telepon'  => 'required|string|max:20|required|regex:/^08[0-9]{8,11}$/',
             'alamat'      => 'required|string',
             'gambar_mou'  => 'required|image|mimes:jpg,jpeg,png|max:2048'
         ]);

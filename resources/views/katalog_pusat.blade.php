@@ -80,7 +80,7 @@
                         <span class="badge-kategori">{{ $produk->kategori->nama_kategori ?? '-' }}</span>
                         <img src="{{ $gambar }}" class="img-produk">
                         <h4 class="nama-produk">{{ $produk->nama_produk }}</h4>
-                        <p class="harga">Rp {{ number_format($produk->harga) }} / hari</p>
+                        <p class="harga">Rp. {{ number_format($produk->harga, 0, ',', '.') }} / hari</p>
 
                         <div class="stok-wrapper">
                             <span class="stok">Stok: {{ $stok }}</span>

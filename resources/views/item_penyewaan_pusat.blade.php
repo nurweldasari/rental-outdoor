@@ -58,7 +58,7 @@
                             @if ($item->bukti_bayar)
                                 <button class="btn waiting">Menunggu Konfirmasi Admin</button>
                             @else
-                                <a href="{{ route('penyewaan.upload_pembayaran', $item->idpenyewaan) }}"
+                                <a href="{{ route('penyewaan_pusat.upload_pembayaran', $item->idpenyewaan) }}"
                                    class="btn upload">
                                     Upload Bukti Transfer
                                 </a>
@@ -67,7 +67,7 @@
                             <button class="btn waiting">Menunggu Pembayaran di toko</button>
                         @endif
 
-                        <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
+                        <a href="{{ route('detail_sewa_pusat', $item->idpenyewaan) }}"
                            class="btn detail">
                             Detail
                         </a>
@@ -108,7 +108,7 @@
                     </p>
 
                     <div class="action">
-                        <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
+                        <a href="{{ route('detail_sewa_pusat', $item->idpenyewaan) }}"
                            class="btn detail">
                             Detail
                         </a>

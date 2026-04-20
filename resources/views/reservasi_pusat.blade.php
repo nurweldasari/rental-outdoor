@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $active = 'katalog';
+    $active = 'penyewa';
 @endphp
 
 @section('title', 'Katalog Produk')
@@ -17,31 +17,43 @@
 
     {{-- ================= HEADER ================= --}}
     <div class="header-produk">
+
+    {{-- KIRI --}}
+    <div class="left-header">
         <div class="card-penyewa">
-    <div class="card-body">
-    <div class="avatar">
-        <i class="fa-solid fa-user"></i>
+            <div class="card-body">
+                <div class="avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="info">
+                    <h4>Buat Reservasi:</h4>
+                    <h4>{{ $penyewa->user->nama }}</h4>
+                    <p><i class="fa-solid fa-phone"></i> {{ $penyewa->user->no_telepon }}</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="info">
-        <h4>Buat Reservasi:</h4>
-        <h4>{{ $penyewa->user->nama }}</h4>
-        <p><i class="fa-solid fa-phone"></i> {{ $penyewa->user->no_telepon }}</p>
-    </div>
-</div>
-</div>
-        <form method="GET" id="searchForm">
-    <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text"
-               id="searchInput"
-               name="search"
-               placeholder="Pencarian..."
-               value="{{ request('search') }}">
-    </div>
-</form>
+    {{-- KANAN --}}
+    <div class="right-header">
 
-        <form method="GET" id="filterForm">
+        <form method="GET">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="search" placeholder="Pencarian..." value="{{ request('search') }}">
+            </div>
+        </form>
+
+        <form method="GET">
+            <select name="skala" onchange="this.form.submit()">
+                <option value="">Pilih Jenis Skala</option>
+                <option value="Skala Besar" {{ request('skala') == 'Skala Besar' ? 'selected' : '' }}>Skala Besar</option>
+                <option value="Skala Kecil" {{ request('skala') == 'Skala Kecil' ? 'selected' : '' }}>Skala Kecil</option>
+            </select>
+        </form>
+
+        <form method="GET">
             <select name="kategori" onchange="this.form.submit()">
                 <option value="">Filter Kategori</option>
                 @foreach($kategoriList as $kategori)
@@ -51,7 +63,10 @@
                 @endforeach
             </select>
         </form>
+
     </div>
+
+</div>
 
     {{-- ================= KATALOG + KERANJANG ================= --}}
     <div class="katalog-wrapper" id="katalogWrapper">
@@ -61,8 +76,8 @@
             <div class="grid-produk">
                 @forelse($produkList as $pc)
                     @php
-                        $produk = $pc->produk;
-                        $stok = $pc->jumlah ?? 0;
+                        $produk = $pc;
+                        $stok = $pc->stok_pusat ?? 0;
                         $gambar = $produk->gambar_produk
         ? asset('storage/'.$produk->gambar_produk)
         : asset('images/placeholder.png');
@@ -72,11 +87,11 @@
                         <span class="badge-kategori">{{ $produk->kategori->nama_kategori ?? '-' }}</span>
                         <img src="{{ $gambar }}" class="img-produk">
                         <h4 class="nama-produk">{{ $produk->nama_produk }}</h4>
-                        <p class="harga">Rp {{ number_format($produk->harga) }} / hari</p>
+                        <p class="harga">Rp. {{ number_format($produk->harga, 0, ',', '.') }} / hari</p>
 
                         <div class="stok-wrapper">
                             <span class="stok">Stok: {{ $stok }}</span>
-                            <button type="button" class="btn-keranjang" onclick="addToCart({{ $pc->idstok }})">
+                            <button type="button" class="btn-keranjang" onclick="addToCart({{ $pc->idproduk}})">
                                 <i class="fa-solid fa-cart-plus"></i>
                             </button>
                         </div>
@@ -112,7 +127,7 @@
 {{-- ================= FORM SUBMIT ================= --}}
 <form id="formPenyewaan"
       method="POST"
-      action="{{ route('reservasi.store', $penyewa->users_idusers) }}" 
+      action="{{ route('reservasi_pusat.store', $penyewa->users_idusers) }}" 
       style="display:none;">
     @csrf
     <input type="hidden" name="tanggal_sewa" id="formTanggalSewa">
@@ -135,18 +150,22 @@
 
         <p class="catatan-bayar" id="catatanBayar"></p>
 
-        <div id="infoTransfer" style="display:none; margin:10px 0;">
-            <p><strong>Rekening Transfer:</strong></p>
-            <p>BCA 123456789</p>
-            <p>a.n Rental Outdoor</p>
+        <div class="info-transfer" id="infoTransfer" style="display:none;">
+            <div class="bank-box"><strong>Bank Negara Indonesia (BNI)</strong></div>
+            <p class="rekening">No. rekening : 489755489287</p>
         </div>
 
         <button class="btn-konfirmasi">Simpan Reservasi</button>
     </div>
 </div>
 @endsection
-
+@push('scripts')
 <script>
+    document.querySelectorAll('#filterAll select').forEach(el=>{
+    el.addEventListener('change', ()=>{
+        document.getElementById('filterAll').submit();
+    });
+});
 /* ================= CART CACHE ================= */
 let cartCache = {};
 
@@ -173,17 +192,17 @@ function hitungDurasi(tglSewa, tglSelesai){
 
 
 /* ================= CART AJAX ================= */
-function addToCart(idstok){
+function addToCart(idproduk){
     openKeranjang();
 
-    fetch('/cart/add',{
+    fetch('/cart/add-pusat',{
         method:'POST',
         headers:{
             'Content-Type':'application/json',
             'Accept':'application/json',
             'X-CSRF-TOKEN':'{{ csrf_token() }}'
         },
-        body:JSON.stringify({idstok})
+        body:JSON.stringify({idproduk})
     })
     .then(async r=>{
         const data = await r.json();
@@ -198,17 +217,17 @@ function addToCart(idstok){
     })
     .catch(err=>console.error(err));
 }
-function updateCart(idstok,qty){
-    if(qty < 1) return deleteCart(idstok);
+function updateCart(idproduk,qty){
+    if(qty < 1) return deleteCart(idproduk);
 
-    fetch('/cart/update',{
+    fetch('/cart/update-pusat',{
         method:'POST',
         headers:{
             'Content-Type':'application/json',
             'Accept':'application/json',
             'X-CSRF-TOKEN':'{{ csrf_token() }}'
         },
-        body:JSON.stringify({idstok,qty})
+        body:JSON.stringify({idproduk,qty})
     })
     .then(async r=>{
         const data = await r.json();
@@ -223,15 +242,15 @@ function updateCart(idstok,qty){
     })
     .catch(err=>console.error(err));
 }
-function deleteCart(idstok){
-    fetch('/cart/delete',{
+function deleteCart(idproduk){
+    fetch('/cart/delete-pusat',{
         method:'POST',
         headers:{
             'Content-Type':'application/json',
             'Accept':'application/json',
             'X-CSRF-TOKEN':'{{ csrf_token() }}'
         },
-        body:JSON.stringify({idstok})
+        body:JSON.stringify({idproduk})
     })
     .then(async r=>{
         const data = await r.json();
@@ -287,15 +306,15 @@ function renderCart(cart){
                 <small>${subtotalText}</small>
             </div>
             <div class="item-aksi">
-                <button onclick="updateCart(${item.idstok},${item.qty-1})">−</button>
+                <button onclick="updateCart(${item.idproduk},${item.qty-1})"><i class="fa-solid fa-minus"></i></button>
                 <span class="qty">${item.qty}</span>
-                <button onclick="updateCart(${item.idstok},${item.qty+1})">+</button>
-                <button onclick="deleteCart(${item.idstok})">🗑</button>
+                <button onclick="updateCart(${item.idproduk},${item.qty+1})"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn-hapus" onclick="deleteCart(${item.idproduk})"><i class="fa-solid fa-trash"></i></button>
             </div>
         </div>`;
 
         inputs += `
-        <input type="hidden" name="produk_cabang[]" value="${item.idstok}">
+        <input type="hidden" name="produk[]" value="${item.idproduk}">
         <input type="hidden" name="qty[]" value="${item.qty}">`;
     });
 
@@ -392,3 +411,4 @@ document.addEventListener('DOMContentLoaded', function(){
 
 });
 </script>
+@endpush

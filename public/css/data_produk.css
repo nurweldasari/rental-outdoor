@@ -958,16 +958,18 @@ select option:checked {
     border-radius: 20px;
 }
 
-/* info penyewa */
+/* ================= CARD PENYEWA ================= */
 .card-penyewa {
     background: #ffffff;
     border-radius: 10px;
-    padding: 8px 10px;
+    padding: 8px 12px;
     border: 1px solid #b4aeae;
     box-shadow: 0 2px 5px rgba(0,0,0,0.04);
-     position: relative;
-    left: -300px; /* geser ke kiri */
-    min-width: 335px; 
+
+    min-width: 320px;
+    max-width: 420px;
+
+    overflow: hidden; /* ⛔ tahan isi biar gak keluar */
 }
 
 /* header */
@@ -986,37 +988,58 @@ select option:checked {
     display: flex;
     align-items: center;
     gap: 8px;
+
+    overflow: hidden; /* ⛔ penting */
 }
 
-/* ubah jadi horizontal */
+/* avatar */
+.card-penyewa .avatar {
+    flex: 0 0 auto; /* ⛔ jangan ikut melebar */
+}
+
+/* ================= INFO ================= */
 .card-penyewa .info {
     display: flex;
     align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    gap: 6px;
+
+    flex-wrap: nowrap;        /* ✅ WAJIB */
+    white-space: nowrap;      /* ✅ WAJIB */
+    overflow: hidden;         /* ✅ WAJIB */
 }
 
-/* kecilkan & rapikan */
-.card-penyewa .info h4 {
-    margin: 0;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-/* hilangkan jarak bawah bawaan */
+/* teks */
+.card-penyewa .info h4,
 .card-penyewa .info p {
     margin: 0;
+    font-size: 12px;
+
+    max-width: 180px;         /* ⛔ batas biar gak dorong */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* no telp kecil */
+.card-penyewa .info p {
     font-size: 11px;
     color: #555;
 }
 
-/* biar "Buat Reservasi" lebih soft */
+/* "Buat Reservasi" */
 .card-penyewa .info h4:first-child {
     color: #777;
     font-weight: 500;
 }
 
-/* kasih pemisah otomatis */
+.fa-user{
+font-size: 12px;
+color: #000;
+}
+.fa-phone{
+font-size: 12px;
+color: #000;
+}
+/* separator */
 .card-penyewa .info h4:not(:last-child)::after {
     content: ":";
     margin-left: 4px;
@@ -1024,6 +1047,148 @@ select option:checked {
 
 .card-penyewa .info h4:nth-child(2)::after {
     content: "|";
-    margin-left: 8px;
+    margin-left: 6px;
     color: #ccc;
+}
+/* HEADER UTAMA */
+.header-produk {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    flex-wrap: wrap;
+}
+
+/* KIRI */
+.left-header {
+    display: flex;
+    align-items: center;
+}
+
+/* KANAN */
+.right-header {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 🔥 ini biar rapet */
+}
+
+/* ================= CARD PENYEWA ================= */
+.card-penyewa {
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+
+    /* ❌ HAPUS INI KALO ADA */
+    /* left: -300px; */
+    /* position: relative; */
+
+    max-width: 100%;
+}
+
+.card-penyewa .card-body {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* INFO JANGAN KEKANAN LAGI */
+.card-penyewa .info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    max-width: 100%;
+}
+
+/* BIAR TEKS GAK KEPOTONG */
+.card-penyewa .info h4,
+.card-penyewa .info p {
+    white-space: nowrap;
+}
+
+/* ================= SEARCH ================= */
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    width: 180px;
+    height: 40px;
+    padding-left: 34px;
+    border-radius: 20px;
+    border: 1px solid #333;
+}
+
+.search-box i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* ================= SELECT ================= */
+.right-header select {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 20px;
+    border: 1px solid #333;
+}
+
+/* SKALA ORANGE */
+.right-header select[name="skala"] {
+    background: #D17A00;
+    color: #fff;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .header-produk {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .right-header {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+}
+
+.pagination-simple {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    gap: 1px; /* lebih renggang */
+}
+
+/* default (angka & panah) */
+.pagination-simple .page,
+.pagination-simple .nav {
+    padding: 4px 6px;
+    text-decoration: none;
+    color: #151516; /* abu */
+    font-size: 16px;
+    font-weight: 500;
+    border: none; /* 🔥 hapus kotak */
+    background: none;
+}
+
+/* halaman aktif */
+.pagination-simple .page.active {
+    color: #d97706; /* 🔥 orange seperti gambar */
+    font-weight: 700;
+}
+
+/* panah */
+.pagination-simple .nav {
+    font-size: 18px;
+}
+
+/* disable */
+.pagination-simple .nav.disabled {
+    opacity: 0.4;
+    pointer-events: none;
 }

@@ -141,7 +141,11 @@ class PenyewaanController extends Controller
         ]);
 
         DB::commit();
+$tipe = session('tipe_toko');
 
+if ($tipe === 'pusat') {
+    return redirect()->route('item_penyewaan_pusat');
+}
         return redirect()
             ->route('item_penyewaan', $penyewaan->idpenyewaan);
 
@@ -183,12 +187,14 @@ public function riwayat()
 
     // ⏳ BELUM BAYAR
     $belumBayar = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
+    ->whereNotNull('cabang_idcabang')
     ->whereIn('status_penyewaan', ['menunggu_pembayaran'])
     ->with(['cabang', 'cabang.adminCabang.user', 'penyewa.user'])
     ->orderBy('created_at', 'desc')
     ->get();
 
 $penyewaanAktif = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
+    ->whereNotNull('cabang_idcabang')
     ->whereIn('status_penyewaan', ['sedang_disewa'])
     ->with(['cabang', 'cabang.adminCabang.user', 'penyewa.user'])
     ->orderBy('created_at', 'desc')
@@ -205,6 +211,7 @@ public function selesai() {
     }
 
     $penyewaanSelesai = Penyewaan::with(['penyewa.user'])
+        ->whereNotNull('cabang_idcabang')
         ->where('penyewa_idpenyewa', $penyewa->idpenyewa) // ✅ FIX DI SINI
         ->where('status_penyewaan', 'selesai')
         ->orderBy('created_at', 'desc')
@@ -222,8 +229,16 @@ public function uploadPage($id)
         return back()->with('error', 'Penyewaan ini tidak bisa diupload bukti bayar');
     }
     $rekening = $penyewaan->cabang->rekening ?? null;
+    if ($penyewaan->batas_pembayaran) {
+        $sisaDetik = now()->diffInSeconds($penyewaan->batas_pembayaran, false);
+        if ($sisaDetik < 0) {
+            $sisaDetik = 0;
+        }
+    } else {
+        $sisaDetik = 0;
+    }
 
-    return view('upload_pembayaran', compact('penyewaan','rekening'));
+    return view('upload_pembayaran', compact('penyewaan','rekening', 'sisaDetik'));
 }
 
 public function uploadBuktiBayar(Request $request, $idpenyewaan)
@@ -243,7 +258,7 @@ public function uploadBuktiBayar(Request $request, $idpenyewaan)
         $penyewaan->save(); // status tetap menunggu konfirmasi
     }
 
-    return redirect()->route('penyewaan.riwayat')
+    return redirect()->route('item_penyewaan')
                      ->with('success', 'Bukti bayar berhasil diupload, tunggu konfirmasi admin.');
 }
 
@@ -459,6 +474,7 @@ public function createReservasi($id)
 {
     $user = Auth::user();
     $adminCabang = $user->adminCabang;
+     $rekening = $adminCabang->cabang->rekening ?? null;
 
     $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
 
@@ -475,7 +491,8 @@ public function createReservasi($id)
     return view('reservasi', compact(
         'penyewa',
         'kategoriList',
-        'produkList'
+        'produkList',
+        'rekening'
     ));
 }
 
@@ -574,5 +591,474 @@ public function reservasi(Request $request, $idpenyewa)
     }
 }
 
+
+//reservasi pusat
+public function createReservasiPusat(Request $request, $id)
+{
+    $user = Auth::user();
+    $adminPusat = $user->adminPusat;
+
+    if (!$adminPusat && $user->status !== 'owner') {
+        abort(403, 'Tidak punya akses');
+    }
+
+    $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
+
+    $kategoriList = Kategori::all();
+
+    // 🔥 QUERY PRODUK
+    $query = Produk::with('kategori');
+
+    // 🔍 SEARCH (nama produk)
+    if ($request->search) {
+        $query->where('nama_produk', 'like', '%' . $request->search . '%');
+    }
+
+    // 🔍 FILTER SKALA
+    if ($request->skala) {
+        $query->where('jenis_skala', $request->skala);
+    }
+
+    // 🔍 FILTER KATEGORI
+    if ($request->kategori) {
+        $query->where('kategori_idkategori', $request->kategori);
+    }
+
+    // 🔥 PAGINATION + QUERY STRING
+    $produkList = $query->paginate(12)->withQueryString();
+
+    return view('reservasi_pusat', compact(
+        'penyewa',
+        'kategoriList',
+        'produkList'
+    ));
 }
 
+public function reservasiPusat(Request $request, $idpenyewa)
+{
+    $user = Auth::user();
+    $adminPusat = $user->adminPusat;
+
+    // ✅ izinkan admin pusat ATAU owner
+    if (!$adminPusat && $user->status !== 'owner') {
+    abort(403, 'Tidak punya akses');
+}
+
+    $penyewa = Penyewa::where('users_idusers', $idpenyewa)->firstOrFail();
+
+    $request->validate([
+        'tanggal_sewa'    => 'required|date',
+        'tanggal_selesai' => 'required|date|after_or_equal:tanggal_sewa',
+        'metode_bayar'    => 'required|in:cash,transfer',
+        'produk'          => 'required|array',
+        'qty'             => 'required|array',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+
+        $tanggalSewa    = Carbon::parse($request->tanggal_sewa)->startOfDay();
+        $tanggalSelesai = Carbon::parse($request->tanggal_selesai)->endOfDay();
+
+        $durasiHari = $tanggalSewa->diffInDays($tanggalSelesai);
+        if ($durasiHari < 1) $durasiHari = 1;
+
+        // 🔥 FIX PENTING (biar owner gak error)
+       $adminPusatId = $adminPusat->idadmin_pusat ?? 1;
+
+        $penyewaan = Penyewaan::create([
+            'tanggal_sewa'    => $tanggalSewa,
+            'tanggal_selesai' => $tanggalSelesai,
+            'total'           => 0,
+            'total_produk'    => 0,
+            'status_penyewaan'=> 'sedang_disewa',
+            'metode_bayar'    => $request->metode_bayar,
+            'batas_pembayaran'=> null,
+
+            'penyewa_idpenyewa' => $penyewa->idpenyewa,
+            'cabang_idcabang'   => null,
+            'admin_pusat_idadmin_pusat' => $adminPusatId, // ✅ aman untuk owner
+        ]);
+
+        $total = 0;
+        $totalProduk = 0;
+
+        foreach ($request->produk as $i => $idproduk) {
+
+            $qty = (int) ($request->qty[$i] ?? 0);
+            if ($qty < 1) continue;
+
+            $produk = Produk::findOrFail($idproduk);
+
+            if ($qty > $produk->stok_pusat) {
+                throw new \Exception('Stok pusat tidak cukup');
+            }
+
+            $produk->decrement('stok_pusat', $qty);
+
+            $subtotal = $produk->harga * $qty * $durasiHari;
+
+            ItemPenyewaan::create([
+                'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+                'produk_idproduk'       => $produk->idproduk,
+                'harga'                 => $produk->harga,
+                'qty'                   => $qty,
+                'subtotal'              => $subtotal,
+            ]);
+
+            $total += $subtotal;
+            $totalProduk += $qty;
+        }
+
+        $penyewaan->update([
+            'total' => $total,
+            'total_produk' => $totalProduk
+        ]);
+
+        DB::commit();
+
+        return redirect()->route('data_penyewaan_pusat')
+            ->with('success', 'Reservasi pusat berhasil');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
+    }
+}
+
+public function pusatIndex(Request $request)
+{
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat;
+    $isOwner = $user->status === 'owner';
+
+    if (!$adminPusat && !$isOwner) {
+        abort(403, 'Tidak punya akses');
+    }
+
+    $query = Penyewaan::with(['penyewa.user'])
+        ->whereNull('cabang_idcabang')
+        ->whereIn('status_penyewaan', [
+            'menunggu_pembayaran',
+            'sedang_disewa',
+            'dibatalkan'
+        ])
+        ->orderBy('tanggal_sewa', 'desc');
+
+    if (!$isOwner) {
+    $query->where(function ($q) use ($adminPusat) {
+        $q->where('admin_pusat_idadmin_pusat', $adminPusat->idadmin_pusat)
+          ->whereNull('cabang_idcabang'); // 🔥 TAMBAH INI
+    });
+}
+
+    if ($request->search) {
+        $query->whereHas('penyewa.user', function ($q) use ($request) {
+            $q->where('nama', 'like', '%' . $request->search . '%')
+              ->orWhere('no_telepon', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    $penyewaanList = $query->paginate($request->get('per_page', 10))
+                          ->withQueryString();
+
+    return view('data_penyewaan_pusat', compact('penyewaanList'));
+}
+public function pusatDetail($id)
+{
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat;
+    $isOwner = $user->status === 'owner';
+
+    if (!$adminPusat && !$isOwner) {
+        abort(403, 'Tidak punya akses');
+    }
+
+    $query = Penyewaan::with([
+        'penyewa.user',
+        'itemPenyewaan.produk'
+    ])->where('idpenyewaan', $id);
+
+    if (!$isOwner) {
+        $query->where('admin_pusat_idadmin_pusat', $adminPusat->idadmin_pusat);
+    }
+
+    $penyewaan = $query->firstOrFail();
+
+    return view('detail_penyewaan_pusat', compact('penyewaan'));
+}
+public function konfirmasiPusat($id)
+{
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat;
+    $isOwner = $user->status === 'owner';
+
+    if (!$adminPusat && !$isOwner) {
+        abort(403, 'Tidak punya akses');
+    }
+
+    $query = Penyewaan::where('idpenyewaan', $id);
+
+    if (!$isOwner) {
+        $query->where('admin_pusat_idadmin_pusat', $adminPusat->idadmin_pusat);
+    }
+
+    $penyewaan = $query->firstOrFail();
+
+    if ($penyewaan->status_penyewaan === 'menunggu_pembayaran') {
+        $penyewaan->update([
+            'status_penyewaan' => 'sedang_disewa'
+        ]);
+
+        return back()->with('success', 'Pembayaran berhasil dikonfirmasi');
+    }
+
+    return back()->with('error', 'Tidak bisa dikonfirmasi');
+}
+public function selesaiAdminPusat($id)
+{
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat;
+    $isOwner = $user->status === 'owner';
+
+    if (!$adminPusat && !$isOwner) {
+        abort(403, 'Tidak punya akses');
+    }
+
+    $query = Penyewaan::with('itemPenyewaan')
+        ->whereNull('cabang_idcabang')
+        ->where('idpenyewaan', $id);
+
+    if (!$isOwner) {
+        $query->where('admin_pusat_idadmin_pusat', $adminPusat->idadmin_pusat);
+    }
+
+    $penyewaan = $query->firstOrFail();
+
+    if ($penyewaan->status_penyewaan !== 'sedang_disewa') {
+        return back()->with('error', 'Tidak bisa diselesaikan');
+    }
+
+    DB::beginTransaction();
+
+    try {
+        foreach ($penyewaan->itemPenyewaan as $item) {
+            Produk::where('idproduk', $item->produk_idproduk)
+                ->increment('stok_pusat', $item->qty);
+        }
+
+        $penyewaan->update([
+            'status_penyewaan' => 'selesai',
+            'tanggal_kembali'  => now(),
+        ]);
+
+        DB::commit();
+
+        return redirect()
+            ->route('data_riwayat_pusat')
+            ->with('success', 'Penyewaan selesai');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Gagal menyelesaikan');
+    }
+}
+public function pusatRiwayat(Request $request)
+{
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat;
+    $isOwner = $user->status === 'owner';
+
+    if (!$adminPusat && !$isOwner) {
+        abort(403, 'Tidak punya akses');
+    }
+
+    $query = Penyewaan::with(['penyewa.user'])
+        ->whereNull('cabang_idcabang')
+        ->where('status_penyewaan', 'selesai');
+
+    if (!$isOwner) {
+        $query->where('admin_pusat_idadmin_pusat', $adminPusat->idadmin_pusat);
+    }
+
+    if ($request->search) {
+        $query->whereHas('penyewa.user', function ($q) use ($request) {
+            $q->where('nama', 'like', "%{$request->search}%")
+              ->orWhere('no_telepon', 'like', "%{$request->search}%");
+        });
+    }
+
+    $riwayatList = $query->orderBy('tanggal_kembali', 'desc')
+                         ->paginate(10)
+                         ->withQueryString();
+
+    return view('data_riwayat_pusat', compact('riwayatList'));
+}
+public function cancelPusat($id)
+{
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat;
+    $isOwner = $user->status === 'owner';
+
+    if (!$adminPusat && !$isOwner) {
+        return response()->json(['success' => false, 'message' => 'Tidak punya akses']);
+    }
+
+    $query = Penyewaan::with('itemPenyewaan')
+        ->where('idpenyewaan', $id);
+
+    if (!$isOwner) {
+        $query->where('admin_pusat_idadmin_pusat', $adminPusat->idadmin_pusat);
+    }
+
+    $penyewaan = $query->firstOrFail();
+
+    if ($penyewaan->status_penyewaan !== 'menunggu_pembayaran') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Tidak bisa dibatalkan'
+        ]);
+    }
+
+    DB::beginTransaction();
+
+    try {
+        foreach ($penyewaan->itemPenyewaan as $item) {
+            Produk::where('idproduk', $item->produk_idproduk)
+                ->increment('stok_pusat', $item->qty);
+        }
+
+        $penyewaan->update([
+            'status_penyewaan' => 'dibatalkan'
+        ]);
+
+        DB::commit();
+
+        return response()->json(['success' => true]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal membatalkan'
+        ]);
+    }
+}
+public function detailPenyewaPusat($id)
+{
+    if (!auth()->check()) {
+        abort(403);
+    }
+
+    $penyewaan = Penyewaan::with([
+        'penyewa.user',
+        'itemPenyewaan.produk',
+        'cabang'
+    ])
+    ->where('idpenyewaan', $id)
+    ->whereHas('penyewa.user', function ($q) {
+        $q->where('idusers', auth()->user()->idusers);
+    })
+    ->firstOrFail();
+
+    return view('detail_sewa_pusat', compact('penyewaan'));
+}
+
+public function riwayatPusat()
+{
+    $user = Auth::user();
+    $penyewa = $user->penyewa ?? null;
+
+    if (!$penyewa) {
+        abort(403, 'Akun ini bukan penyewa');
+    }
+
+    // ⏳ BELUM BAYAR
+    $belumBayar = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
+    ->whereNotNull('admin_pusat_idadmin_pusat')
+    ->whereIn('status_penyewaan', ['menunggu_pembayaran'])
+    ->with(['cabang', 'cabang.adminCabang.user', 'penyewa.user'])
+    ->orderBy('created_at', 'desc')
+    ->get();
+
+$penyewaanAktif = Penyewaan::where('penyewa_idpenyewa', $penyewa->idpenyewa)
+    ->whereNotNull('admin_pusat_idadmin_pusat')
+    ->whereIn('status_penyewaan', ['sedang_disewa'])
+    ->with(['cabang', 'cabang.adminCabang.user', 'penyewa.user'])
+    ->orderBy('created_at', 'desc')
+    ->get();
+
+    return view('item_penyewaan_pusat', compact('belumBayar', 'penyewaanAktif'));
+}
+public function selesaiPusat() {
+    $user = Auth::user();
+    $penyewa = $user->penyewa ?? null;
+
+    if (!$penyewa) {
+        abort(403, 'Akun ini bukan penyewa');
+    }
+
+    $penyewaanSelesai = Penyewaan::with(['penyewa.user'])
+        ->whereNotNull('admin_pusat_idadmin_pusat')
+        ->where('penyewa_idpenyewa', $penyewa->idpenyewa) // ✅ FIX DI SINI
+        ->where('status_penyewaan', 'selesai')
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    return view('riwayat_penyewaan_Pusat', compact('penyewaanSelesai'));
+}
+
+public function uploadPusat($id)
+{
+    $penyewaan = Penyewaan::findOrFail($id);
+
+    // Hanya bisa akses jika status menunggu pembayaran
+    if ($penyewaan->status_penyewaan !== 'menunggu_pembayaran') {
+        return back()->with('error', 'Penyewaan ini tidak bisa diupload bukti bayar');
+    }
+    $rekening = null; // atau ambil sesuai kebutuhan pusat
+    
+    if ($penyewaan->batas_pembayaran) {
+        $sisaDetik = now()->diffInSeconds($penyewaan->batas_pembayaran, false);
+        if ($sisaDetik < 0) {
+            $sisaDetik = 0;
+        }
+    } else {
+        $sisaDetik = 0;
+    }
+    return view('upload_pembayaran_pusat', compact(
+        'penyewaan',
+        'rekening',
+        'sisaDetik'
+    ));
+}
+
+public function uploadBuktiBayarPusat(Request $request, $idpenyewaan)
+{
+    $request->validate([
+        'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $penyewaan = Penyewaan::findOrFail($idpenyewaan);
+
+    if($request->hasFile('bukti_bayar')){
+        $file = $request->file('bukti_bayar');
+        $filename = 'bukti_'.$idpenyewaan.'_'.time().'.'.$file->getClientOriginalExtension();
+        $file->move(public_path('uploads/bukti_bayar'), $filename);
+
+        $penyewaan->bukti_bayar = 'uploads/bukti_bayar/'.$filename;
+        $penyewaan->save(); // status tetap menunggu konfirmasi
+    }
+
+    return redirect()->route('item_penyewaan_pusat')
+                     ->with('success', 'Bukti bayar berhasil diupload, tunggu konfirmasi admin.');
+}
+}

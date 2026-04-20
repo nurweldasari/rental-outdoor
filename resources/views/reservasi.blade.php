@@ -126,7 +126,7 @@
     <div class="modal-bayar-box">
         <h4>Konfirmasi Pembayaran</h4>
 
-        <label>Metode Pembayaran</label>
+         <label>Metode Pembayaran</label>
         <select id="metodeBayar">
             <option value="">-- Pilih --</option>
             <option value="cash">Cash</option>
@@ -135,10 +135,9 @@
 
         <p class="catatan-bayar" id="catatanBayar"></p>
 
-        <div id="infoTransfer" style="display:none; margin:10px 0;">
-            <p><strong>Rekening Transfer:</strong></p>
-            <p>BCA 123456789</p>
-            <p>a.n Rental Outdoor</p>
+        <div class="info-transfer" id="infoTransfer" style="display:none;">
+            <div class="bank-box"><strong>{{ $rekening->nama_bank }}</strong></div>
+            <p class="rekening">No. Rekening : {{ $rekening->no_rekening }} ({{ $rekening->atas_nama }})</p>
         </div>
 
         <button class="btn-konfirmasi">Simpan Reservasi</button>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $active = 'penyewaan';
+    $active = 'sewa';
 @endphp
 
 @section('title','Penyewaan')

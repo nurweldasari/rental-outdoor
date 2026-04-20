@@ -111,12 +111,12 @@
 /* semua header div flex start, kecuali nomor & total */
 .laporan-header > div {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .laporan-row div:nth-child(3) {
     display: flex;
-    gap: 4px; /* jarak antara nama dan nomor */
+    gap: 1px; /* jarak antara nama dan nomor */
 }
 
 .laporan-header > div:last-child {
@@ -126,11 +126,11 @@
 /* semua row div flex start, kecuali nomor & angka total */
 .laporan-row > div {
     display: flex;
-    align-items: center;
+    align-items: flex-start; 
 }
 
 .laporan-row > div:first-child {
-    justify-content: center; /* No. */
+    justify-content: flex-start; /* No. */
 }
 
 .laporan-row > div:last-child {
@@ -306,6 +306,11 @@
     border-bottom: 2px solid #000 !important;
     margin-top: 16px;
 }
+.laporan-header > div,
+    .laporan-row > div,
+    .laporan-total > div {
+        display: block !important;   /* 🔥 MATIKAN FLEX */
+    }
 
     /* MATIKAN SEMUA BORDER ROW */
 .laporan-row {

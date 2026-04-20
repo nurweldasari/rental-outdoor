@@ -12,19 +12,18 @@
 <div class="laporan-container">
      {{-- ================= HEADER ================= --}}
 
-    {{-- OWNER (Tampil di layar) --}}
-    @if(auth()->user()->status === 'owner')
-        <div class="no-print">
-            <a href="{{ route('laporan') }}" class="btn-kembali">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
+    <div class="no-print">
+    <a href="{{ route('laporan_pusat') }}" class="btn-kembali">
+        <i class="fa-solid fa-arrow-left"></i> Kembali
+    </a>
 
-            <h2>
-                Laporan Pendapatan - {{ $cabang->nama_cabang ?? '' }}
-            </h2>
-            <div class="print-date-range" id="printDateRange"></div>
-        </div>
-    @endif
+    <h2>
+        Laporan Pendapatan - {{ $cabang->nama_cabang ?? ' ' }}
+    </h2>
+</div>
+
+{{-- INI WAJIB ADA UNTUK SEMUA ROLE --}}
+<div class="print-date-range" id="printDateRange"></div>
 
     {{-- ADMIN CABANG (Hanya muncul saat print) --}}
     @if(auth()->user()->status === 'admin_cabang')

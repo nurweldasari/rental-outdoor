@@ -37,14 +37,14 @@ Route::post('/register_penyewa', [AuthController::class, 'registerPenyewa'])
 
 /* ================= HALAMAN FORM (GET) ================= */
 
-Route::get('/register_admincabang', function () {
+Route::get('/register-admin-cabang', function () {
     $cabang = Cabang::all();
     return view('register_admincabang', compact('cabang'));
 })->name('register.admin_cabang.form');
 
 
 /* ================= PROSES REGISTER (POST) ================= */
-Route::post('/register_admincabang', [AuthController::class, 'registerAdminCabang'])
+Route::post('/register-admin-cabang', [AuthController::class, 'registerAdminCabang'])
     ->name('register.admin_cabang');
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -99,7 +99,13 @@ Route::get('/penyewaan', [PenyewaanController::class, 'riwayat'])
     ->name('item_penyewaan');
 
 // PUSAT
-Route::get('/penyewaan-pusat', [PenyewaanController::class, 'riwayat'])
+Route::post('/penyewaan-pusat/store', [PenyewaanController::class, 'store'])
+    ->name('penyewaan_pusat.store');
+
+Route::get('/penyewaan-pusat/{id}', [PenyewaanController::class, 'detail'])
+    ->name('penyewaan_pusat.detail');
+
+Route::get('/penyewaan-pusat', [PenyewaanController::class, 'riwayatPusat'])
     ->name('item_penyewaan_pusat');
 
 // Halaman penyewaan selesai
@@ -108,17 +114,18 @@ Route::get('/riwayat-penyewaan', [PenyewaanController::class, 'selesai'])
     ->name('riwayat_penyewaan');
 
 // (kalau mau pisah pusat, opsional)
-Route::get('/riwayat-penyewaan-pusat', [PenyewaanController::class, 'selesai'])
+Route::get('/riwayat-penyewaan-pusat', [PenyewaanController::class, 'selesaiPusat'])
     ->name('riwayat_penyewaan_pusat');
+
+Route::get('/detail-sewa-pusat/{id}', 
+    [PenyewaanController::class, 'detailPenyewaPusat']
+)->name('detail_sewa_pusat');
 
     // Detail penyewaan
 Route::get('/detail-sewa/{id}', 
     [PenyewaanController::class, 'detailPenyewa']
 )->name('detail_sewa');
 
-Route::get('/detail-sewa-pusat/{id}', 
-    [PenyewaanController::class, 'pusatDetail']
-)->name('detail_sewa_pusat');
 
 // Upload Bukti Bayar
 // Halaman upload bukti bayar
@@ -154,34 +161,38 @@ Route::post('/admin/penyewaan/{id}/cancel', [PenyewaanController::class, 'cancel
 // ================= PUSAT =================
 
 // halaman data penyewaan pusat
-Route::get('/pusat/data_penyewaan_pusat', [PenyewaanController::class, 'pusatIndex'])
+Route::get('/data_penyewaan_pusat', [PenyewaanController::class, 'pusatIndex'])
     ->name('data_penyewaan_pusat');
 
 // detail penyewaan pusat
-Route::get('/pusat/penyewaan/{id}',
+Route::get('/admin/penyewaan_pusat/{id}',
     [PenyewaanController::class, 'pusatDetail']
 )->name('pusat.penyewaan.detail');
 
 // konfirmasi pembayaran pusat
-Route::post('/pusat/penyewaan/konfirmasi/{id}', 
+Route::post('/penyewaan_pusat/konfirmasi/{id}', 
     [PenyewaanController::class, 'konfirmasiPusat']
 )->name('pusat.konfirmasi_bayar');
 
 // selesai penyewaan pusat
-Route::post('/pusat/penyewaan/selesai/{id}',
-    [PenyewaanController::class, 'selesaiPusat']
+Route::post('/penyewaan_pusat/selesai/{id}',
+    [PenyewaanController::class, 'selesaiAdminPusat']
 )->name('pusat.penyewaan.selesai');
 
 // riwayat pusat
-Route::get('/pusat/riwayat', 
+Route::get('/riwayat_pusat', 
     [PenyewaanController::class, 'pusatRiwayat']
 )->name('data_riwayat_pusat');
 
 // cancel pusat
-Route::post('/pusat/penyewaan/{id}/cancel', 
+Route::post('/penyewaan_pusat/{id}/cancel', 
     [PenyewaanController::class, 'cancelPusat']
 )->name('pusat.penyewaan.cancel');
 
+Route::get('/penyewaan_pusat/{id}/upload', [PenyewaanController::class, 'uploadPusat'])->name('penyewaan_pusat.upload_pembayaran');
+Route::post('/penyewaan_pusat/{id}/upload', [PenyewaanController::class, 'uploadBuktiBayarPusat'])->name('penyewaan_pusat.upload_bukti');
+Route::get('/penyewaan_pusat/{id}', [PenyewaanController::class, 'detailPenyewaPusat'])
+    ->name('penyewaan.detail');
 
 Route::middleware('auth')->group(function () {
 
@@ -194,7 +205,7 @@ Route::middleware('auth')->group(function () {
         ->name('laporan_cabang');
 
      // ADMIN CABANG
-    Route::get('/laporan-pusat', [LaporanController::class, 'index'])
+    Route::get('/laporan-pusat', [LaporanController::class, 'laporanPusat'])
         ->name('laporan_pusat');
 
 });
@@ -220,25 +231,35 @@ Route::post('/tambah_penyewa', [PenyewaController::class, 'store'])
     )->name('reservasi.store');
 
 //pusat
-Route::get('/data_penyewa_pusat', [PenyewaController::class, 'index'])
+Route::get('/data_penyewa_pusat', [PenyewaController::class, 'indexPusat'])
     ->middleware('auth');
 
 // tampilkan form tambah penyewa
-Route::get('/tambah_penyewa_pusat', [PenyewaController::class, 'create'])
-    ->name('tambah.penyewa.form');
+Route::get('/tambah_penyewa_pusat', [PenyewaController::class, 'createPusat'])
+    ->name('tambah.penyewa.pusat');
 
 // simpan data penyewa
-Route::post('/tambah_penyewa_pusat', [PenyewaController::class, 'store'])
+Route::post('/tambah_penyewa_pusat', [PenyewaController::class, 'storePusat'])
     ->name('tambah_penyewa.store');
 
   Route::get('/admin/reservasi_pusat/{idpenyewa}', 
-        [PenyewaanController::class, 'createReservasi']
-    )->name('reservasi');
+        [PenyewaanController::class, 'createReservasiPusat']
+    )->name('reservasi_pusat');
 
     // 🔥 SIMPAN RESERVASI (POST)
     Route::post('/admin/reservasi_pusat/{idpenyewa}', 
-        [PenyewaanController::class, 'reservasi']
-    )->name('reservasi.store');
+        [PenyewaanController::class, 'reservasiPusat']
+    )->name('reservasi_pusat.store');
+
+
+// Konfirmasi
+Route::post('/penyewa/terima/{id}', [PenyewaController::class, 'terimaPusat'])->name('penyewa.terima');
+Route::post('/penyewa/tolak/{id}', [PenyewaController::class, 'tolakPusat'])->name('penyewa.tolak');
+
+// Toggle status (reload page)
+Route::post('/penyewa/toggle/{id}', [PenyewaController::class, 'toggleStatusPusat'])->name('penyewa.toggle');
+
+
 
 Route::get('/profil_cabang', [AkunController::class, 'editcabang'])
     ->name('profil_cabang');
@@ -413,8 +434,8 @@ Route::post('/bagi-hasil/{id}/tolak',
 [BagiHasilController::class,'tolak'])
 ->name('bagi_hasil.tolak');
 
-Route::get('/landingpage_cabang', function () {
-    return view('landingpage_cabang');
+Route::get('/landing_page_cabang', function () {
+    return view('landing_page_cabang');
 });
 
 Route::post('/kirim-otp', [AuthController::class, 'kirimOtp']);

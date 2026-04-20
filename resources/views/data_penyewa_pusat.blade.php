@@ -22,7 +22,7 @@
             <input type="text" id="searchInput" placeholder="Pencarian...">
         </div>
 
-        <a href="/tambah_penyewa" class="btn-add">
+        <a href="/tambah_penyewa_pusat" class="btn-add">
             <i class="fa-solid fa-plus"></i>
             Tambah Penyewa
         </a>

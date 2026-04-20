@@ -29,22 +29,24 @@
 
     <!-- FORM REKENING -->
     <form
-        class="profile-form"
-        method="POST"
-        action="{{ route('rekening.update') }}"
-    >
-        @csrf
+    class="profile-form"
+    method="POST"
+    action="{{ route('rekening.update') }}"
+>
+    @csrf
 
-        <!-- NAMA BANK -->
-        <div class="form-row full">
-            <input
-                type="text"
-                name="nama_bank"
-                placeholder="Nama Bank"
-                value="{{ old('nama_bank', $rekening->nama_bank ?? '') }}"
-                required
-            >
-        </div>
+    <input type="hidden" name="cabang_idcabang"
+        value="{{ auth()->user()->adminCabang->cabang_idcabang }}">
+
+    <div class="form-row full">
+        <input
+            type="text"
+            name="nama_bank"
+            placeholder="Nama Bank"
+            value="{{ old('nama_bank', $rekening->nama_bank ?? '') }}"
+            required
+        >
+    </div>
 
         <!-- NO REKENING -->
         <div class="form-row full">

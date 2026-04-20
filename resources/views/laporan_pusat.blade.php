@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@php $active = 'laporan'; @endphp
+@php $active = 'laporan_pendataan'; @endphp
 
 @section('title','Laporan Pendapatan')
 
@@ -12,24 +12,18 @@
 <div class="laporan-container">
      {{-- ================= HEADER ================= --}}
 
-    {{-- OWNER (Tampil di layar) --}}
-    @if(auth()->user()->status === 'owner')
-        <div class="no-print">
-            <a href="{{ route('laporan_pusat') }}" class="btn-kembali">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
-            </a>
+    <div class="no-print">
+    <a href="{{ route('laporan_pusat') }}" class="btn-kembali">
+        <i class="fa-solid fa-arrow-left"></i> Kembali
+    </a>
 
-            <h2>
-                Laporan Pendapatan - {{ $cabang->nama_cabang ?? '' }}
-            </h2>
-            <div class="print-date-range" id="printDateRange"></div>
-        </div>
-    @endif
+    <h2>
+        Laporan Pendapatan - {{ $cabang->nama_cabang ?? 'Pusat' }}
+    </h2>
+</div>
 
-    {{-- ADMIN CABANG (Hanya muncul saat print) --}}
-    @if(auth()->user()->status === 'admin_pusat')
-        <h2 class="print-only">Laporan Pendapatan</h2>
-    @endif
+{{-- INI WAJIB ADA UNTUK SEMUA ROLE --}}
+<div class="print-date-range" id="printDateRange"></div>
 
 
     {{-- ================= TOP SECTION ================= --}}
@@ -174,8 +168,10 @@ function handlePrint(e) {
     const sampaiFormatted = new Date(sampai).toLocaleDateString('id-ID', options);
 
     // Set ke elemen printDateRange
-    document.getElementById('printDateRange').textContent = `Dari ${dariFormatted} sampai ${sampaiFormatted}`;
-
+   const el = document.getElementById('printDateRange');
+if (el) {
+    el.textContent = `Dari ${dariFormatted} sampai ${sampaiFormatted}`;
+}
     // Sembunyikan row yang di luar range
     const d1 = new Date(dari);
     const d2 = new Date(sampai);

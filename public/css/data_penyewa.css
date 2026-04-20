@@ -85,7 +85,16 @@ th, td {
   text-align: center;
   border-bottom: 1px solid #aaa;
 }
+tbody tr {
+  border-bottom: 1px solid #aaa;
+}
 
+td, th {
+  border: none;
+}
+td {
+  white-space: nowrap;
+}
 th {
   font-weight: 600;
 }
@@ -101,6 +110,7 @@ th {
   background: #0b6e2b;
   color: #fff;
   border: none;
+  text-decoration: none;
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;

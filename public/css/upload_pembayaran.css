@@ -104,9 +104,41 @@
     border: none;
     font-weight: 600;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .btn-konfirmasi:hover,
 .btn-batal:hover {
     opacity: 0.9;
+}
+.upload-content p {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* saat file sudah dipilih */
+.upload-content p.active {
+    font-weight: 600;
+    color: #c56a00; /* coklat */
+}
+/* TIMER */
+.timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+
+    color: #1b7f3c; /* hijau */
+    font-weight: 600;
+}
+
+.timer i {
+    font-size: 18px;
+}
+
+.countdown {
+    font-size: 18px;
+    letter-spacing: 1px;
 }
