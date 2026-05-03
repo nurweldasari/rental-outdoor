@@ -58,7 +58,7 @@
 
     @php
         $gambar = $paket->gambar_paket
-            ? asset('paket/'.$paket->gambar_paket)
+            ? asset('storage/'.$paket->gambar_paket)
             : asset('images/placeholder.png');
     @endphp
 
@@ -109,7 +109,9 @@
     onclick="openModal(this)"
     data-nama="{{ $paket->nama_paket }}"
     data-harga="{{ $paket->harga_paket }}"
-    data-gambar="{{ $paket->gambar_paket ? asset('paket/'.$paket->gambar_paket) : asset('images/placeholder.png') }}"
+    data-gambar="{{ $paket->gambar_paket
+    ? asset('storage/'.$paket->gambar_paket)
+    : asset('images/placeholder.png') }}"
     data-detail="
     @foreach($paket->detail as $item)
         {{ optional($item->produk)->nama_produk ?? '-' }} ({{ $item->qty }})

@@ -62,8 +62,8 @@
 
     @php
         $gambar = $paket->gambar_paket
-            ? asset('paket/'.$paket->gambar_paket)
-            : asset('images/placeholder.png');
+        ? asset('storage/'.$paket->gambar_paket)
+        : asset('images/placeholder.png');
     @endphp
 
     <div class="card-produk paket">
@@ -113,7 +113,9 @@
     onclick="openModal(this)"
     data-nama="{{ $paket->nama_paket }}"
     data-harga="{{ $paket->harga_paket }}"
-    data-gambar="{{ $paket->gambar_paket ? asset('paket/'.$paket->gambar_paket) : asset('images/placeholder.png') }}"
+    data-gambar="{{ $paket->gambar_paket
+            ? asset('storage/'.$paket->gambar_paket)
+            : asset('images/placeholder.png') }}"
     data-detail="
         @foreach($paket->detail as $item)
             {{ optional($item->stokCabang->produk)->nama_produk }} ({{ $item->qty }})|
