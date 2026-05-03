@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $active = 'katalog';
+    $active = 'penyewa';
 @endphp
 
 @section('title', 'Katalog Produk')
@@ -78,7 +78,7 @@
         <h4 class="nama-produk">{{ $paket->nama_paket }}</h4>
 
         <p class="harga">
-            Rp {{ number_format($paket->harga_paket) }}
+            Rp {{ number_format($paket->harga_paket, 0, ',', '.') }} / hari
         </p>
 <div class="aksi-wrapper">
         <button class="btn-detail"
@@ -442,10 +442,10 @@ function renderCart(cart){
                     </div>
 
                     <div class="item-aksi">
-                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})">−</button>
+                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})"><i class="fa-solid fa-minus"></i></button>
                         <span class="qty">${qty}</span>
-                        <button onclick="updatePaket(${item.paket_id}, ${qty + 1})" ${disablePlus ? 'disabled' : ''}>+</button>
-                        <button onclick="deletePaket(${item.paket_id})">🗑</button>
+                        <button onclick="updatePaket(${item.paket_id}, ${qty + 1})" ${disablePlus ? 'disabled' : ''}><i class="fa-solid fa-plus"></i></button>
+                        <button class="btn-hapus" onclick="deletePaket(${item.paket_id})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `;
@@ -485,10 +485,10 @@ function renderCart(cart){
                     </div>
 
                     <div class="item-aksi">
-                        <button onclick="updateCart(${item.idstok},${qty-1})">−</button>
+                        <button onclick="updateCart(${item.idstok},${qty-1})"><i class="fa-solid fa-minus"></i></button>
                         <span class="qty">${qty}</span>
-                        <button onclick="updateCart(${item.idstok},${qty+1})">+</button>
-                        <button onclick="deleteCart(${item.idstok})">🗑</button>
+                        <button onclick="updateCart(${item.idstok},${qty+1})"><i class="fa-solid fa-plus"></i></button>
+                        <button class="btn-hapus" onclick="deleteCart(${item.idstok})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `;
@@ -598,4 +598,37 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
 });
+function openModal(el) {
+    let nama = el.getAttribute('data-nama');
+    let harga = el.getAttribute('data-harga');
+    let gambar = el.getAttribute('data-gambar');
+    let detail = el.getAttribute('data-detail');
+
+    let list = detail.split('|');
+
+    let html = '';
+    list.forEach(item => {
+        if (item.trim() !== '') {
+            html += `<div>• ${item}</div>`;
+        }
+    });
+
+    document.getElementById('modalNama').innerText = nama;
+    document.getElementById('modalHarga').innerText = "Rp " + Number(harga).toLocaleString('id-ID');
+    document.getElementById('modalGambar').src = gambar;
+    document.getElementById('modalIsi').innerHTML = html;
+
+    document.getElementById('modalDetail').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('modalDetail').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    let modal = document.getElementById('modalDetail');
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
 </script>

@@ -48,7 +48,11 @@
 
                 <div class="input-group">
                     <i class="fa-solid fa-lock"></i>
+
                     <input type="password" name="password" placeholder="Password" id="password" required>
+
+                    <!-- ICON MATA -->
+                    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
                 </div>
 
                 <div class="lupa-password">
@@ -181,5 +185,19 @@ function verifikasiOtp() {
             alert('OTP salah!');
         }
     });
+}
+function togglePassword() {
+    const input = document.getElementById("password");
+    const icon = document.querySelector(".toggle-password");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
 }
 </script>

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\StokCabang;
 use App\Models\Paket;
 use App\Models\PaketDetail;
+use App\Models\Produk;
 
 class PaketController extends Controller
 {
@@ -96,11 +97,19 @@ public function update(Request $request, $id)
     try {
         $paket = Paket::findOrFail($id);
 
-        // update data utama
-        $paket->update([
-            'nama_paket' => $request->nama_paket,
-            'harga_paket' => $request->harga_paket,
-        ]);
+        $paket->nama_paket = $request->nama_paket;
+        $paket->harga_paket = $request->harga_paket;
+
+        // 🔥 HANDLE GAMBAR (BENAR)
+        if ($request->hasFile('gambar_paket')) {
+            $file = $request->file('gambar_paket');
+            $namaFile = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('paket'), $namaFile);
+
+            $paket->gambar_paket = $namaFile;
+        }
+
+        $paket->save(); // 🔥 WAJIB
 
         // hapus detail lama
         PaketDetail::where('paket_id', $paket->id)->delete();
@@ -119,7 +128,93 @@ public function update(Request $request, $id)
 
         DB::commit();
 
-        return redirect()->back()->with('success', 'Paket berhasil diupdate');
+        return redirect()->route('produk_cabang')->with('success', 'Paket berhasil diupdate');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
+    }
+}
+public function destroy($id)
+{
+    DB::beginTransaction();
+
+    try {
+        $paket = Paket::findOrFail($id);
+
+        // hapus detail dulu
+        PaketDetail::where('paket_id', $paket->id)->delete();
+
+        // hapus paket
+        $paket->delete();
+
+        DB::commit();
+
+        return redirect()->back()->with('success', 'Paket berhasil dihapus');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
+    }
+}
+public function createPusat()
+{
+    $user = Auth::user();
+    $adminPusat = $user->adminPusat;
+
+    // ✅ izinkan admin pusat ATAU owner
+    if (!$adminPusat && $user->status !== 'owner') {
+    abort(403, 'Tidak punya akses');
+}
+
+    $produk = Produk::where('stok_pusat', '>', 0)->get();
+
+    return view('paket_pusat', compact('produk'));
+}
+
+public function storePusat(Request $request)
+{
+    $user = Auth::user();
+    $adminPusat = $user->adminPusat;
+
+    // ✅ izinkan admin pusat ATAU owner
+    if (!$adminPusat && $user->status !== 'owner') {
+    abort(403, 'Tidak punya akses');
+}
+    DB::beginTransaction();
+
+    try {
+        $namaFile = null;
+
+        if ($request->hasFile('gambar_paket')) {
+            $file = $request->file('gambar_paket');
+            $namaFile = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('paket'), $namaFile);
+        }
+
+        $paket = Paket::create([
+            'nama_paket' => $request->nama_paket,
+            'harga_paket' => $request->harga_paket,
+            'cabang_id' => null, // pusat
+            'gambar_paket' => $namaFile
+        ]);
+
+        foreach ($request->produk_id as $index => $produkId) {
+
+            if (!$produkId) continue;
+
+            PaketDetail::create([
+                'paket_id' => $paket->id,
+                'produk_idproduk' => $produkId, // 🔥 INI YANG BENAR
+                'stok_cabang_id' => null,
+                'qty' => $request->qty[$index]
+            ]);
+        }
+
+        DB::commit();
+
+        return redirect()->route('data_produk')
+            ->with('success', 'Paket pusat berhasil dibuat');
 
     } catch (\Exception $e) {
         DB::rollBack();
@@ -127,8 +222,84 @@ public function update(Request $request, $id)
     }
 }
 
-public function destroy($id)
+public function editPusat($id)
 {
+    $user = Auth::user();
+    $adminPusat = $user->adminPusat;
+
+    // ✅ izinkan admin pusat ATAU owner
+    if (!$adminPusat && $user->status !== 'owner') {
+    abort(403, 'Tidak punya akses');
+}
+    $paket = Paket::with('detail.produk')->findOrFail($id);
+
+    $produk = Produk::where('stok_pusat', '>', 0)->get();
+
+    return view('paket_edit_pusat', compact('paket', 'produk'));
+}
+
+public function updatePusat(Request $request, $id)
+{
+    $user = Auth::user();
+    $adminPusat = $user->adminPusat;
+
+    // ✅ izinkan admin pusat ATAU owner
+    if (!$adminPusat && $user->status !== 'owner') {
+    abort(403, 'Tidak punya akses');
+}
+    DB::beginTransaction();
+
+    try {
+        $paket = Paket::findOrFail($id);
+
+        $paket->nama_paket = $request->nama_paket;
+        $paket->harga_paket = $request->harga_paket;
+
+        // 🔥 HANDLE GAMBAR (BENAR)
+        if ($request->hasFile('gambar_paket')) {
+            $file = $request->file('gambar_paket');
+            $namaFile = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('paket'), $namaFile);
+
+            $paket->gambar_paket = $namaFile;
+        }
+
+        $paket->save(); // 🔥 WAJIB
+
+        // hapus detail lama
+        PaketDetail::where('paket_id', $paket->id)->delete();
+
+        // simpan ulang detail
+        foreach ($request->produk_id as $index => $produkId) {
+
+            if (!$produkId) continue;
+
+            PaketDetail::create([
+                'paket_id' => $paket->id,
+                'produk_idproduk' => $produkId,
+                'stok_cabang_id' => null,
+                'qty' => $request->qty[$index]
+            ]);
+        }
+
+        DB::commit();
+
+        return redirect()->route('data_produk')->with('success', 'Paket berhasil diupdate');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
+    }
+}
+public function destroyPusat($id)
+{
+    $user = Auth::user();
+    $adminPusat = $user->adminPusat;
+
+    // ✅ izinkan admin pusat ATAU owner
+    if (!$adminPusat && $user->status !== 'owner') {
+    abort(403, 'Tidak punya akses');
+}
     DB::beginTransaction();
 
     try {

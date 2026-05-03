@@ -14,41 +14,42 @@
 <div class="container-produk">
 
     {{-- HEADER (MENYAMAKAN PRODUK PUSAT) --}}
-    <div class="header-produk">
+   <div class="header-produk">
 
-    {{-- Search --}}
     <form method="GET" id="searchForm">
-    <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text"
-               id="searchInput"
-               name="search"
-               placeholder="Pencarian..."
-               value="{{ request('search') }}">
-    </div>
-</form>
-<a href="{{ route('paket_cabang') }}" class="btn-tambah">
-        <i class="fa-solid fa-plus"></i> Tambah Paket
-    </a>
-
-
-    {{-- Tombol Permintaan Alat --}}
-    <a href="{{ route('permintaan_produk.create') }}" class="btn-tambah">
-        <i class="fa-solid fa-plus"></i> Permintaan Alat
-    </a>
-
-    {{-- Filter Kategori (DIPINDAH KE KANAN) --}}
-    <form method="GET" id="filterForm">
-        <select name="kategori" onchange="this.form.submit()">
-            <option value="">Filter Kategori</option>
-            @foreach($kategoriList as $kategori)
-                <option value="{{ $kategori->idkategori }}"
-                    {{ request('kategori') == $kategori->idkategori ? 'selected' : '' }}>
-                    {{ $kategori->nama_kategori }}
-                </option>
-            @endforeach
-        </select>
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text"
+                   id="searchInput"
+                   name="search"
+                   placeholder="Pencarian..."
+                   value="{{ request('search') }}">
+        </div>
     </form>
+
+    <div class="right-header">
+
+        <a href="{{ route('paket_cabang') }}" class="btn-tambah-paket">
+            <i class="fa-solid fa-plus"></i> Tambah Paket
+        </a>
+
+        <a href="{{ route('permintaan_produk.create') }}" class="btn-tambah">
+            <i class="fa-solid fa-plus"></i> Permintaan Alat
+        </a>
+
+        <form method="GET" id="filterForm">
+            <select name="kategori" onchange="this.form.submit()">
+                <option value="">Filter Kategori</option>
+                @foreach($kategoriList as $kategori)
+                    <option value="{{ $kategori->idkategori }}"
+                        {{ request('kategori') == $kategori->idkategori ? 'selected' : '' }}>
+                        {{ $kategori->nama_kategori }}
+                    </option>
+                @endforeach
+            </select>
+        </form>
+
+    </div>
 
 </div>
 
@@ -66,6 +67,38 @@
     @endphp
 
     <div class="card-produk paket">
+
+    {{-- TITIK 3 --}}
+    <div class="dropdown-produk">
+        <button type="button"
+                class="btn-dot"
+                onclick="toggleDropdown({{ $paket->id }})">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+
+        <div class="dropdown-menu-produk"
+             id="dropdown-{{ $paket->id }}">
+
+            {{-- EDIT --}}
+            <a href="{{ route('paket.edit', $paket->id) }}">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Paket
+            </a>
+
+            {{-- HAPUS --}}
+            <form action="{{ route('paket.destroy', $paket->id) }}"
+                  method="POST">
+                @csrf
+                @method('DELETE')
+
+                <button type="submit"
+                        class="btn-hapus"
+                        onclick="return confirm('Yakin hapus paket ini?')">
+                    <i class="fa-solid fa-trash"></i> Hapus Paket
+                </button>
+            </form>
+
+        </div>
+    </div>
         <span class="badge-kategori">Paket</span>
 
         <img src="{{ $gambar }}" class="img-produk">
@@ -223,6 +256,19 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
+function toggleDropdown(id) {
 
+    document.querySelectorAll('.dropdown-menu-produk')
+        .forEach(menu => menu.style.display = 'none');
+
+    const menu = document.getElementById('dropdown-' + id);
+
+    if (menu) {
+        menu.style.display =
+            menu.style.display === 'block'
+                ? 'none'
+                : 'block';
+    }
+}
 </script>
 @endpush

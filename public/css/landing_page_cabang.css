@@ -63,6 +63,7 @@ html {
 /* LOGIN */
 .btn-login {
   background: #b45309;
+  border: 1px solid #FE990C; 
   color: #fff !important;  /* paksa putih */
   padding: 8px 18px;
   border-radius: 20px;
@@ -503,7 +504,6 @@ body {
         flex-wrap: wrap;
         gap: 10px;
     }
-
     /* ================= HERO ================= */
     .hero {
         height: auto;

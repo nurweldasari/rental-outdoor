@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Produk;
 use App\Models\Kategori;
+use App\Models\Paket;
 use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Storage;    
 
@@ -22,8 +23,13 @@ class ProdukController extends Controller
         $query->where('jenis_skala', $request->skala);
     }) 
     ->get();
+    
+    $paketList = Paket::with('detail.produk')
+    ->whereNull('cabang_id')
+    ->get();
+    $produk = Produk::paginate(10);
 
-    return view('data_produk', compact('produk', 'kategori'));
+    return view('data_produk', compact('produk', 'kategori', 'paketList'));
 }
 
     // ================== CREATE ==================

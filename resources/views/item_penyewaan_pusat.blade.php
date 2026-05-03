@@ -50,7 +50,7 @@
                     </p>
 
                     <p class="total">
-                        Total : Rp {{ number_format($item->total) }}
+                        Total : Rp {{ number_format($item->total,0,',','.') }}
                     </p>
 
                     <div class="action">
@@ -104,7 +104,7 @@
                     <div class="badge-disewa">Sedang Disewa</div>
 
                     <p class="total">
-                        Total : Rp {{ number_format($item->total) }}
+                        Total : Rp {{ number_format($item->total,0,',','.') }}
                     </p>
 
                     <div class="action">

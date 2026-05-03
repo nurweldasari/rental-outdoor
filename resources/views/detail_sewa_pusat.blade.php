@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    $active = 'penyewaan';
+@endphp
+
 @section('title','Detail Penyewaan')
 
 @push('styles')
@@ -95,7 +99,17 @@
                 @foreach($penyewaan->itemPenyewaan as $item)
                 <tr>
                     <td>{{ $no++ }}</td>
-                    <td>{{ $item->produk->nama_produk }}</td>
+                    <td>
+                        @if($item->type === 'produk')
+                            {{ optional($item->produk)->nama_produk }}
+
+                        @elseif($item->type === 'paket')
+                            {{ optional($item->paket)->nama_paket}}
+
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td>{{ $item->qty }}</td>
                     <td>{{ $item->produk->jenis_skala ?? '-' }}</td>
 

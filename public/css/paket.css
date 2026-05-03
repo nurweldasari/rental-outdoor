@@ -8,6 +8,7 @@
 }
 
 h3 {
+    text-align: center;
     margin-bottom: 20px;
 }
 
@@ -37,7 +38,7 @@ input, select {
 }
 
 .btn-add {
-    background: #3490dc;
+    background: #D17A00;
     color: white;
     padding: 8px 12px;
     border: none;
@@ -45,18 +46,8 @@ input, select {
     cursor: pointer;
 }
 
-.btn-submit {
-    background: #38c172;
-    color: white;
-    padding: 10px;
-    width: 100%;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
 .btn-remove {
-    background: #e3342f;
+    background: #ff0000;
     color: white;
     border: none;
     padding: 8px;
@@ -93,4 +84,29 @@ input, select {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+.form-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center; 
+}
+
+.btn-simpan, .btn-batal {
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-simpan {
+    background: #056A28;
+    color: white;
+}
+
+.btn-batal {
+    background: #ff0000;
+    color: white;
 }

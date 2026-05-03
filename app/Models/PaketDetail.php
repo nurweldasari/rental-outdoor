@@ -32,4 +32,5 @@ class PaketDetail extends Model
     {
         return $this->belongsTo(StokCabang::class, 'stok_cabang_id', 'idstok');
     }
+    
 }

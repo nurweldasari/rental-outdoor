@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    $active = 'produk.cabang';
+@endphp
+
 @section('title','Tambah Paket Cabang')
 
 @push('styles')
@@ -64,9 +68,17 @@
 </div>
         <br><br>
 
-        <button type="submit" class="btn-submit">
-            Simpan Paket
-        </button>
+        <div class="form-footer">
+
+    <button type="submit" class="btn-simpan">
+        Simpan Paket
+    </button>
+
+    <a href="{{ route('produk_cabang') }}" class="btn-batal">
+        Batal
+    </a>
+
+</div>
 
     </form>
 </div>

@@ -63,7 +63,7 @@
         <h4 class="nama-produk">{{ $paket->nama_paket }}</h4>
 
         <p class="harga">
-            Rp {{ number_format($paket->harga_paket) }}
+            Rp {{ number_format($paket->harga_paket,0,',','.') }}/hari
         </p>
 <div class="aksi-wrapper">
         <button class="btn-detail"
@@ -101,7 +101,7 @@
                         <span class="badge-kategori">{{ $produk->kategori->nama_kategori ?? '-' }}</span>
                         <img src="{{ $gambar }}" class="img-produk">
                         <h4 class="nama-produk">{{ $produk->nama_produk }}</h4>
-                        <p class="harga">Rp {{ number_format($produk->harga) }} / hari</p>
+                        <p class="harga">Rp {{ number_format($produk->harga,0,',','.')}} / hari</p>
 
                         <div class="stok-wrapper">
                             <span class="stok">Stok: {{ $stok }}</span>
@@ -209,8 +209,6 @@ function hitungDurasi(tglSewa, tglSelesai){
     return Math.max(1, selisih);
 }
 
-
-/* ================= CART AJAX ================= */
 /* ================= CART AJAX ================= */
 
 function addToCart(idstok){
@@ -297,8 +295,9 @@ function addPaketToCart(paketId){
 
         // 🔥 kalau backend kasih max → paksa ke max
         if(res.max !== undefined){
-            updatePaket(paketId, res.max);
-        }
+    cartCache = res.cart;
+    renderCart(cartCache);
+}
 
         return;
     }
@@ -322,20 +321,21 @@ function updatePaket(paketId, qty){
             'Accept':'application/json',
             'X-CSRF-TOKEN':'{{ csrf_token() }}'
         },
-        body: JSON.stringify({ paket_id: paketId, qty })
+        body: JSON.stringify({
+            paket_id: paketId,
+            qty: qty
+        })
     })
     .then(r => r.json())
     .then(res => {
 
-        // 🔥 STOP kalau error
         if(res.error){
             alert(res.error);
-            return; // ❗ INI PENTING BANGET
+            return;
         }
 
-        // 🔥 safety tambahan
         if(!res.cart){
-            console.log('RESPONSE ANEH:', res);
+            console.log(res);
             return;
         }
 
@@ -426,10 +426,10 @@ function renderCart(cart){
                     </div>
 
                     <div class="item-aksi">
-                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})">−</button>
+                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})"><i class="fa-solid fa-minus"></i></button>
                         <span class="qty">${qty}</span>
-                        <button onclick="updatePaket(${item.paket_id}, ${qty + 1})" ${disablePlus ? 'disabled' : ''}>+</button>
-                        <button onclick="deletePaket(${item.paket_id})">🗑</button>
+                        <button onclick="updatePaket(${item.paket_id}, ${qty + 1})" ${disablePlus ? 'disabled' : ''}><i class="fa-solid fa-plus"></i></button>
+                        <button class="btn-hapus" onclick="deletePaket(${item.paket_id})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `;
@@ -469,10 +469,10 @@ function renderCart(cart){
                     </div>
 
                     <div class="item-aksi">
-                        <button onclick="updateCart(${item.idstok},${qty-1})">−</button>
+                        <button onclick="updateCart(${item.idstok},${qty-1})"><i class="fa-solid fa-minus"></i></button>
                         <span class="qty">${qty}</span>
-                        <button onclick="updateCart(${item.idstok},${qty+1})">+</button>
-                        <button onclick="deleteCart(${item.idstok})">🗑</button>
+                        <button onclick="updateCart(${item.idstok},${qty+1})"><i class="fa-solid fa-plus"></i></button>
+                        <button class="btn-hapus" onclick="deleteCart(${item.idstok})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `;
@@ -517,6 +517,7 @@ function renderCart(cart){
     document.getElementById('totalItem').textContent = totalItem;
     document.getElementById('totalHarga').textContent = 'Rp ' + totalHarga.toLocaleString();
 }
+
 /* ================= CHANGE TANGGAL ================= */
 document.addEventListener('change',function(e){
     if(e.target.id === 'cartTanggalSewa' || e.target.id === 'cartTanggalSelesai'){
@@ -598,7 +599,7 @@ function openModal(el) {
     });
 
     document.getElementById('modalNama').innerText = nama;
-    document.getElementById('modalHarga').innerText = "Rp " + Number(harga).toLocaleString();
+    document.getElementById('modalHarga').innerText = "Rp " + Number(harga).toLocaleString('id-ID');
     document.getElementById('modalGambar').src = gambar;
     document.getElementById('modalIsi').innerHTML = html;
 

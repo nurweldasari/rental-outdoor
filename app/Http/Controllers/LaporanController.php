@@ -25,22 +25,25 @@ class LaporanController extends Controller
         // MODE DETAIL → pakai blade laporan (yang ada tabel)
         $cabang = Cabang::findOrFail($request->cabang);
 
-        $penyewaan = Penyewaan::where('cabang_idcabang', $cabang->idcabang)
-    ->where('status_penyewaan', 'selesai') // 🔥 INI YANG KURANG
-    ->when($request->bulan, function ($q) use ($request) {
-        $q->whereMonth('tanggal_sewa', date('m', strtotime($request->bulan)))
-          ->whereYear('tanggal_sewa', date('Y', strtotime($request->bulan)));
-    })
-    ->get();
+       $penyewaan = Penyewaan::with([
+    'itemPenyewaan.produk',
+    'itemPenyewaan.paket.detail.stokCabang.produk'
+])
+->where('cabang_idcabang', $cabang->idcabang)
+->where('status_penyewaan', 'selesai')
+->when($request->bulan, function ($q) use ($request) {
+    $q->whereMonth('tanggal_sewa', date('m', strtotime($request->bulan)))
+      ->whereYear('tanggal_sewa', date('Y', strtotime($request->bulan)));
+})
+->get();
 
         $totalPendapatan = $penyewaan->sum('total');
 
         return view('laporan', compact(
-            'penyewaan',
-            'totalPendapatan',
-            'itemPenyewaan.paket.detail.stokCabang.produk',
-            'cabang'
-        ));
+    'penyewaan',
+    'totalPendapatan',
+    'cabang'
+));
     }
 
     // ================= ADMIN CABANG =================

@@ -63,6 +63,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/dashboard_cabang', [DashboardController::class, 'dashboardCabang'])
     ->middleware('auth');
 
+Route::get('/dashboard_pusat', [DashboardController::class, 'dashboardPusat'])
+    ->middleware('auth');
+
 // klik card cabang
 Route::get('/pilih-cabang/{id}', 
     [KatalogController::class, 'pilihCabang']
@@ -86,18 +89,23 @@ Route::get('/katalog-pusat',
     [KatalogController::class, 'katalogPusat']
 )->name('katalog_pusat');
 
-// tambah ke keranjang
-// routes/web.php
+//keranjang cabang
 Route::post('/cart/add', [CartController::class, 'add']);
 Route::post('/cart/update', [CartController::class, 'update']);
 Route::post('/cart/delete', [CartController::class, 'delete']);
 
 Route::post('/cart/add-paket', [CartController::class, 'addPaket']);
+Route::post('/cart/update-paket', [CartController::class, 'updatePaket']);
 Route::post('/cart/delete-paket', [CartController::class, 'deletePaket']);
 
+//keranjang pusat
 Route::post('/cart/add-pusat', [CartController::class, 'addPusat']);
 Route::post('/cart/update-pusat', [CartController::class, 'updatePusat']);
 Route::post('/cart/delete-pusat', [CartController::class, 'deletePusat']);
+
+Route::post('/cart/add-paket-pusat', [CartController::class, 'addPaketPusat']);
+Route::post('/cart/update-paket-pusat', [CartController::class, 'updatePaketPusat']);
+Route::post('/cart/delete-paket-pusat', [CartController::class, 'deletePaketPusat']);
 
 Route::post('/penyewaan/store', [PenyewaanController::class, 'store'])
     ->name('penyewaan.store');
@@ -202,7 +210,7 @@ Route::post('/penyewaan_pusat/{id}/cancel',
 Route::get('/penyewaan_pusat/{id}/upload', [PenyewaanController::class, 'uploadPusat'])->name('penyewaan_pusat.upload_pembayaran');
 Route::post('/penyewaan_pusat/{id}/upload', [PenyewaanController::class, 'uploadBuktiBayarPusat'])->name('penyewaan_pusat.upload_bukti');
 Route::get('/penyewaan_pusat/{id}', [PenyewaanController::class, 'detailPenyewaPusat'])
-    ->name('penyewaan.detail');
+    ->name('penyewaan_pusat.detail');
 
 Route::middleware('auth')->group(function () {
 
@@ -456,3 +464,12 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::get('/paket_cabang', [PaketController::class, 'create'])->name('paket_cabang');
 Route::post('/paket/store', [PaketController::class, 'store'])->name('paket.store');
+Route::get('/paket/{id}/edit', [PaketController::class, 'edit'])->name('paket.edit');
+Route::put('/paket/{id}', [PaketController::class, 'update'])->name('paket.update');
+Route::delete('/paket/{id}', [PaketController::class, 'destroy'])->name('paket.destroy');
+
+Route::get('/paket_pusat', [PaketController::class, 'createPusat'])->name('paket_pusat');
+Route::post('/paket_pusat/store', [PaketController::class, 'storePusat'])->name('paket_pusat.store');
+Route::get('/paket_pusat/{id}/edit', [PaketController::class, 'editPusat'])->name('paket_pusat.edit');
+Route::put('/paket_pusat/{id}', [PaketController::class, 'updatePusat'])->name('paket_pusat.update');
+Route::delete('/paket_pusat/{id}', [PaketController::class, 'destroyPusat'])->name('paket_pusat.destroy');

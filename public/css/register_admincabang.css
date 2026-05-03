@@ -11,132 +11,153 @@ body{
     overflow:hidden;
 }
 
-/* ===== GAMBAR KIRI (SAMA LOGIN) ===== */
+/* LEFT */
 .left-image{
     width:50%;
+    height:100vh;
     background:url('../assets/images/login.png') no-repeat center top;
     background-size:cover;
 }
 
-/* ===== KANAN ===== */
+/* RIGHT */
 .container{
     width:50%;
+    height:100vh;
+    overflow-y:auto;
     display:flex;
     justify-content:center;
-    align-items:center;
+    align-items:flex-start;
     background:#fff;
 }
 
-/* ===== FORM (SCROLL) ===== */
+/* FORM */
 .register-box{
-    width:420px;
-    height:90vh;
-    overflow-y:auto;
-    padding-right:10px;
-
-    scrollbar-width:none;
-}
-.register-box::-webkit-scrollbar{
-    display:none;
+    width:550px; 
+    padding:40px 0px;
+    text-align:center;
 }
 
+/* TITLE */
 .register-box h2{
     color:#c86b00;
     margin-bottom:15px;
-    text-align:center;
 }
 
 .logo{
     width:130px;
-    display:block;
     margin:10px auto 20px;
+    display:block;
 }
 
-/* ===== INPUT ===== */
+/* INPUT */
 .input-group{
     position:relative;
     margin-bottom:14px;
+    width:100%;
 }
 
 .input-group input,
 .input-group textarea{
     width:100%;
-    padding:12px 40px;
-    border-radius:10px; /* DISAMAKAN */
+    padding:10px 35px; 
+    border-radius:10px;
     border:1px solid #ccc;
     font-size:13px;
-    outline:none;
 }
 
-.input-group textarea{
-    border-radius:10px;
-    resize:none;
-}
-
-.input-group i{
+/* ICON KIRI */
+.icon-left{
     position:absolute;
+    left:15px;
     top:50%;
     transform:translateY(-50%);
-    left:15px;
     color:#999;
 }
 
-/* ===== ROW ADMIN (TETAP) ===== */
+/* TEXTAREA FIX */
+.input-group textarea{
+    resize:none;
+    height:48px;
+}
+
+/* ICON KHUSUS TEXTAREA */
+.textarea-group .icon-left{
+    top:14px;
+    transform:none;
+}
+
+/* ROW FIX */
 .row{
     display:flex;
-    gap:10px;
+    gap:12px;
+    width:100%;
 }
 
-/* ===== UPLOAD ===== */
+.row .input-group{
+    flex:1;
+    min-width:0; 
+}
+
+/* PASSWORD */
+.password-group input{
+    padding-right:45px;
+}
+
+/* ICON MATA */
+.toggle-password{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#999;
+}
+input[type="password"]::-ms-reveal {
+    display: none;
+}
 /* UPLOAD */
-        .upload-box {
-            border: 1px dashed #c86b00;
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .upload-btn {
-            display: inline-block;
-            padding: 6px 14px;
-            background-color: #c86b00;
-            color: #fff;
-            border-radius: 20px;
-            font-size: 11px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        .upload-area {
-            border: 1px dashed #f0b57a;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            color: #999;
-            word-break: break-all;
-        }
-
-        .upload-area i {
-            display: block;
-            font-size: 20px;
-            color: #c86b00;
-            margin-bottom: 5px;
-        }
-
-.file-name{
-    margin-top:6px;
-    font-size:12px;
-    color:#c86b00;
-    font-style:italic;
+.upload-box{
+    border:1px solid #ccc;        
+    border-radius:10px;           
+    padding:14px;
+    margin-bottom:16px;
+    text-align:center;
+    background:#fff;
 }
 
-/* ===== BUTTON ===== */
+.upload-btn{
+    padding:6px 14px;
+    background:#c86b00;
+    color:#fff;
+    border-radius:20px;
+    font-size:11px;
+    cursor:pointer;
+    display:inline-block;
+    margin-bottom:8px;
+}
+
+.upload-area{
+    border:1px dashed #c86b00;    
+    background:#FFF7ED;           
+    padding:14px;
+    border-radius:10px;
+    font-size:12px;
+    color:#999;
+}
+
+.upload-area i{
+    display:block;
+    font-size:20px;
+    color:#c86b00;
+    margin-bottom:5px;
+}
+
+/* BUTTON */
 .btn-register{
     width:100%;
     padding:12px;
-    border-radius:10px;
     border:none;
+    border-radius:10px;
     background:#c86b00;
     color:#fff;
     font-size:15px;
@@ -147,19 +168,22 @@ body{
     background:#a85700;
 }
 
+/* LOGIN LINK */
 .login-link{
+    text-align:center;
     margin-top:15px;
     font-size:13px;
-    text-align:center;
 }
 
 .login-link a{
     color:#c86b00;
-    text-decoration:none;
     font-weight:500;
+    text-decoration:none;
 }
 
+/* RESPONSIVE */
 @media(max-width:768px){
     .left-image{display:none;}
     .container{width:100%;}
+    .register-box{width:100%;}
 }

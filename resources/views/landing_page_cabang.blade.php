@@ -58,10 +58,10 @@
                 <p>Perlengkapan Dari Owner</p>
             </div>
 
-<div class="item">
-<i class="fa-solid fa-copyright"></i>
-<p>Brand Siap Pakai</p>
-</div>
+            <div class="box">
+                <i class="fa-solid fa-copyright"></i>
+                <p>Brand Siap Pakai</p>
+            </div>
 
             <div class="box">
                 <i class="fa-solid fa-sack-dollar"></i>

@@ -113,12 +113,28 @@
 
             <div class="produk-list">
                 @foreach($data->itemPenyewaan as $item)
-                    {{ $loop->iteration }}.
-                    {{ $item->produk->nama_produk }}
-                    ({{ $item->qty }}) <br>
-                @endforeach
-            </div>
 
+    {{-- ================= PRODUK ================= --}}
+    @if($item->type === 'produk' && $item->produk)
+        {{ $loop->iteration }}.
+        {{ $item->produk->nama_produk }}
+        ({{ $item->qty }}) <br>
+
+    {{-- ================= PAKET ================= --}}
+    @elseif($item->type === 'paket' && $item->paket)
+        {{ $loop->iteration }}.
+        <strong>{{ $item->paket->nama_paket }}</strong>
+({{ $item->qty }}) <br>
+
+<small style="margin-left:10px;">
+@foreach($item->paket->detail as $detail)
+    {{ $detail->produk->nama_produk ?? 'Produk tidak ditemukan' }} ({{ $detail->qty }}) |
+@endforeach
+</small>
+    @endif
+
+@endforeach
+            </div>
             <div>
                 Rp {{ number_format($data->total,0,',','.') }}
             </div>

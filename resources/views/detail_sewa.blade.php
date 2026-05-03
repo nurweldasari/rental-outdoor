@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    $active = 'penyewaan';
+@endphp
+
 @section('title','Detail Penyewaan')
 
 @push('styles')

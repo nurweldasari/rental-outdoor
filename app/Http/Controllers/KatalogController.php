@@ -114,10 +114,14 @@ public function katalogPusat(Request $request)
             $q->where('jenis_skala', $request->skala);
         })
 
+        
         ->paginate(8); // pakai paginate biar rapi
 
     $kategoriList = Kategori::all();
+    $paketList = Paket::with('detail.produk')
+    ->whereNull('cabang_id')
+    ->get();
 
-    return view('katalog_pusat', compact('produkList','kategoriList'));
+    return view('katalog_pusat', compact('produkList','kategoriList', 'paketList'));
 }
 }

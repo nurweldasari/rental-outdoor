@@ -107,7 +107,25 @@
                 @foreach($penyewaan->itemPenyewaan as $item)
                 <tr>
                     <td>{{ $no++ }}</td>
-                    <td>{{ $item->produk->nama_produk }}</td>
+                    <td>
+                        {{-- ================= PRODUK ================= --}}
+                        @if($item->type === 'produk')
+                            {{ optional($item->produk)->nama_produk }}
+
+                        {{-- ================= PAKET ================= --}}
+                        @elseif($item->type === 'paket')
+
+                            {{ optional($item->paket)->nama_paket ?? 'Paket tidak ditemukan' }}
+
+                            <div style="font-size:12px;color:#666;">
+                                @foreach(optional($item->paket)->detail ?? [] as $d)
+                                    • {{ optional($d->produk)->nama_produk ?? 'Produk hilang' }}
+                                    ({{ $d->qty }}) <br>
+                                @endforeach
+                            </div>
+
+                        @endif
+                    </td>
                     <td>{{ $item->qty }}</td>
                     <td>{{ $item->produk->jenis_skala ?? '-' }}</td>
                     <td>

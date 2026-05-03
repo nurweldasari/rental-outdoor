@@ -27,22 +27,31 @@
     <ul>
 
         {{-- HALAMAN LANDING PENYEWA --}}
-        @if (Route::currentRouteName() == 'landing_penyewa')
+        @if (request()->routeIs('landing_penyewa'))
 
-            <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Home</a></li>
+            <li>
+                <a href="{{ route('landing_penyewa') }}" 
+                class="{{ request()->routeIs('landing_penyewa') ? 'active' : '' }}">Home
+                </a>
+            </li>
             <li><a href="#profil">Profil</a></li>
             <li><a href="#syarat">Syarat</a></li>
             <li><a href="#cabang">Cabang</a></li>
-            <li><a href="/landing_page_cabang"
-                   class="{{ request()->is('landing_page_cabang') ? 'active' : '' }}">
-                   Franchise
+            <li>
+                <a href="{{ route('landing_page_cabang') }}" 
+                class="{{ request()->routeIs('landing_page_cabang') ? 'active' : '' }}">
+                Franchise
                 </a>
             </li>
 
         {{-- HALAMAN LANDING CABANG (FRANCHISE) --}}
-        @elseif (Route::currentRouteName() == 'landing_page_cabang')
+        @elseif (request()->routeIs('landing_page_cabang'))
 
-            <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Home</a></li>
+            <li>
+                <a href="{{ route('landing_penyewa') }}" 
+                class="{{ request()->routeIs('landing_penyewa') ? 'active' : '' }}">Home
+                </a>
+            </li>
             <li><a href="#gambaran">Gambaran</a></li>
             <li><a href="#keuntungan">Keuntungan</a></li>
             <li><a href="#section">Alur</a></li>
@@ -68,8 +77,10 @@
             <div class="footer-logo">
                 <img src="{{ asset('assets/images/logo.png') }}" class="footer-logo-img">
             <p class="footer-address">
-                Dusun Krajan I, RT 07/RW 01, Desa Tegalsari, <br>
-                Kecamatan Tegalsari, Kabupaten Banyuwangi. 
+                <a href="https://maps.app.goo.gl/A9TsYNrXUiX7kkAi8" target="_blank">
+                    Dusun Krajan I, RT 07/RW 01, Desa Tegalsari, <br>
+                    Kecamatan Tegalsari, Kabupaten Banyuwangi.
+                </a>
             </p>
             </div>
         </div>
@@ -112,5 +123,30 @@
 
     </div>
 </footer>
+<script>
+const sections = document.querySelectorAll("section[id]");
+const navLinks = document.querySelectorAll(".nav-right ul li a");
+
+window.addEventListener("scroll", () => {
+    let current = "";
+
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop - 150;
+        const sectionHeight = section.offsetHeight;
+
+        if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+            current = section.getAttribute("id");
+        }
+    });
+
+    navLinks.forEach(a => {
+        a.classList.remove("active");
+
+        if (a.getAttribute("href") === "#" + current) {
+            a.classList.add("active");
+        }
+    });
+});
+</script>
 </body>
 </html>

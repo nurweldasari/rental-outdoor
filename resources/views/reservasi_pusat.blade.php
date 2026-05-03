@@ -74,6 +74,48 @@
         {{-- ================= KATALOG ================= --}}
         <div class="katalog-area">
             <div class="grid-produk">
+               {{-- ================= PAKET ================= --}}
+@foreach($paketList as $paket)
+
+    @php
+        $gambar = $paket->gambar_paket
+            ? asset('paket/'.$paket->gambar_paket)
+            : asset('images/placeholder.png');
+    @endphp
+
+    <div class="card-produk paket">
+
+        <span class="badge-kategori">Paket</span>
+
+        <img src="{{ $gambar }}" class="img-produk">
+
+        <h4 class="nama-produk">{{ $paket->nama_paket }}</h4>
+
+        <p class="harga">
+            Rp {{ number_format($paket->harga_paket,0,',','.') }} / hari
+        </p>
+<div class="aksi-wrapper">
+        <button class="btn-detail"
+            onclick="openModal(this)"
+            data-nama="{{ $paket->nama_paket }}"
+            data-harga="{{ $paket->harga_paket }}"
+            data-gambar="{{ $gambar }}"
+            data-detail="
+@foreach($paket->detail as $item)
+    {{ $item->produk->nama_produk ?? 'Produk tidak ditemukan' }} ({{ $item->qty }})|
+@endforeach
+">
+            Detail
+        </button>
+
+        <button class="btn-keranjang"
+            onclick="addPaketToCart({{ $paket->id }})">
+            <i class="fa-solid fa-cart-plus"></i>
+        </button>
+</div>
+    </div>
+
+@endforeach
                 @forelse($produkList as $pc)
                     @php
                         $produk = $pc;
@@ -158,7 +200,23 @@
         <button class="btn-konfirmasi">Simpan Reservasi</button>
     </div>
 </div>
+<div id="modalDetail" class="modal-paket">
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <img id="modalGambar" style="width:100%; border-radius:10px; margin-bottom:10px;">
+
+        <h3 id="modalNama"></h3>
+        <p id="modalHarga" style="font-weight:bold;"></p>
+
+        <div id="modalIsi" style="margin-top:10px;"></div>
+
+    </div>
+</div>
+
 @endsection
+
 @push('scripts')
 <script>
     document.querySelectorAll('#filterAll select').forEach(el=>{
@@ -190,7 +248,6 @@ function hitungDurasi(tglSewa, tglSelesai){
     return Math.max(1, selisih);
 }
 
-
 /* ================= CART AJAX ================= */
 function addToCart(idproduk){
     openKeranjang();
@@ -204,20 +261,18 @@ function addToCart(idproduk){
         },
         body:JSON.stringify({idproduk})
     })
-    .then(async r=>{
-        const data = await r.json();
-
-        if(!r.ok){
-            alert(data.error || 'Terjadi kesalahan');
-            return;
+    .then(r=>r.json())
+    .then(res=>{
+        if(res.error){
+            alert(res.error);
         }
 
-        cartCache = data;
+        cartCache = res.cart;
         renderCart(cartCache);
-    })
-    .catch(err=>console.error(err));
+    });
 }
-function updateCart(idproduk,qty){
+
+function updateCart(idproduk, qty){
     if(qty < 1) return deleteCart(idproduk);
 
     fetch('/cart/update-pusat',{
@@ -229,19 +284,17 @@ function updateCart(idproduk,qty){
         },
         body:JSON.stringify({idproduk,qty})
     })
-    .then(async r=>{
-        const data = await r.json();
-
-        if(!r.ok){
-            alert(data.error || 'Terjadi kesalahan');
-            return;
+    .then(r=>r.json())
+    .then(res=>{
+        if(res.error){
+            alert(res.error);
         }
 
-        cartCache = data;
+        cartCache = res.cart;
         renderCart(cartCache);
-    })
-    .catch(err=>console.error(err));
+    });
 }
+
 function deleteCart(idproduk){
     fetch('/cart/delete-pusat',{
         method:'POST',
@@ -252,21 +305,98 @@ function deleteCart(idproduk){
         },
         body:JSON.stringify({idproduk})
     })
-    .then(async r=>{
-        const data = await r.json();
+    .then(r=>r.json())
+    .then(res=>{
+        cartCache = res.cart;
+        renderCart(cartCache);
+    });
+}
 
-        if(!r.ok){
-            alert(data.error || 'Terjadi kesalahan');
+function addPaketToCart(paketId){
+    openKeranjang();
+
+    fetch('/cart/add-paket-pusat',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Accept':'application/json',
+            'X-CSRF-TOKEN':'{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ paket_id: paketId })
+    })
+    .then(r => r.json())
+    .then(res => {
+  console.log('UPDATE RES:', res);
+    // 🔥 HANDLE ERROR + AUTO FIX
+    if(res.error){
+        alert(res.error);
+
+        // 🔥 kalau backend kasih max → paksa ke max
+        if(res.max !== undefined){
+    cartCache = res.cart;
+    renderCart(cartCache);
+}
+
+        return;
+    }
+
+    if(!res.cart){
+        console.log('RESPONSE ANEH:', res);
+        return;
+    }
+
+    cartCache = res.cart;
+    renderCart(cartCache);
+});
+}
+function updatePaket(paketId, qty){
+    if(qty < 1) return deletePaket(paketId);
+
+    fetch('/cart/update-paket-pusat',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Accept':'application/json',
+            'X-CSRF-TOKEN':'{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            paket_id: paketId,
+            qty: qty
+        })
+    })
+    .then(r => r.json())
+    .then(res => {
+
+        if(res.error){
+            alert(res.error);
             return;
         }
 
-        cartCache = data;
-        renderCart(cartCache);
-    })
-    .catch(err=>console.error(err));
-}
+        if(!res.cart){
+            console.log(res);
+            return;
+        }
 
-/* ================= RENDER CART ================= */
+        cartCache = res.cart;
+        renderCart(cartCache);
+    });
+}
+function deletePaket(paketId){
+    fetch('/cart/delete-paket-pusat',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Accept':'application/json',
+            'X-CSRF-TOKEN':'{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ paket_id: paketId })
+    })
+    .then(r=>r.json())
+    .then(res=>{
+        cartCache = res.cart;
+        renderCart(cartCache);
+    });
+}
 function renderCart(cart){
     const body  = document.getElementById('cartBody');
     const items = document.getElementById('formItemsContainer');
@@ -281,49 +411,141 @@ function renderCart(cart){
 
     const tglSewa    = document.getElementById('cartTanggalSewa')?.value || '';
     const tglSelesai = document.getElementById('cartTanggalSelesai')?.value || '';
-
     const durasi = hitungDurasi(tglSewa, tglSelesai);
 
-    let html='', inputs='', totalItem=0, totalHarga=0;
+    let html = '';
+    let inputs = '';
 
-    Object.values(cart).forEach(item=>{
-        totalItem += item.qty;
+    let totalItem = 0;
+    let totalHarga = 0;
+    let usedStock = {};
 
-        let subtotal = 0;
-        let subtotalText = '<em>Pilih tanggal sewa</em>';
+Object.values(cart).forEach(item => {
+    if(item.type === 'paket'){
+        Object.values(item.items || {}).forEach(i => {
+            if(!usedStock[i.idproduk]){
+                usedStock[i.idproduk] = 0;
+            }
+            usedStock[i.idproduk] += i.qty * item.qty;
+        });
+    }
+});
 
-        if(durasi > 0){
-            subtotal = item.qty * item.harga * durasi;
-            totalHarga += subtotal;
-            subtotalText = `${item.qty} × ${durasi} hari = <strong>Rp ${subtotal.toLocaleString()}</strong>`;
+// 🔥 LOOP UTAMA
+Object.values(cart).forEach(item => {
+
+    const qty   = Number(item.qty) || 1;
+    const harga = Number(item.harga) || 0;
+    const max   = item.max ?? null;
+        // ================= PAKET =================
+        if(item.type === 'paket'){
+    
+            totalItem += qty;
+
+            let subtotal = 0;
+            let subtotalText = '<em>Pilih tanggal</em>';
+
+            if(durasi > 0){
+                subtotal = harga * qty * durasi;
+                totalHarga += subtotal;
+
+                subtotalText = `${qty} paket × ${durasi} hari = <b>Rp ${subtotal.toLocaleString()}</b>`;
+            }
+
+            const disablePlus = max !== null && qty >= max;
+
+            html += `
+                <div class="item-keranjang">
+                    <div class="item-info">
+
+                        <span class="badge-paket">Paket</span>
+
+                        <strong>${item.nama}</strong>
+
+                        <p>Rp ${harga.toLocaleString()} / paket</p>
+
+                        <small>${subtotalText}</small>
+
+                        <div class="paket-detail">
+                            ${Object.values(item.items || {}).map(i =>
+                                `<div class="detail-line">• ${i.nama} (${i.qty})</div>`
+                            ).join('')}
+                        </div>
+
+                    </div>
+
+                    <div class="item-aksi">
+                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})"><i class="fa-solid fa-minus"></i></button>
+                        <span class="qty">${qty}</span>
+                        <button onclick="updatePaket(${item.paket_id}, ${qty + 1})"
+                        ${max !== null && qty >= max ? 'disabled' : ''}><i class="fa-solid fa-plus"></i></button>
+                         <button class="btn-hapus" onclick="deletePaket(${item.paket_id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+
+            inputs += `
+                <input type="hidden" name="produk[]" value="${item.paket_id}">
+                <input type="hidden" name="qty[]" value="${qty}">
+                <input type="hidden" name="type[]" value="paket">
+            `;
         }
 
-        html += `
-        <div class="item-keranjang">
-            <div class="item-info">
-                <strong>${item.nama}</strong>
-                <p>Rp ${item.harga.toLocaleString()} / hari</p>
-                <small>${subtotalText}</small>
-            </div>
-            <div class="item-aksi">
-                <button onclick="updateCart(${item.idproduk},${item.qty-1})"><i class="fa-solid fa-minus"></i></button>
-                <span class="qty">${item.qty}</span>
-                <button onclick="updateCart(${item.idproduk},${item.qty+1})"><i class="fa-solid fa-plus"></i></button>
-                <button class="btn-hapus" onclick="deleteCart(${item.idproduk})"><i class="fa-solid fa-trash"></i></button>
-            </div>
-        </div>`;
+        // ================= PRODUK =================
+        else {
 
-        inputs += `
-        <input type="hidden" name="produk[]" value="${item.idproduk}">
-        <input type="hidden" name="qty[]" value="${item.qty}">`;
+            totalItem += qty;
+
+            let subtotal = 0;
+            let subtotalText = '<em>Pilih tanggal</em>';
+
+            if(durasi > 0){
+                subtotal = qty * harga * durasi;
+                totalHarga += subtotal;
+
+                subtotalText = `${qty} × ${durasi} hari = <b>Rp ${subtotal.toLocaleString()}</b>`;
+            }
+
+            html += `
+                <div class="item-keranjang">
+                    <div class="item-info">
+
+                        <strong>${item.nama}</strong>
+
+                        <p>Rp ${harga.toLocaleString()} / hari</p>
+
+                        <small>${subtotalText}</small>
+
+                    </div>
+
+                    <div class="item-aksi">
+                        <button onclick="updateCart(${item.idproduk},${qty-1})"><i class="fa-solid fa-minus"></i></button>
+                        <span class="qty">${qty}</span>
+                        <button 
+                            onclick="updateCart(${item.idproduk},${qty+1})"
+                            ${max !== null && qty >= max ? 'disabled' : ''}
+                        ><i class="fa-solid fa-plus"></i></button>
+                        <button class="btn-hapus" onclick="deleteCart(${item.idproduk})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+
+            inputs += `
+                <input type="hidden" name="produk[]" value="${item.idproduk}">
+                <input type="hidden" name="qty[]" value="${qty}">
+                <input type="hidden" name="type[]" value="produk">
+            `;
+        }
     });
 
     body.innerHTML = `
         ${html}
+
         <hr>
+
         <div class="ringkasan">
             <p>Total Item <span>${totalItem}</span></p>
-            <p>Durasi <span>${durasi > 0 ? durasi+' hari' : '-'}</span></p>
+            <p>Durasi <span>${durasi > 0 ? durasi + ' hari' : '-'}</span></p>
             <p>Total <strong>Rp ${totalHarga.toLocaleString()}</strong></p>
         </div>
 
@@ -338,14 +560,16 @@ function renderCart(cart){
             </div>
         </div>
 
-        <button class="btn-pesan" ${durasi === 0 ? 'disabled' : ''}>Pesan Sekarang</button>
+        <button class="btn-pesan" ${durasi === 0 ? 'disabled' : ''}>
+            Pesan Sekarang
+        </button>
     `;
 
     items.innerHTML = inputs;
+
     document.getElementById('totalItem').textContent = totalItem;
     document.getElementById('totalHarga').textContent = 'Rp ' + totalHarga.toLocaleString();
 }
-
 /* ================= CHANGE TANGGAL ================= */
 document.addEventListener('change',function(e){
     if(e.target.id === 'cartTanggalSewa' || e.target.id === 'cartTanggalSelesai'){
@@ -395,11 +619,11 @@ document.addEventListener('DOMContentLoaded', function(){
     metodeSelect.addEventListener('change', function(){
 
         if(this.value === 'cash'){
-    catatan.textContent = 'Pembayaran dilakukan langsung di toko';
+            catatan.textContent = 'Bayar ke toko (batas waktu 2 jam)';
             info.style.display = 'none';
         }
         else if(this.value === 'transfer'){
-            catatan.textContent = 'Transfer ke rekening ';
+            catatan.textContent = 'Transfer ke rekening (batas waktu 2 jam)';
             info.style.display = 'block';
         }
         else{
@@ -410,5 +634,39 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
 });
+
+function openModal(el) {
+    let nama = el.getAttribute('data-nama');
+    let harga = el.getAttribute('data-harga');
+    let gambar = el.getAttribute('data-gambar');
+    let detail = el.getAttribute('data-detail');
+
+    let list = detail.split('|');
+
+    let html = '';
+    list.forEach(item => {
+        if (item.trim() !== '') {
+            html += `<div>• ${item}</div>`;
+        }
+    });
+
+    document.getElementById('modalNama').innerText = nama;
+    document.getElementById('modalHarga').innerText = "Rp " + Number(harga).toLocaleString('id-ID');
+    document.getElementById('modalGambar').src = gambar;
+    document.getElementById('modalIsi').innerHTML = html;
+
+    document.getElementById('modalDetail').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('modalDetail').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    let modal = document.getElementById('modalDetail');
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+}
 </script>
 @endpush
