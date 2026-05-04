@@ -206,9 +206,32 @@
 </div>
 {{-- PAGINATION --}}
     @if(method_exists($produk, 'links'))
-        <div class="pagination">
-            {{ $produk->withQueryString()->links() }}
-        </div>
+         <div class="pagination-simple">
+
+    {{-- Prev --}}
+    @if ($produk->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $produk->previousPageUrl() }}" class="nav">«</a>
+    @endif
+
+    {{-- Nomor halaman --}}
+    @foreach ($produk->getUrlRange(1, $produk->lastPage()) as $page => $url)
+        @if ($page == $produk->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+    @endforeach
+
+    {{-- Next --}}
+    @if ($produk->hasMorePages())
+        <a href="{{ $produk->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+
+</div>
     @endif
 
 </div>

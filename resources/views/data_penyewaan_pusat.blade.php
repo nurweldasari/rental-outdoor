@@ -127,7 +127,7 @@
         Detail
     </a>
 </div>
-</div>
+
             </div>
         </div>
     @empty
@@ -158,8 +158,6 @@
         <span class="nav disabled">»</span>
     @endif
 </div>
-
-
-
+</div>
 </div>
 @endsection

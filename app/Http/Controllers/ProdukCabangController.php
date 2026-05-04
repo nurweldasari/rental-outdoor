@@ -49,7 +49,7 @@ class ProdukCabangController extends Controller
             );
         }
 
-        $produkList = $query->paginate(12);
+        $produkList = $query->paginate(10);
         $kategoriList = Kategori::all();
 
 

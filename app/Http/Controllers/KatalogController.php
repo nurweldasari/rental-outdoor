@@ -67,7 +67,7 @@ public function katalogCabang(Request $request)
             });
         })
 
-        ->paginate(8);
+        ->paginate(10);
 
     // kategori untuk filter
     $kategoriList = Kategori::all();
@@ -135,7 +135,7 @@ public function katalogPusat(Request $request)
         })
 
         
-        ->paginate(8); // pakai paginate biar rapi
+        ->paginate(10); // pakai paginate biar rapi
 
     $kategoriList = Kategori::all();
     $paketList = Paket::with('detail.produk')

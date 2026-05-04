@@ -622,7 +622,7 @@ public function createReservasi(Request $request, $id)
             });
         })
 
-        ->paginate(12)
+        ->paginate(10)
         ->appends($request->query()); // biar filter & search tetap
 
     // ===================== PAKET =====================
@@ -820,7 +820,7 @@ public function createReservasiPusat(Request $request, $id)
         $query->where('kategori_idkategori', $request->kategori);
     }
 
-    $produkList = $query->paginate(12)->withQueryString();
+    $produkList = $query->paginate(10)->withQueryString();
 
     // 🔥 FIX: hanya paket pusat
     $paketList = Paket::with('detail.produk')
