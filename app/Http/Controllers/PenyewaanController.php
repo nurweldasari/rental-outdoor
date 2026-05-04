@@ -555,7 +555,7 @@ public function cancel($id)
     }
 }
 
-public function createReservasi($id)
+public function createReservasi(Request $request, $id)
 {
     $user = Auth::user();
     $adminCabang = $user->adminCabang;
@@ -570,11 +570,30 @@ public function createReservasi($id)
 
     $kategoriList = Kategori::all();
 
+    // ===================== PRODUK =====================
     $produkList = StokCabang::with('produk.kategori')
         ->where('cabang_idcabang', $cabangId)
-        ->paginate(12);
+        ->where('is_active', 1)
+        ->where('jumlah', '>', 0)
 
-    // ✅ FIX BAGIAN INI
+        // 🔍 SEARCH
+        ->when($request->search, function ($q) use ($request) {
+            $q->whereHas('produk', function ($p) use ($request) {
+                $p->where('nama_produk', 'like', '%' . $request->search . '%');
+            });
+        })
+
+        // 📂 FILTER KATEGORI
+        ->when($request->kategori, function ($q) use ($request) {
+            $q->whereHas('produk', function ($p) use ($request) {
+                $p->where('kategori_idkategori', $request->kategori);
+            });
+        })
+
+        ->paginate(12)
+        ->appends($request->query()); // biar filter & search tetap
+
+    // ===================== PAKET =====================
     $paketList = Paket::with('detail.stokCabang.produk')
         ->where('cabang_id', $cabangId)
         ->whereDoesntHave('detail', function ($q) {
@@ -583,7 +602,7 @@ public function createReservasi($id)
                   ->orWhere('stok_cabang.is_active', 0);
             });
         })
-        ->get(); // 🔥 jangan lupa ini
+        ->get();
 
     return view('reservasi', compact(
         'penyewa',
