@@ -158,7 +158,7 @@
         <span class="nav disabled">»</span>
     @endif
 
-                </div>
+</div>
             @endif
         </div>
 
