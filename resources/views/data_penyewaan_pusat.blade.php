@@ -127,7 +127,7 @@
         Detail
     </a>
 </div>
-</div>
+
             </div>
         </div>
     @empty
@@ -158,8 +158,19 @@
         <span class="nav disabled">»</span>
     @endif
 </div>
-
-
-
+</div>
 </div>
 @endsection
+@push('scripts')
+<script>
+let timeout = null;
+
+document.getElementById('searchInput').addEventListener('keyup', function () {
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+        document.getElementById('filterForm').submit();
+    }, 500); // delay biar ga spam
+});
+</script>
+@endpush

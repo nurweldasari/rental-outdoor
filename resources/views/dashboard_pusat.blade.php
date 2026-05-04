@@ -14,7 +14,7 @@
     <option value="2024" {{ ($tahun ?? '') == 2024 ? 'selected' : '' }}>2024</option>
     <option value="2025" {{ ($tahun ?? '') == 2025 ? 'selected' : '' }}>2025</option>
   </select>
-</div>
+</form>
 
 <section class="cards">
 
@@ -46,16 +46,13 @@
 
 <section class="dashboard-bottom">
 
-  <!-- LEFT -->
   <div class="pendapatan-box">
     <h3>Pendapatan</h3>
-
     <div class="chart-wrapper">
       <canvas id="pendapatanChart"></canvas>
     </div>
   </div>
 
-  <!-- RIGHT -->
   <div class="sewa-box">
 
     <div class="sewa-header">
@@ -68,26 +65,24 @@
     </div>
 
     <div class="legend">
-  @forelse($alatPersen ?? [] as $i => $a)
-    <div class="item">
-      <div class="left">
-        <span class="dot" style="background: {{ ['#8b3f00','#d97706','#fbbf24'][$i] ?? '#ccc' }}"></span>
-        <span class="nama">{{ $a['nama'] }}</span>
-      </div>
-      <span class="persen">{{ $a['persen'] }}%</span>
+      @forelse($alatPersen ?? [] as $i => $a)
+        <div class="item">
+          <div class="left">
+            <span class="dot" style="background: {{ ['#8b3f00','#d97706','#fbbf24'][$i] ?? '#ccc' }}"></span>
+            <span class="nama">{{ $a['nama'] }}</span>
+          </div>
+          <span class="persen">{{ $a['persen'] }}%</span>
+        </div>
+      @empty
+        <p style="text-align:center;">Belum ada data</p>
+      @endforelse
     </div>
-  @empty
-    <p style="text-align:center;">Belum ada data</p>
-  @endforelse
-</div>
 
   </div>
 
 </section>
 
 @endsection
-
-
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -129,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ===== DONUT CHART (SUDAH DIPERBAIKI) ===== */
+    /* ===== DONUT CHART ===== */
     const donut = document.getElementById('alatChart');
 
     if (donut) {
@@ -143,13 +138,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 datasets: [{
                     data: dataAlat.map(a => a.persen),
                     backgroundColor: colors,
-                    borderColor: '#e9d4c3', // gap antar slice
+                    borderColor: '#e9d4c3',
                     borderWidth: 6,
                     hoverOffset: 4
                 }]
             },
             options: {
-                cutout: '72%', // bikin ring tipis seperti desain
+                cutout: '72%',
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
