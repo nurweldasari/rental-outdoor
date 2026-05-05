@@ -10,6 +10,8 @@ use PHPUnit\Framework\Attributes\Test;
 use App\Http\Controllers\KatalogController;
 use App\Models\StokCabang;
 use App\Models\Kategori;
+use Illuminate\Http\Request;
+
 
 class KatalogCabangTest extends TestCase
 {
@@ -67,26 +69,27 @@ class KatalogCabangTest extends TestCase
 
     // =========================
     #[Test]
-    public function tc_kat_01_menampilkan_katalog()
-    {
-        $this->seedRelasi();
+public function tc_kat_01_menampilkan_katalog()
+{
+    $this->seedRelasi();
 
-        Session::start();
-        session(['cabang_id' => 1]);
+    Session::start();
+    session(['cabang_id' => 1]);
 
-        StokCabang::create([
-            'cabang_idcabang' => 1,
-            'produk_idproduk' => 1,
-            'jumlah' => 5,
-            'is_active' => 1
-        ]);
+    StokCabang::create([
+        'cabang_idcabang' => 1,
+        'produk_idproduk' => 1,
+        'jumlah' => 5,
+        'is_active' => 1
+    ]);
 
-        $controller = new KatalogController();
-        $response = $controller->katalogCabang();
+    $controller = new KatalogController();
 
-        $this->assertNotNull($response);
-    }
+    $request = new Request(); // ✅ TAMBAH INI
+    $response = $controller->katalogCabang($request); // ✅ FIX
 
+    $this->assertNotNull($response);
+}
     // =========================
     #[Test]
     public function tc_kat_02_informasi_produk()

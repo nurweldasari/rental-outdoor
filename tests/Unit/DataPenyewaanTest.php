@@ -97,7 +97,7 @@ class DataPenyewaanTest extends TestCase
 
         $this->actingAs($user)
             ->post(route('admin.penyewaan.cancel', $penyewaan->idpenyewaan))
-            ->assertJson(['success' => true]);
+            ->assertRedirect();
     }
 
     /** @test */

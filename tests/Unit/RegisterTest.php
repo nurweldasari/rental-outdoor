@@ -42,31 +42,23 @@ public function tc_reg_01_registrasi_berhasil()
     ]);
 
     $request->files->set('gambar_identitas',
-        UploadedFile::fake()->create('ktp.jpg', 100)
+        UploadedFile::fake()->image('ktp.jpg')
     );
 
-    // ✅ MOCK DB
-    DB::shouldReceive('beginTransaction')->once();
-    DB::shouldReceive('commit')->once();
-    DB::shouldReceive('rollback')->never(); 
-
-    // ✅ MOCK MODEL
-    $mockUser = Mockery::mock('alias:App\Models\User');
-    $mockUser->shouldReceive('create')
-        ->once()
-        ->andReturn((object)['idusers' => 1]);
-
-    $mockPenyewa = Mockery::mock('alias:App\Models\Penyewa');
-    $mockPenyewa->shouldReceive('create')
-        ->once()
-        ->andReturn(true);
+    DB::beginTransaction();
 
     $controller = new \App\Http\Controllers\AuthController();
     $response = $controller->registerPenyewa($request);
 
-    $this->assertEquals(302, $response->getStatusCode());
-}
+    DB::commit();
 
+    $this->assertEquals(302, $response->getStatusCode());
+
+    // ✔️ cek database bukan mock
+    $this->assertDatabaseHas('users', [
+        'username' => 'user'
+    ]);
+}
     #[Test]
     public function tc_reg_02_username_kosong()
     {

@@ -75,6 +75,7 @@ public function katalogCabang(Request $request)
     $rekening = Rekening::where('cabang_idcabang', $cabangId)->first();
 
     $paketList = Paket::with('detail.stokCabang.produk')
+    ->where('is_active', 1)
         ->where('cabang_id', $cabangId)
         ->whereDoesntHave('detail', function ($q) {
             $q->whereHas('stokCabang', function ($s) {
@@ -139,6 +140,7 @@ public function katalogPusat(Request $request)
 
     $kategoriList = Kategori::all();
     $paketList = Paket::with('detail.produk')
+    ->where('is_active', 1)
     ->whereNull('cabang_id')
     ->get();
 

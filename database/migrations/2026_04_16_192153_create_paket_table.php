@@ -16,6 +16,7 @@ return new class extends Migration
     $table->string('nama_paket');
     $table->integer('harga_paket');
     $table->string('gambar_paket')->nullable();
+    $table->boolean('is_active')->default(true);
     
     // nullable = paket pusat
     $table->unsignedBigInteger('cabang_id')->nullable();

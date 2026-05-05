@@ -146,7 +146,6 @@
     border: 1.5px solid transparent; /* supaya ukuran sama */
      margin: 0 auto;
     justify-content: center;
-     transform: translateX(-30px);
      
 }
 
@@ -172,71 +171,79 @@
 }
 
 
-/* ===== MODAL (FIX JELEK 😄) ===== */
-.modal-custom {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.45);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+/*MODAL*/
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    padding:20px;
 }
 
-.modal-custom.active {
-    display: flex;
+.modal-box{
+    background:#fff;
+    width:620px;
+    max-width:95%;
+    border-radius:16px;
+    padding:24px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.15);
 }
 
-.modal-content {
-    background: #fff;
-    width: 380px;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0,0,0,.2);
-    animation: zoom .2s ease;
+/* MODAL HEADER*/
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:18px;
 }
 
-@keyframes zoom {
-    from {
-        transform: scale(.92);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+.modal-title h4{
+    font-size:16px;
+    font-weight:600;
+    margin:0;
 }
 
-.modal-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 15px;
-    font-weight: 600;
+.modal-admin{
+    font-size:13px;
+    color:#6b7280;
+    margin-top:4px;
 }
 
-.modal-close {
-    font-size: 22px;
-    cursor: pointer;
+.close{
+    cursor:pointer;
+    font-size:18px;
+    color:#000;
 }
 
-.modal-body {
-    padding: 18px 20px;
+/* MODAL TABLE */
+.modal-body{
+    margin-top:6px;
 }
 
-.modal-table {
-    width: 100%;
-    border-collapse: collapse;
+.modal-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
 }
 
-.modal-table th,
-.modal-table td {
-    padding: 10px 8px;
-    border-bottom: 1px solid #e5e7eb;
-    font-size: 14px;
+.modal-table thead{
+    background:#f3f4f6;
 }
+
+.modal-table th{
+    padding:10px;
+    font-weight:600;
+    text-align:left;
+}
+
+.modal-table td{
+    padding:10px;
+    border-bottom:1px solid #f1f1f1;
+}
+
 
 .pagination-simple {
     display: flex;
@@ -372,6 +379,59 @@
     .pagination-simple {
         flex-wrap: wrap;
         gap: 6px;
+    }
+    .modal {
+        padding: 10px; /* biar tidak mepet layar */
+        align-items: flex-start; /* modal mulai dari atas */
+        overflow-y: auto; /* kalau tinggi, bisa scroll */
+    }
+
+    .modal-box {
+        width: 100%;
+        max-width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        margin-top: 20px; /* kasih jarak dari atas */
+    }
+
+    /* HEADER */
+    .modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .close {
+        align-self: flex-end; /* tombol X ke kanan */
+        font-size: 20px;
+    }
+
+    /* TITLE */
+    .modal-title h4 {
+        font-size: 14px;
+    }
+
+    .modal-admin {
+        font-size: 12px;
+    }
+
+    /* TABLE */
+    .modal-table {
+        font-size: 12px;
+    }
+
+    .modal-table th,
+    .modal-table td {
+        padding: 8px;
+    }
+
+    /* 🔥 BIAR TABLE BISA SCROLL */
+    .modal-body {
+        overflow-x: auto;
+    }
+
+    .modal-table {
+        min-width: 500px; /* biar gak gepeng */
     }
 }
 

@@ -23,56 +23,88 @@
             <h2>Register</h2>
 
             <img src="assets/images/logo.png" class="logo-img">
+            
 
-            <form method="POST" action="{{ route('register.penyewa') }}" enctype="multipart/form-data">
-                @csrf
+           <form method="POST" action="{{ route('register.penyewa') }}" enctype="multipart/form-data">
+    @csrf
 
-                <div class="input-group">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" name="nama" placeholder="Nama Lengkap" required>
-                </div>
+    <!-- NAMA -->
+    <div class="input-group">
+        <i class="fa-solid fa-user"></i>
+        <input type="text"
+               name="nama"
+               placeholder="Nama Lengkap"
+               required
+               minlength="3"
+               maxlength="30"
+               pattern="[A-Za-z\s]+"
+               title="Nama 3-30 huruf, tanpa angka">
+    </div>
 
-                <div class="input-group">
-                    <i class="fa-solid fa-user-circle"></i>
-                    <input type="text" name="username" placeholder="Username" required>
-                </div>
+    <!-- USERNAME -->
+    <div class="input-group">
+        <i class="fa-solid fa-user-circle"></i>
+        <input type="text"
+               name="username"
+               placeholder="Username"
+               required>
+    </div>
 
-                <!-- PASSWORD — SAMA DENGAN LOGIN -->
-                 <div class="input-group">
-                    <i class="fa-solid fa-lock"></i>
+    <!-- PASSWORD -->
+    <div class="input-group">
+        <i class="fa-solid fa-lock"></i>
 
-                    <input type="password" name="password" placeholder="Password" id="password" required>
+        <input type="password"
+               name="password"
+               id="password"
+               placeholder="Password"
+               required
+               minlength="6"
+               title="Minimal 6 karakter">
 
-                    <!-- ICON MATA -->
-                    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
-                </div>
+        <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
+    </div>
 
-                <div class="input-group">
-                    <i class="fa-solid fa-phone"></i>
-                    <input type="text" name="no_telepon" placeholder="No. Telepon" required>
-                </div>
+    <!-- TELEPON -->
+    <div class="input-group">
+        <i class="fa-solid fa-phone"></i>
+        <input type="text"
+               name="no_telepon"
+               placeholder="No. Telepon"
+               required
+               pattern="[0-9]{10,15}"
+               title="Nomor harus 10-15 digit angka">
+    </div>
 
-                <div class="input-group textarea-group">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <textarea name="alamat" rows="2" placeholder="Alamat" required></textarea>
-                </div>
+    <!-- ALAMAT -->
+    <div class="input-group textarea-group">
+        <i class="fa-solid fa-location-dot"></i>
+        <textarea name="alamat"
+                  rows="2"
+                  placeholder="Alamat"
+                  required></textarea>
+    </div>
 
-                <!-- UPLOAD -->
-                <div class="upload-box">
-                    <label class="upload-btn">
-                        Upload Identitas
-                        <input type="file" name="gambar_identitas" id="gambar_identitas" hidden required
-                               accept=".jpg,.jpeg,.png">
-                    </label>
+    <!-- FILE -->
+    <div class="upload-box">
+        <label class="upload-btn">
+            Upload Identitas
+            <input type="file"
+                   name="gambar_identitas"
+                   id="gambar_identitas"
+                   hidden
+                   required
+                   accept=".jpg,.jpeg,.png">
+        </label>
 
-                    <div class="upload-area" id="file-name">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                        JPG / PNG max 2MB
-                    </div>
-                </div>
+        <div class="upload-area" id="file-name">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            JPG / PNG max 2MB
+        </div>
+    </div>
 
-                <button type="submit" class="btn-register">Register</button>
-            </form>
+    <button type="submit" class="btn-register">Register</button>
+</form>
 
             <div class="login-link">
                 Sudah Punya Akun? <a href="{{ route('login') }}">Login</a>

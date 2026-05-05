@@ -39,13 +39,13 @@ class PenyewaController extends Controller
     public function store(Request $request)
 {
     $validated = $request->validate([
-        'nama'              => 'required|string|max:100',
-        'username'          => 'required|string|max:50|unique:users,username',
-        'password'          => 'required|string|min:6|max:255',
-        'no_telepon'        => 'required|string|max:20',
-        'alamat'            => 'required|string|max:255',
-        'gambar_identitas'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+    'nama' => 'required|string|max:100',
+    'username' => 'required|string|max:50|unique:users,username',
+    'password' => 'required|string|min:6|max:255',
+    'no_telepon' => 'required|digits_between:10,15',
+    'alamat' => 'required|string|max:255',
+    'gambar_identitas' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+]);
 
     DB::beginTransaction();
 

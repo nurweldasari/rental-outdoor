@@ -11,11 +11,6 @@ use Illuminate\Http\Request;
 use PHPUnit\Framework\Attributes\Test;
 
 use App\Models\User;
-use App\Models\Penyewa;
-use App\Models\Penyewaan;
-use App\Models\StokCabang;
-use App\Models\Produk;
-
 use App\Http\Controllers\PenyewaanController;
 
 class PenyewaanTest extends TestCase
@@ -24,7 +19,6 @@ class PenyewaanTest extends TestCase
 
     private function seedRelasi()
     {
-        // USERS
         DB::table('users')->insert([
             'idusers' => 1,
             'nama' => 'User',
@@ -35,26 +29,22 @@ class PenyewaanTest extends TestCase
             'status' => 'aktif'
         ]);
 
-        // PENYEWA
         DB::table('penyewa')->insert([
             'idpenyewa' => 1,
             'users_idusers' => 1,
             'status_penyewa' => 'aktif'
         ]);
 
-        // KATEGORI
         DB::table('kategori')->insert([
             'idkategori' => 1,
             'nama_kategori' => 'Tenda'
         ]);
 
-        // ADMIN PUSAT
         DB::table('admin_pusat')->insert([
             'idadmin_pusat' => 1,
             'users_idusers' => 1
         ]);
 
-        // PRODUK
         DB::table('produk')->insert([
             'idproduk' => 1,
             'nama_produk' => 'Tenda',
@@ -63,29 +53,21 @@ class PenyewaanTest extends TestCase
             'jenis_skala' => 'harian',
             'kategori_idkategori' => 1,
             'admin_pusat_idadmin_pusat' => 1,
-            'created_at' => now(),
-            'updated_at' => now()
         ]);
 
-        // CABANG
         DB::table('cabang')->insert([
             'idcabang' => 1,
             'nama_cabang' => 'Cabang A',
             'status_cabang' => 'aktif',
             'lokasi' => 'Jember',
-            'created_at' => now(),
-            'updated_at' => now()
         ]);
 
-        // STOK CABANG
         DB::table('stok_cabang')->insert([
             'idstok' => 1,
             'produk_idproduk' => 1,
             'cabang_idcabang' => 1,
             'jumlah' => 10,
             'is_active' => 1,
-            'created_at' => now(),
-            'updated_at' => now()
         ]);
     }
 
@@ -96,7 +78,7 @@ class PenyewaanTest extends TestCase
     }
 
     // =========================
-    // TC-SEWA-02 (durasi & total)
+    // TC-SEWA-02
     // =========================
     #[Test]
     public function tc_sewa_02_mengatur_tanggal_sewa()
@@ -105,18 +87,16 @@ class PenyewaanTest extends TestCase
         $this->seedRelasi();
         $this->loginUser();
 
-        session([
-            'tipe_toko' => 'cabang',
-            'toko_id' => 1
-        ]);
+        session(['tipe_toko' => 'cabang', 'toko_id' => 1]);
 
         $request = Request::create('/sewa', 'POST', [
-            'tanggal_sewa' => '2026-01-01',
-            'tanggal_selesai' => '2026-01-03',
-            'metode_bayar' => 'cash',
-            'produk_cabang' => [1],
-            'qty' => [2]
-        ]);
+    'type' => ['produk'], // ✅ FIX: HARUS ARRAY
+    'tanggal_sewa' => '2026-01-01',
+    'tanggal_selesai' => '2026-01-03',
+    'metode_bayar' => 'cash',
+    'produk_cabang' => [1],
+    'qty' => [2]
+]);
 
         $controller = new PenyewaanController();
         $response = $controller->store($request);
@@ -125,7 +105,7 @@ class PenyewaanTest extends TestCase
     }
 
     // =========================
-    // TC-SEWA-04 (cash)
+    // TC-SEWA-04 CASH
     // =========================
     #[Test]
     public function tc_sewa_04_metode_cash()
@@ -137,12 +117,13 @@ class PenyewaanTest extends TestCase
         session(['tipe_toko' => 'cabang', 'toko_id' => 1]);
 
         $request = Request::create('/sewa', 'POST', [
-            'tanggal_sewa' => '2026-01-01',
-            'tanggal_selesai' => '2026-01-02',
-            'metode_bayar' => 'cash',
-            'produk_cabang' => [1],
-            'qty' => [1]
-        ]);
+    'type' => ['produk'], // ✅ FIX
+    'tanggal_sewa' => '2026-01-01',
+    'tanggal_selesai' => '2026-01-02',
+    'metode_bayar' => 'cash',
+    'produk_cabang' => [1],
+    'qty' => [1]
+]);
 
         $controller = new PenyewaanController();
         $controller->store($request);
@@ -153,7 +134,7 @@ class PenyewaanTest extends TestCase
     }
 
     // =========================
-    // TC-SEWA-05 (transfer)
+    // TC-SEWA-05 TRANSFER
     // =========================
     #[Test]
     public function tc_sewa_05_metode_transfer()
@@ -165,13 +146,13 @@ class PenyewaanTest extends TestCase
         session(['tipe_toko' => 'cabang', 'toko_id' => 1]);
 
         $request = Request::create('/sewa', 'POST', [
-            'tanggal_sewa' => '2026-01-01',
-            'tanggal_selesai' => '2026-01-02',
-            'metode_bayar' => 'transfer',
-            'produk_cabang' => [1],
-            'qty' => [1]
-        ]);
-
+    'type' => ['produk'], // ✅ FIX
+    'tanggal_sewa' => '2026-01-01',
+    'tanggal_selesai' => '2026-01-02',
+    'metode_bayar' => 'transfer',
+    'produk_cabang' => [1],
+    'qty' => [1]
+]);
         $controller = new PenyewaanController();
         $controller->store($request);
 

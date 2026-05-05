@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Penyewaan;
 use App\Models\StokCabang;
+use App\Models\Produk;
 use App\Models\Paket;
 use Illuminate\Support\Facades\DB;
 
@@ -26,36 +27,62 @@ class CancelExpiredPenyewaan extends Command
 
                 foreach ($p->itemPenyewaan as $item) {
 
-                    /* ================= PRODUK ================= */
-                    if ($item->type === 'produk' && $item->produk_idproduk) {
+                    /* ==================================================
+                     | PRODUK CABANG
+                     ================================================== */
+                    if ($item->type === 'produk' && $item->produk_idproduk && $p->cabang_idcabang) {
 
                         StokCabang::where('produk_idproduk', $item->produk_idproduk)
                             ->where('cabang_idcabang', $p->cabang_idcabang)
                             ->increment('jumlah', $item->qty);
                     }
 
-                    /* ================= PAKET ================= */
-                    elseif ($item->type === 'paket' && $item->paket_id) {
+                    /* ==================================================
+                     | PRODUK PUSAT
+                     ================================================== */
+                    elseif ($item->type === 'produk' && $item->produk_idproduk && !$p->cabang_idcabang) {
+
+                        Produk::where('idproduk', $item->produk_idproduk)
+                            ->increment('stok_pusat', $item->qty);
+                    }
+
+                    /* ==================================================
+                     | PAKET CABANG
+                     ================================================== */
+                    elseif ($item->type === 'paket' && $item->paket_id && $p->cabang_idcabang) {
 
                         $paket = Paket::with('detail')->find($item->paket_id);
 
                         if ($paket) {
                             foreach ($paket->detail as $detail) {
 
-                                $stok = StokCabang::find($detail->stok_cabang_id);
+                                StokCabang::where('idstok', $detail->stok_cabang_id)
+                                    ->where('cabang_idcabang', $p->cabang_idcabang)
+                                    ->increment('jumlah', $detail->qty * $item->qty);
+                            }
+                        }
+                    }
 
-                                if ($stok) {
-                                    $stok->increment(
-                                        'jumlah',
-                                        $detail->qty * $item->qty
-                                    );
-                                }
+                    /* ==================================================
+                     | PAKET PUSAT
+                     ================================================== */
+                    elseif ($item->type === 'paket' && $item->paket_id && !$p->cabang_idcabang) {
+
+                        $paket = Paket::with('detail')->find($item->paket_id);
+
+                        if ($paket) {
+                            foreach ($paket->detail as $detail) {
+
+                                Produk::where('idproduk', $detail->produk_idproduk)
+                                    ->increment('stok_pusat', $detail->qty * $item->qty);
                             }
                         }
                     }
                 }
 
-                // ❌ Update status (DI LUAR LOOP ITEM)
+                // ==================================================
+                // UPDATE STATUS PENYEWAAN
+                // ==================================================
                 $p->update([
                     'status_penyewaan' => 'dibatalkan'
                 ]);

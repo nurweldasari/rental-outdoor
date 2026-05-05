@@ -117,29 +117,46 @@
             </div>
 
             <div class="produk-list">
-                @foreach($data->itemPenyewaan as $item)
 
-    {{-- ================= PRODUK ================= --}}
-    @if($item->type === 'produk' && $item->produk)
-        {{ $loop->iteration }}.
-        {{ $item->produk->nama_produk }}
-        ({{ $item->qty }}) <br>
+    @php $noItem = 1; @endphp
 
-    {{-- ================= PAKET ================= --}}
-    @elseif($item->type === 'paket' && $item->paket)
-        {{ $loop->iteration }}.
-        <strong>{{ $item->paket->nama_paket }}</strong>
-        ({{ $item->qty }}) <br>
+    @foreach($data->itemPenyewaan as $item)
 
-        <small style="margin-left:10px;">
-            @foreach($item->paket->detail as $d)
-                • {{ optional($d->stokCabang->produk)->nama_produk }} ({{ $d->qty }})<br>
-            @endforeach
-        </small>
-    @endif
+        {{-- ================= PRODUK ================= --}}
+        @if($item->type === 'produk' && $item->produk)
 
-@endforeach
+            <div class="item-line">
+                {{ $noItem++ }}.
+                {{ $item->produk->nama_produk }}
+                <span class="qty">({{ $item->qty }})</span>
             </div>
+
+        {{-- ================= PAKET ================= --}}
+        @elseif($item->type === 'paket' && $item->paket)
+
+            <div class="item-paket">
+
+                <div class="paket-title">
+                    {{ $noItem++ }}.
+                    <strong>{{ $item->paket->nama_paket }}</strong>
+                    <span class="qty">({{ $item->qty }})</span>
+                </div>
+
+                <div class="paket-detail">
+                    @foreach($item->paket->detail as $d)
+                        <div class="paket-item">
+                            • {{ optional($d->stokCabang->produk)->nama_produk }}
+                            <span class="qty">({{ $d->qty }})</span>
+                        </div>
+                    @endforeach
+                </div>
+
+            </div>
+
+        @endif
+
+    @endforeach
+</div>
 
             <div>
                 Rp {{ number_format($data->total,0,',','.') }}

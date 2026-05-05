@@ -628,6 +628,7 @@ public function createReservasi(Request $request, $id)
     // ===================== PAKET =====================
     $paketList = Paket::with('detail.stokCabang.produk')
         ->where('cabang_id', $cabangId)
+        ->where('is_active', 1)
         ->whereDoesntHave('detail', function ($q) {
             $q->whereHas('stokCabang', function ($s) {
                 $s->whereColumn('stok_cabang.jumlah', '<', 'paket_detail.qty')
@@ -824,6 +825,7 @@ public function createReservasiPusat(Request $request, $id)
 
     // 🔥 FIX: hanya paket pusat
     $paketList = Paket::with('detail.produk')
+    ->where('is_active', 1)
         ->whereNull('cabang_id')
         ->get();
 

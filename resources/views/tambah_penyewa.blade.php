@@ -18,7 +18,7 @@
   <div class="form-card">
     <h3 class="form-title">Tambah Penyewa</h3>
 
-    <form 
+     <form 
         class="penyewa-form"
         method="POST"
         action="{{ route('tambah_penyewa.store') }}"
@@ -26,24 +26,53 @@
     >
         @csrf
 
+        <!-- NAMA -->
         <div class="form-group">
-            <input type="text" name="nama" placeholder="Nama" required>
+            <input type="text"
+                   name="nama"
+                   placeholder="Nama"
+                   value="{{ old('nama') }}"
+                   required
+                   minlength="3"
+                   maxlength="30"
+                   pattern="[A-Za-z\s]+">
         </div>
 
+        <!-- USERNAME -->
         <div class="form-group">
-            <input type="text" name="username" placeholder="Username" required>
+            <input type="text"
+                   name="username"
+                   placeholder="Username"
+                   value="{{ old('username') }}"
+                   required>
         </div>
 
+        <!-- PASSWORD -->
         <div class="form-group">
-            <input type="password" name="password" placeholder="Password" required>
+            <input type="password"
+                   name="password"
+                   placeholder="Password"
+                   required
+                   minlength="6">
         </div>
 
+        <!-- TELEPON -->
         <div class="form-group">
-            <input type="text" name="no_telepon" placeholder="No. Telephone" required>
+            <input type="text"
+               name="no_telepon"
+               placeholder="No. Telepon"
+               required
+               pattern="[0-9]{10,15}"
+               title="Nomor harus 10-15 digit angka">
         </div>
 
+        <!-- ALAMAT -->
         <div class="form-group">
-            <input type="text" name="alamat" placeholder="Alamat" required>
+            <input type="text"
+                   name="alamat"
+                   placeholder="Alamat"
+                   value="{{ old('alamat') }}"
+                   required>
         </div>
 
         <!-- UPLOAD -->
@@ -58,8 +87,9 @@
                 type="file"
                 name="gambar_identitas"
                 id="gambar"
-                accept="image/*"
+                accept=".jpg,.jpeg,.png"
                 hidden
+                required
                 onchange="showFileName(this)">
         </div>
 

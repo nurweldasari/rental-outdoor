@@ -51,11 +51,12 @@ class PaketController extends Controller
             }
 
             $paket = Paket::create([
-                'nama_paket' => $request->nama_paket,
-                'harga_paket' => $request->harga_paket,
-                'cabang_id' => $cabangId,
-                'gambar_paket' => $path
-            ]);
+    'nama_paket' => $request->nama_paket,
+    'harga_paket' => $request->harga_paket,
+    'cabang_id' => $cabangId,
+    'gambar_paket' => $path,
+    'is_active' => true // 🔥 tambahin ini
+]);
 
             foreach ($request->produk_cabang_id as $index => $stokId) {
                 if (!$stokId) continue;
@@ -68,11 +69,13 @@ class PaketController extends Controller
             }
 
             DB::commit();
-            return back()->with('success', 'Paket berhasil dibuat');
+            return redirect()->route('produk_cabang')
+    ->with('success', 'Paket berhasil dibuat');
 
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', $e->getMessage());
+            
         }
     }
 
@@ -188,7 +191,8 @@ class PaketController extends Controller
                 'nama_paket' => $request->nama_paket,
                 'harga_paket' => $request->harga_paket,
                 'cabang_id' => null,
-                'gambar_paket' => $path
+                'gambar_paket' => $path,
+                'is_active' => true
             ]);
 
             foreach ($request->produk_id as $index => $produkId) {
@@ -300,4 +304,15 @@ class PaketController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function toggle($id)
+{
+    $paket = Paket::findOrFail($id);
+
+    $paket->is_active = !$paket->is_active;
+    $paket->save();
+
+    return back();
 }
+}
+

@@ -13,7 +13,8 @@ class Paket extends Model
         'harga_paket',
         'cabang_id',
         'is_template',
-        'gambar_paket'
+        'gambar_paket',
+        'is_active' 
     ];
 
     // 🔗 relasi ke cabang
