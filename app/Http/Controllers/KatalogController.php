@@ -119,6 +119,7 @@ public function katalogPusat(Request $request)
     $pusatId = session('pusat_id');
 
     $produkList = Produk::where('admin_pusat_idadmin_pusat', $pusatId)
+     ->where('stok_pusat', '>', 0) // 🔥 WAJIB
 
         // 🔍 SEARCH
         ->when($request->search, function ($q) use ($request) {
@@ -134,7 +135,6 @@ public function katalogPusat(Request $request)
         ->when($request->skala, function ($q) use ($request) {
             $q->where('jenis_skala', $request->skala);
         })
-
         
         ->paginate(10); // pakai paginate biar rapi
 
@@ -142,7 +142,15 @@ public function katalogPusat(Request $request)
     $paketList = Paket::with('detail.produk')
     ->where('is_active', 1)
     ->whereNull('cabang_id')
-    ->get();
+    ->get()
+    ->filter(function ($paket) {
+        foreach ($paket->detail as $item) {
+            if (!$item->produk || $item->produk->stok_pusat <= 0) {
+                return false; // ❌ ada yang habis → buang paket
+            }
+        }
+        return true; // ✅ semua tersedia
+    });
 
     return view('katalog_pusat', compact('produkList','kategoriList', 'paketList'));
 }

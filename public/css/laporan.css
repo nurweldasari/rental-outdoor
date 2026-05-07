@@ -1,7 +1,7 @@
 /* ================= CONTAINER ================= */
 .laporan-container {
     max-width: 1100px;
-    margin: 20px auto 40px;
+    margin: -15px auto 40px;
     padding: 20px;
     font-family: "Segoe UI", Arial, sans-serif;
     color: #333;
@@ -100,6 +100,8 @@
 .laporan-row {
     border-bottom: 1px solid #f2f2f2;
     transition: 0.15s ease;
+    align-items: center;
+    
 }
 
 .laporan-row:hover {
@@ -114,11 +116,18 @@
     align-items: flex-start;
 }
 
+ .laporan-row > div:nth-child(4),
+    .laporan-header > div:nth-child(4) {
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+        text-align: left;
+    }
 .laporan-row div:nth-child(3) {
     display: flex;
-    gap: 1px; /* jarak antara nama dan nomor */
+    flex-direction: row;   /* 🔥 horizontal */
+    align-items: center;
+    gap: 2px;              /* jarak nama & no hp */
 }
-
 .laporan-header > div:last-child {
     justify-content: flex-start;/* Total */
 }
@@ -149,6 +158,7 @@
 
 .laporan-total > div:last-child {
     justify-content: flex-start;/* angka total rata kanan */
+    
 }
 
 /* Judul Admin Cabang hanya muncul saat print */
@@ -157,10 +167,15 @@
 }
 /* ================= PRODUK ================= */
 .produk-list {
+    display: flex;
     font-size: 13px;
     line-height: 1.7;
     color: #555;
     padding-left: 6px;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 0 !important;   /* 🔥 hapus dorongan ke kanan */
+    margin-left: 0 !important;
 }
 
 /* ================= TOTAL ================= */
@@ -287,12 +302,12 @@
     .laporan-total {
         padding: 8px 10px !important;
         font-size: 12px !important;
-        grid-template-columns:
-            40px
-            120px
-            200px
-            1fr
-            130px;
+          grid-template-columns:
+        40px
+        120px
+        170px
+        220px   /* 🔥 DIPERKECIL */
+        90px;   /* 🔥 TOTAL JUGA DISESUAIKAN */
    
     border-bottom: none !important;
     }
@@ -343,7 +358,9 @@
     .print-date-range {
         display: block;
     }
-
+.laporan-table {
+    overflow: visible !important; /* 🔥 WAJIB */
+}
 }
 
 /* ================= ANIMATION ================= */
@@ -430,4 +447,33 @@
     font-size: 20px;
     font-weight: 600;
     color: #333;
+}
+.item-line,
+.paket-title {
+    display: block;        /* 🔥 bikin normal */
+    text-align: left;      /* pastikan kiri */
+    font-weight: 600;
+}
+
+.qty {
+    font-weight: 500;
+    color: #666;
+    margin-left: 6px;
+}
+.paket-detail {
+    margin-top: 2px;
+     color: #888;
+}
+
+.paket-item {
+    display: flex;
+    justify-content: flex-start !important; /* 🔥 jangan space-between */
+    gap: 6px; /* kasih jarak normal */
+    font-size: 12px;
+    color: #666;
+}
+
+.paket-nama{
+    font-weight:600; /* 🔥 ini bikin bold */
+    color:#565555;
 }

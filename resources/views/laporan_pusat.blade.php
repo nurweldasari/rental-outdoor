@@ -103,7 +103,7 @@
             <div>{{ $no++ }}</div>
 
             <div>
-                {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('d M Y') }}
+                {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('l, d M Y') }}
             </div>
 
             <div>
@@ -112,29 +112,46 @@
             </div>
 
             <div class="produk-list">
-                @foreach($data->itemPenyewaan as $item)
+    @foreach($data->itemPenyewaan as $item)
 
-    {{-- ================= PRODUK ================= --}}
+    {{-- PRODUK --}}
     @if($item->type === 'produk' && $item->produk)
-        {{ $loop->iteration }}.
-        {{ $item->produk->nama_produk }}
-        ({{ $item->qty }}) <br>
+        <div class="item-line">
+            {{ $loop->iteration }}.
+            <span class="produk-nama">
+                {{ $item->produk->nama_produk }}
+            </span>
+            <span class="qty">({{ $item->qty }})</span>
+        </div>
 
-    {{-- ================= PAKET ================= --}}
+    {{-- PAKET --}}
     @elseif($item->type === 'paket' && $item->paket)
-        {{ $loop->iteration }}.
-        <strong>{{ $item->paket->nama_paket }}</strong>
-({{ $item->qty }}) <br>
+        <div class="item-paket">
 
-<small style="margin-left:10px;">
-@foreach($item->paket->detail as $detail)
-    {{ $detail->produk->nama_produk ?? 'Produk tidak ditemukan' }} ({{ $detail->qty }}) |
-@endforeach
-</small>
+            <!-- 🔥 HANYA NAMA PAKET YANG DITENGAH -->
+            <div class="paket-title-center">
+                {{ $loop->iteration }}.
+                <span class="paket-nama">
+                    {{ $item->paket->nama_paket }}
+                </span>
+                <span class="qty">({{ $item->qty }})</span>
+            </div>
+
+            <!-- DETAIL PAKET -->
+            <div class="paket-detail">
+                @foreach($item->paket->detail as $detail)
+                    <div class="paket-item">
+                        • {{ $detail->produk->nama_produk ?? 'Produk tidak ditemukan' }}
+                        <span class="qty">({{ $detail->qty }})</span>
+                    </div>
+                @endforeach
+            </div>
+
+        </div>
     @endif
 
-@endforeach
-            </div>
+    @endforeach
+</div>
             <div>
                 Rp {{ number_format($data->total,0,',','.') }}
             </div>

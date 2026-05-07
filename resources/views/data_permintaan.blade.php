@@ -45,7 +45,7 @@
             </form>
 
             <a href="{{ route('permintaan_produk.create') }}" class="btn btn-orange">
-                <i class="fa-solid fa-plus"></i> Ajukan
+                <i class="fa-solid fa-circle-plus"></i> Ajukan
             </a>
         </div>
 

@@ -38,7 +38,7 @@
         <div class="form-header">
             <span>Daftar Alat yang diminta</span>
             <button type="button" id="tambah-permintaan" class="btn btn-orange small">
-                <i class="fa fa-plus"></i> Tambah
+                <i class="fa-solid fa-circle-plus"></i> Tambah
             </button>
         </div>
 
@@ -87,7 +87,9 @@
             <!-- ACTION -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-green">Buat Permintaan</button>
-                <button type="reset" class="btn btn-red">Batal</button>
+                <a href="{{ url()->previous() }}" class="btn btn-red" style="text-decoration: none;">
+                    Batal
+                </a>
             </div>
 
         </form>

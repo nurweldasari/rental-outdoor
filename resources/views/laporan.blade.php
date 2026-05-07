@@ -108,7 +108,7 @@
             <div>{{ $no++ }}</div>
 
             <div>
-                {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('d M Y') }}
+                {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('l, d M Y') }}
             </div>
 
             <div>
