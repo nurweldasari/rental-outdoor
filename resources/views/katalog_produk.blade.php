@@ -63,13 +63,13 @@
         <h4 class="nama-produk">{{ $paket->nama_paket }}</h4>
 
         <p class="harga">
-            Rp {{ number_format($paket->harga_paket,0,',','.') }}/hari
+            Rp {{ number_format($paket->hargaTerbaru?->harga ?? 0,0,',','.') }} / hari
         </p>
 <div class="aksi-wrapper">
         <button class="btn-detail"
             onclick="openModal(this)"
             data-nama="{{ $paket->nama_paket }}"
-            data-harga="{{ $paket->harga_paket }}"
+            data-harga="{{ $paket->hargaTerbaru?->harga ?? 0 }}"
             data-gambar="{{ $paket->gambar_paket
             ? asset('storage/'.$paket->gambar_paket)
             : asset('images/placeholder.png') }}"
@@ -103,7 +103,7 @@
                         <span class="badge-kategori">{{ $produk->kategori->nama_kategori ?? '-' }}</span>
                         <img src="{{ $gambar }}" class="img-produk">
                         <h4 class="nama-produk">{{ $produk->nama_produk }}</h4>
-                        <p class="harga">Rp {{ number_format($produk->harga,0,',','.')}} / hari</p>
+                        <p class="harga">Rp {{ number_format($produk->hargaAktif?->harga ?? 0, 0, ',', '.') }} / hari</p>
 
                         <div class="stok-wrapper">
                             <span class="stok">Stok: {{ $stok }}</span>
@@ -425,7 +425,7 @@ function renderCart(cart){
                 subtotal = harga * qty * durasi;
                 totalHarga += subtotal;
 
-                subtotalText = `${qty} paket × ${durasi} hari = <b>Rp ${subtotal.toLocaleString()}</b>`;
+                subtotalText = `${qty} paket × ${durasi} hari = <b>Rp ${subtotal.toLocaleString('id-ID')}</b>`;
             }
 
             const disablePlus = max !== null && qty >= max;
@@ -438,7 +438,7 @@ function renderCart(cart){
 
                         <strong>${item.nama}</strong>
 
-                        <p>Rp ${harga.toLocaleString()} / paket</p>
+                        <p>Rp ${harga.toLocaleString('id-ID')} / paket</p>
 
                         <small>${subtotalText}</small>
 
@@ -478,7 +478,7 @@ function renderCart(cart){
                 subtotal = qty * harga * durasi;
                 totalHarga += subtotal;
 
-                subtotalText = `${qty} × ${durasi} hari = <b>Rp ${subtotal.toLocaleString()}</b>`;
+                subtotalText = `${qty} × ${durasi} hari = <b>Rp ${subtotal.toLocaleString('id-ID')}</b>`;
             }
 
             html += `
@@ -487,7 +487,7 @@ function renderCart(cart){
 
                         <strong>${item.nama}</strong>
 
-                        <p>Rp ${harga.toLocaleString()} / hari</p>
+                        <p>Rp ${harga.toLocaleString('id-ID')} / hari</p>
 
                         <small>${subtotalText}</small>
 
@@ -518,7 +518,7 @@ function renderCart(cart){
         <div class="ringkasan">
             <p>Total Item <span>${totalItem}</span></p>
             <p>Durasi <span>${durasi > 0 ? durasi + ' hari' : '-'}</span></p>
-            <p>Total <strong>Rp ${totalHarga.toLocaleString()}</strong></p>
+            <p>Total <strong>Rp ${totalHarga.toLocaleString('id-ID')}</strong></p>
         </div>
 
         <div class="tanggal">
@@ -540,7 +540,7 @@ function renderCart(cart){
     items.innerHTML = inputs;
 
     document.getElementById('totalItem').textContent = totalItem;
-    document.getElementById('totalHarga').textContent = 'Rp ' + totalHarga.toLocaleString();
+    document.getElementById('totalHarga').textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
 }
 
 /* ================= CHANGE TANGGAL ================= */

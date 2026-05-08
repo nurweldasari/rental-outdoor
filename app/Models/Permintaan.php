@@ -28,11 +28,6 @@ class Permintaan extends Model
                     ->with('produk'); // eager load produk
     }
 
-    public function produkPermintaan()
-{
-    return $this->hasMany(PermintaanProduk::class, 'permintaan_id');
-}
-
 // Relasi admin cabang lewat cabang
     public function adminCabang()
     {

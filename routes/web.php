@@ -18,6 +18,7 @@ use App\Http\Controllers\ProdukCabangController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\RekeningController;
 use App\Http\Controllers\BagiHasilController;
+use App\Http\Controllers\SkalaBagiHasilController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\LandingController;
@@ -229,6 +230,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/data_penyewa', [PenyewaController::class, 'index'])
+    ->name('data_penyewa')
     ->middleware('auth');
 
 // tampilkan form tambah penyewa
@@ -250,6 +252,7 @@ Route::post('/tambah_penyewa', [PenyewaController::class, 'store'])
 
 //pusat
 Route::get('/data_penyewa_pusat', [PenyewaController::class, 'indexPusat'])
+    ->name('data_penyewa_pusat')
     ->middleware('auth');
 
 // tampilkan form tambah penyewa
@@ -258,7 +261,7 @@ Route::get('/tambah_penyewa_pusat', [PenyewaController::class, 'createPusat'])
 
 // simpan data penyewa
 Route::post('/tambah_penyewa_pusat', [PenyewaController::class, 'storePusat'])
-    ->name('tambah_penyewa.store');
+    ->name('tambah_penyewa_pusat.store');
 
   Route::get('/admin/reservasi_pusat/{idpenyewa}', 
         [PenyewaanController::class, 'createReservasiPusat']
@@ -422,7 +425,9 @@ Route::get('/cek-waktu', function () {
         now()->timezoneName
     );
 });
-
+Route::post('/skala-bagi-hasil/store',
+    [SkalaBagiHasilController::class,'store']
+)->name('skala_bagi_hasil.store');
 // ===== OWNER BAGI HASIL =====
 
 // Halaman utama + menu view (list / bukti / riwayat / pengaturan)

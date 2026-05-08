@@ -13,9 +13,6 @@
      {{-- ================= HEADER ================= --}}
 
     <div class="no-print">
-    <a href="{{ route('laporan_pusat') }}" class="btn-kembali">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
 
     <h2>
         Laporan Pendapatan - {{ $cabang->nama_cabang ?? 'Pusat' }}
@@ -115,22 +112,26 @@
                 @foreach($data->itemPenyewaan as $item)
 
     {{-- ================= PRODUK ================= --}}
-    @if($item->type === 'produk' && $item->produk)
-        {{ $loop->iteration }}.
-        {{ $item->produk->nama_produk }}
-        ({{ $item->qty }}) <br>
+    @if($item->type === 'produk')
+    {{ $loop->iteration }}.
+    {{ $item->nama_produk }}
+    ({{ $item->qty }}) <br>
 
     {{-- ================= PAKET ================= --}}
-    @elseif($item->type === 'paket' && $item->paket)
-        {{ $loop->iteration }}.
-        <strong>{{ $item->paket->nama_paket }}</strong>
-({{ $item->qty }}) <br>
+   @elseif($item->type === 'paket')
+    {{ $loop->iteration }}.
+    <strong>{{ $item->nama_paket }}</strong>
+    ({{ $item->qty }}) <br>
 
-<small style="margin-left:10px;">
-@foreach($item->paket->detail as $detail)
-    {{ $detail->produk->nama_produk ?? 'Produk tidak ditemukan' }} ({{ $detail->qty }}) |
-@endforeach
-</small>
+    <small style="margin-left:10px;">
+        @php
+            $detail = json_decode($item->detail_paket ?? '[]', true);
+        @endphp
+
+        @foreach($detail as $d)
+            {{ $d['nama_produk'] }} ({{ $d['qty'] }}) |
+        @endforeach
+    </small>
     @endif
 
 @endforeach

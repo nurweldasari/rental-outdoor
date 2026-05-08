@@ -26,7 +26,7 @@ class CartController extends Controller
         ], 403);
     }
 
-    $stok = StokCabang::with('produk')
+    $stok = StokCabang::with('produk.hargaAktif')
         ->where('idstok', $request->idstok)
         ->where('cabang_idcabang', $cabangId)
         ->first();
@@ -74,14 +74,15 @@ if ($totalDipakai > $stok->jumlah) {
     ], 422);
 }
 
-    $cart[$stok->idstok] = [
-        'type'   => 'produk',
-        'idstok' => $stok->idstok,
-        'nama'   => $stok->produk->nama_produk,
-        'harga'  => $stok->produk->harga,
-        'qty'    => $currentQty + 1,
-        'max'    => $stok->jumlah - $usedStock 
-    ];
+    $harga = $stok->produk->hargaAktif?->harga ?? 0;
+$cart[$stok->idstok] = [
+    'type'   => 'produk',
+    'idstok' => $stok->idstok,
+    'nama'   => $stok->produk->nama_produk,
+    'harga'  => $harga,
+    'qty'    => $currentQty + 1,
+    'max' => max(0, $stok->jumlah - $usedStock - $currentQty)
+];
 
     session(['cart' => $cart]);
 
@@ -209,7 +210,7 @@ public function delete(Request $request)
     /* ================= PAKET ADD ================= */
   public function addPaket(Request $request)
 {
-    $paket = Paket::with('detail.stokCabang.produk')
+    $paket = Paket::with('detail.stokCabang.produk.hargaAktif', 'hargaTerbaru')
         ->findOrFail($request->paket_id);
 
     $cart = session('cart', []);
@@ -224,12 +225,14 @@ public function delete(Request $request)
 
         if (!$stok) continue;
 
+       $harga = $stok->produk->hargaAktif?->harga ?? 0;
+
         $items[] = [
             'type'   => 'produk_dalam_paket',
             'idstok' => $stok->idstok,
             'nama'   => $stok->produk->nama_produk,
             'qty'    => $d->qty,
-            'harga'  => $stok->produk->harga,
+            'harga'  => $harga,
         ];
 
         // hitung stok cabang
@@ -277,11 +280,12 @@ public function delete(Request $request)
         $cart[$key]['max'] = $maxPaket;
 
     } else {
+        $hargaPaket = $paket->hargaTerbaru?->harga ?? 0;
         $cart[$key] = [
             'type'     => 'paket',
             'paket_id' => $paket->id,
             'nama'     => $paket->nama_paket,
-            'harga'    => $paket->harga_paket,
+            'harga'    => $hargaPaket,
             'qty'      => 1,
             'max'      => $maxPaket,
             'items'    => $items
@@ -421,7 +425,7 @@ public function deletePaket(Request $request)
         'idproduk' => 'required|exists:produk,idproduk'
     ]);
 
-    $produk = Produk::findOrFail($request->idproduk);
+    $produk = Produk::with('hargaAktif')->findOrFail($request->idproduk);
 
     $cart = session('cart', []);
     $key = 'produk_'.$produk->idproduk;
@@ -458,12 +462,12 @@ public function deletePaket(Request $request)
             'cart'  => $cart
         ], 422);
     }
-
+$harga = $produk->hargaAktif?->harga ?? 0;
     $cart[$key] = [
         'type' => 'produk',
         'idproduk' => $produk->idproduk,
         'nama' => $produk->nama_produk,
-        'harga' => $produk->harga,
+        'harga' => $harga,
         'qty' => $nextQty,
         'max' => max(0, $produk->stok_pusat - $usedStock - $currentQty)
     ];
@@ -560,8 +564,11 @@ public function deletePaket(Request $request)
 
         $usedStock = 0;
 
-        foreach ($cart as $item) {
+        foreach ($cart as $k => $item) {
 
+        // skip item sendiri (WAJIB pakai key)
+        if ($k == $key) continue;
+            
             if (($item['type'] ?? '') === 'produk' && $item['idproduk'] == $produk->idproduk) {
                 $usedStock += $item['qty'];
             }
@@ -593,12 +600,13 @@ public function deletePaket(Request $request)
     foreach ($paket->detail as $d) {
         if (!$d->produk) continue;
 
-        $items[] = [
-            'idproduk' => $d->produk->idproduk,
-            'nama' => $d->produk->nama_produk,
-            'qty'  => $d->qty,
-            'harga'=> $d->produk->harga
-        ];
+       $harga = $d->produk->hargaAktif?->harga ?? 0;
+$items[] = [
+    'idproduk' => $d->produk->idproduk,
+    'nama' => $d->produk->nama_produk,
+    'qty'  => $d->qty,
+    'harga'=> $harga
+];
     }
 
     if (isset($cart[$key])) {
@@ -617,12 +625,12 @@ public function deletePaket(Request $request)
         $cart[$key]['max'] = $maxPaket;
 
     } else {
-
+        $hargaPaket = $paket->hargaTerbaru?->harga ?? 0;
         $cart[$key] = [
             'type' => 'paket',
             'paket_id' => $paket->id,
             'nama' => $paket->nama_paket,
-            'harga' => $paket->harga_paket,
+            'harga' => $hargaPaket,
             'qty' => 1,
             'max' => $maxPaket,
             'items' => $items
@@ -642,7 +650,8 @@ public function updatePaketPusat(Request $request)
         return response()->json(['cart'=>$cart]);
     }
 
-    $paket = Paket::with('detail.produk')->findOrFail($request->paket_id);
+    $paket = Paket::with('detail.produk.hargaAktif', 'hargaTerbaru')
+    ->findOrFail($request->paket_id);
 
     if ($request->qty <= 0) {
         unset($cart[$key]);

@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+
 use App\Models\StokCabang;
 use App\Models\Paket;
 use App\Models\PaketDetail;
 use App\Models\Produk;
+use App\Models\Harga;
 
 class PaketController extends Controller
 {
@@ -43,19 +45,26 @@ class PaketController extends Controller
         try {
             $cabangId = $user->adminCabang->cabang_idcabang;
 
-            // 🔥 upload gambar (FIXED)
             $path = null;
             if ($request->hasFile('gambar_paket')) {
                 $path = $request->file('gambar_paket')
-                                ->store('paket', 'public');
+                    ->store('paket', 'public');
             }
 
             $paket = Paket::create([
                 'nama_paket' => $request->nama_paket,
-                'harga_paket' => $request->harga_paket,
                 'cabang_id' => $cabangId,
                 'gambar_paket' => $path
             ]);
+
+            // 💡 SIMPAN HARGA (HISTORY)
+          Harga::create([
+    'type' => 'paket',
+    'paket_id' => $paket->id,
+    'produk_id' => null,
+    'harga' => $request->harga_paket,
+    'tanggal_berlaku' => now()
+]);
 
             foreach ($request->produk_cabang_id as $index => $stokId) {
                 if (!$stokId) continue;
@@ -68,7 +77,8 @@ class PaketController extends Controller
             }
 
             DB::commit();
-            return back()->with('success', 'Paket berhasil dibuat');
+            return redirect()->route('produk_cabang')
+            ->with('success', 'Paket berhasil dibuat');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -95,11 +105,8 @@ class PaketController extends Controller
             $paket = Paket::findOrFail($id);
 
             $paket->nama_paket = $request->nama_paket;
-            $paket->harga_paket = $request->harga_paket;
 
-            // 🔥 FIXED IMAGE UPDATE
             if ($request->hasFile('gambar_paket')) {
-
                 if ($paket->gambar_paket) {
                     Storage::disk('public')->delete($paket->gambar_paket);
                 }
@@ -110,7 +117,15 @@ class PaketController extends Controller
 
             $paket->save();
 
-            // detail ulang
+            // 💡 SIMPAN HARGA BARU (HISTORY)
+            Harga::create([
+    'type' => 'paket',
+    'paket_id' => $paket->id,
+    'produk_id' => null,
+    'harga' => $request->harga_paket,
+    'tanggal_berlaku' => now()
+]);
+
             PaketDetail::where('paket_id', $paket->id)->delete();
 
             foreach ($request->produk_cabang_id as $index => $stokId) {
@@ -140,6 +155,7 @@ class PaketController extends Controller
             $paket = Paket::findOrFail($id);
 
             PaketDetail::where('paket_id', $paket->id)->delete();
+            Harga::where('paket_id', $paket->id)->delete(); // optional cleanup
             $paket->delete();
 
             DB::commit();
@@ -181,15 +197,22 @@ class PaketController extends Controller
 
             if ($request->hasFile('gambar_paket')) {
                 $path = $request->file('gambar_paket')
-                                ->store('paket', 'public');
+                    ->store('paket', 'public');
             }
 
             $paket = Paket::create([
                 'nama_paket' => $request->nama_paket,
-                'harga_paket' => $request->harga_paket,
                 'cabang_id' => null,
                 'gambar_paket' => $path
             ]);
+
+          Harga::create([
+    'type' => 'paket',
+    'paket_id' => $paket->id,
+    'produk_id' => null,
+    'harga' => $request->harga_paket,
+    'tanggal_berlaku' => now()
+]);
 
             foreach ($request->produk_id as $index => $produkId) {
                 if (!$produkId) continue;
@@ -239,11 +262,8 @@ class PaketController extends Controller
             $paket = Paket::findOrFail($id);
 
             $paket->nama_paket = $request->nama_paket;
-            $paket->harga_paket = $request->harga_paket;
 
-            // FIX IMAGE
             if ($request->hasFile('gambar_paket')) {
-
                 if ($paket->gambar_paket) {
                     Storage::disk('public')->delete($paket->gambar_paket);
                 }
@@ -253,6 +273,14 @@ class PaketController extends Controller
             }
 
             $paket->save();
+
+            Harga::create([
+    'type' => 'paket',
+    'paket_id' => $paket->id,
+    'produk_id' => null,
+    'harga' => $request->harga_paket,
+    'tanggal_berlaku' => now()
+]);
 
             PaketDetail::where('paket_id', $paket->id)->delete();
 
@@ -290,6 +318,7 @@ class PaketController extends Controller
             $paket = Paket::findOrFail($id);
 
             PaketDetail::where('paket_id', $paket->id)->delete();
+            Harga::where('paket_id', $paket->id)->delete();
             $paket->delete();
 
             DB::commit();

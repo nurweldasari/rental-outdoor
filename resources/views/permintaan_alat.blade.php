@@ -7,7 +7,9 @@
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 @endpush
-
+@php
+    $from = request('from');
+@endphp
 @section('content')
 
 <div class="section permintaan">
@@ -87,7 +89,8 @@
             <!-- ACTION -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-green">Buat Permintaan</button>
-                <button type="reset" class="btn btn-red">Batal</button>
+                <a href="{{ $from == 'permintaan' ? route('data_permintaan') : route('produk_cabang') }}" 
+                class="btn btn-red">Batal</a>
             </div>
 
         </form>
@@ -100,7 +103,6 @@
 <script>
 const container = document.getElementById('daftar-permintaan');
 const btnTambah = document.getElementById('tambah-permintaan');
-const btnReset = document.querySelector('button[type=reset]');
 
 // =====================
 // Tambah row baru
@@ -126,26 +128,6 @@ container.addEventListener('click', function(e){
             e.target.closest('.form-item').remove();
         }
     }
-});
-
-// =====================
-// Reset form
-// =====================
-btnReset.addEventListener('click', function(e) {
-    e.preventDefault();
-
-    const items = container.querySelectorAll('.form-item');
-    items.forEach((item, index) => {
-        if(index === 0){
-            item.querySelector('.produk-dropdown').selectedIndex = 0;
-            item.querySelector('input[type=number]').value = '';
-        } else {
-            item.remove();
-        }
-    });
-
-    const textarea = document.querySelector('textarea[name="keterangan"]');
-    if(textarea) textarea.value = '';
 });
 
 // =====================

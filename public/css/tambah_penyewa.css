@@ -198,10 +198,13 @@ body{background:#f7f3ee}
   flex-direction: column;
   gap: 14px;
 }
+.form-group {
+  position: relative;
+}
 
 .form-group input {
   width: 100%;
-  padding: 12px 18px;
+  padding: 12px 40px 12px 18px; 
   border-radius: 20px;
   border: 1px solid #333;
   outline: none;
@@ -210,6 +213,17 @@ body{background:#f7f3ee}
 
 .form-group input:focus {
   border-color: #c56a00;
+}
+.toggle-password{
+  position:absolute;
+  right:15px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:#999;
+}
+input[type="password"]::-ms-reveal {
+  display: none;
 }
 
 /* Upload Box */
@@ -273,6 +287,7 @@ body{background:#f7f3ee}
   border: none;
   border-radius: 15px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 

@@ -28,10 +28,24 @@ $totalPendapatan=$item?($item->nominal_owner+$item->nominal_cabang):0;
 <div class="detail-wrapper">
 <div class="detail-card-custom">
 
-<div class="rekening-pill">
-Rekening Tujuan Fee:<br>
-Mandiri - 98767896540 <br>
-a.n OwnerOutdoorKriss
+<div class="top-info-row">
+
+    <div class="rekening-pill">
+        Rekening Tujuan Fee:<br>
+        Mandiri - 98767896540 <br>
+        a.n OwnerOutdoorKriss
+    </div>
+
+    @if($item)
+    <div class="bulan-box">
+        <label>Bulan Bagi Hasil</label>
+
+        <div class="bulan-display">
+            {{ \Carbon\Carbon::parse($item->bulan)->translatedFormat('F Y') }}
+        </div>
+    </div>
+    @endif
+
 </div>
 
 <h5 class="detail-title-center">Detail Perhitungan Bagi Hasil</h5>
@@ -142,8 +156,6 @@ Belum ada perhitungan bagi hasil dari owner
 </div>
 
 @endif
-
-
 
 @if($view=='riwayat')
 

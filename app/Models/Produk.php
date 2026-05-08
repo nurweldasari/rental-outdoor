@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Models\Harga;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Database\Eloquent\Model;
@@ -18,14 +19,25 @@ class Produk extends Model
     protected $fillable = [
         'nama_produk',
         'stok_pusat',
-        'harga',
         'jenis_skala',
         'gambar_produk',
         'kategori_idkategori',          // ✅
         'admin_pusat_idadmin_pusat',
     ];
+    
 
     // ================= RELATION =================
+    public function harga()
+{
+    return $this->hasMany(Harga::class, 'produk_id', 'idproduk');
+    
+}
+public function hargaAktif()
+{
+    return $this->hasOne(Harga::class, 'produk_id', 'idproduk')
+        ->where('type', 'produk')
+        ->latestOfMany('tanggal_berlaku');
+}
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'kategori_idkategori', 'idkategori');

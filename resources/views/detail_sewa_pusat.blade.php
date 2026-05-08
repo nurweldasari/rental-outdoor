@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@php
-    $active = 'penyewaan';
-@endphp
-
 @section('title','Detail Penyewaan')
 
 @push('styles')
@@ -102,17 +98,26 @@
                     <td>{{ $no++ }}</td>
                     <td>
                         @if($item->type === 'produk')
-                            {{ optional($item->produk)->nama_produk }}
+                            {{ $item->nama_produk }}
 
                         @elseif($item->type === 'paket')
-                            {{ optional($item->paket)->nama_paket}}
+                            {{ $item->nama_paket }}
+                            <div style="font-size:12px;color:#666;">
+                            @php 
+                                $detail = json_decode($item->detail_paket ?? '[]');
+                            @endphp
+
+                            @foreach($detail as $d)
+                                • {{ $d->nama_produk ?? '-' }} ({{ $d->qty ?? 0 }}) <br>
+                            @endforeach
+                        </div>
 
                         @else
                             -
                         @endif
                     </td>
                     <td>{{ $item->qty }}</td>
-                    <td>{{ $item->produk->jenis_skala ?? '-' }}</td>
+                    <td>{{ $item->jenis_skala ?? '-' }}</td>
 
                     <td>
                         {{ \Carbon\Carbon::parse($penyewaan->tanggal_selesai)->format('d M Y') }}

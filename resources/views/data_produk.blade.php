@@ -15,7 +15,7 @@
 
     {{-- HEADER --}}
     <div class="header-produk">
-
+    <div class="left-header">
         {{-- Search --}}
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -28,6 +28,8 @@
             <option value="Skala Besar" {{ request('skala') == 'Skala Besar' ? 'selected' : '' }}>Skala Besar</option>
             <option value="Skala Kecil" {{ request('skala') == 'Skala Kecil' ? 'selected' : '' }}>Skala Kecil</option>
         </select>
+    </div>
+    <div class="right-header">
         {{-- Tombol Tambah Paket --}}
         <a href="{{ route('paket_pusat') }}" class="btn-tambah-paket">
             <i class="fa-solid fa-plus"></i> Tambah Paket
@@ -50,6 +52,7 @@
         {{-- Form hidden --}}
         <form id="filterForm" method="GET" action="{{ route('data_produk') }}"></form>
     </div>
+    </div>
 
     {{-- GRID PRODUK --}}
     <div class="grid-produk">
@@ -68,12 +71,12 @@
     <div class="dropdown-produk">
         <button type="button"
                 class="btn-dot"
-                onclick="toggleDropdown({{ $paket->id }})">
+                onclick="toggleDropdown('paket-{{ $paket->id }}')">
             <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
 
         <div class="dropdown-menu-produk"
-             id="dropdown-{{ $paket->id }}">
+             id="dropdown-paket-{{ $paket->id }}">
 
             {{-- EDIT --}}
             <a href="{{ route('paket_pusat.edit', $paket->id) }}">
@@ -102,19 +105,19 @@
         <h4>{{ $paket->nama_paket }}</h4>
 
         <p class="harga">
-            Rp {{ number_format($paket->harga_paket, 0, ',', '.') }} / hari
+           Rp {{ number_format($paket->hargaTerbaru?->harga ?? 0,0,',','.') }} / hari
         </p>
 
         <button class="btn-detail"
     onclick="openModal(this)"
     data-nama="{{ $paket->nama_paket }}"
-    data-harga="{{ $paket->harga_paket }}"
+    data-harga="{{ $paket->hargaTerbaru?->harga ?? 0 }}"
     data-gambar="{{ $paket->gambar_paket
     ? asset('storage/'.$paket->gambar_paket)
     : asset('images/placeholder.png') }}"
     data-detail="
     @foreach($paket->detail as $item)
-        {{ optional($item->produk)->nama_produk ?? '-' }} ({{ $item->qty }})
+        {{ optional($item->produk)->nama_produk ?? '-' }} ({{ $item->qty }})|
     @endforeach
     ">
     Lihat Detail
@@ -137,12 +140,12 @@
                 <div class="dropdown-produk">
                     <button type="button"
                             class="btn-dot"
-                            onclick="toggleDropdown({{ $item->idproduk }})">
+                            onclick="toggleDropdown('produk-{{ $item->idproduk }}')">
                         <i class="fa-solid fa-ellipsis-vertical"></i>
                     </button>
 
                     <div class="dropdown-menu-produk"
-                         id="dropdown-{{ $item->idproduk }}">
+                         id="dropdown-produk-{{ $item->idproduk }}">
                         <a href="{{ route('produk.update', $item->idproduk) }}">
                             <i class="fa-solid fa-pen-to-square"></i> Edit Produk
                         </a>
@@ -171,7 +174,7 @@
 
                 {{-- Harga --}}
                 <p class="harga">
-                    Rp. {{ number_format($item->harga, 0, ',', '.') }}/hari
+                    Rp {{ number_format($item->hargaAktif?->harga ?? 0, 0, ',', '.') }} / hari
                 </p>
 
                 {{-- Stok --}}
@@ -287,7 +290,7 @@ function openModal(el) {
     });
 
     document.getElementById('modalNama').innerText = nama;
-    document.getElementById('modalHarga').innerText = "Rp " + Number(harga).toLocaleString('id-ID');
+    document.getElementById('modalHarga').innerText = "Rp " + Number(harga).toLocaleString();
     document.getElementById('modalGambar').src = gambar;
     document.getElementById('modalIsi').innerHTML = html;
 

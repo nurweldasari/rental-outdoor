@@ -72,7 +72,7 @@
     </div>
 
     <div>
-        Rp {{ number_format($p->total) }}
+        Rp {{ number_format($p->total,0,',','.') }}
     </div>
 
     <!-- STATUS (Tambahan baru) -->

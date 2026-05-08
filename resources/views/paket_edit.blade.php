@@ -35,7 +35,7 @@
             <label>Harga Paket</label>
             <input type="number"
                    name="harga_paket"
-                   value="{{ $paket->harga_paket }}"
+                   value="{{ $paket->hargaTerbaru->harga ?? 0 }}"
                    required>
         </div>
 

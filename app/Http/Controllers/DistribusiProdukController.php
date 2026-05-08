@@ -19,11 +19,11 @@ class DistribusiProdukController extends Controller
     // default = permintaan
 
     $permintaan = Permintaan::whereIn('status', ['menunggu','disetujui'])
-                    ->with(['produkPermintaan.produk','cabang','adminCabang.user'])
-                    ->get();
+        ->with(['produkDetail.produk','produkDetail.distribusi','cabang','adminCabang.user'])
+        ->get();
 
     $riwayat = Permintaan::where('status','sampai')
-                    ->with(['produkPermintaan.produk','cabang'])
+                    ->with(['produkDetail.produk','cabang'])
                     ->get();
 
     return view('distribusi_produk', compact(
@@ -35,40 +35,59 @@ class DistribusiProdukController extends Controller
 
     // Kirim produk ke cabang
     public function kirimPermintaan(Request $request)
-    {
-        $request->validate([
-            'jumlah_dikirim' => 'required|array',
-            'jumlah_dikirim.*' => 'integer|min:0'
-        ]);
+{
+    $request->validate([
+        'jumlah_dikirim' => 'required|array',
+        'jumlah_dikirim.*' => 'required|integer|min:1',
+        'keterangan' => 'nullable|string|max:255'
+    ]);
 
-        foreach ($request->jumlah_dikirim as $permintaanProdukId => $jumlahKirim) {
-            $permintaanProduk = PermintaanProduk::findOrFail($permintaanProdukId);
-            $produk = Produk::findOrFail($permintaanProduk->produk_idproduk);
+    // ===================== VALIDASI SEMUA DULU =====================
+    foreach ($request->jumlah_dikirim as $permintaanProdukId => $jumlahKirim) {
 
-            $jumlahKirim = min($jumlahKirim, $permintaanProduk->jumlah_diminta, $produk->stok_pusat);
-            if ($jumlahKirim <= 0) continue;
+        $permintaanProduk = PermintaanProduk::findOrFail($permintaanProdukId);
+        $produk = Produk::findOrFail($permintaanProduk->produk_idproduk);
 
-            DistribusiProduk::create([
-                'permintaan_produk_id' => $permintaanProduk->id,
-                'tanggal_distribusi'   => now()->format('Y-m-d'),
-                'jumlah_dikirim'       => $jumlahKirim,
-                'status_distribusi'    => 'dikirim'
-            ]);
-
-            $produk->stok_pusat -= $jumlahKirim;
-            $produk->save();
+        if ($jumlahKirim < 1) {
+            return back()->with('error', 'Jumlah kirim tidak boleh 0.');
         }
 
-        // Update status header permintaan jadi disetujui
-        $permintaanHeaderIds = PermintaanProduk::whereIn('id', array_keys($request->jumlah_dikirim))
-            ->pluck('permintaan_id')
-            ->unique();
+        if ($jumlahKirim > $permintaanProduk->jumlah_diminta) {
+            return back()->with('error', 'Tidak boleh melebihi jumlah permintaan.');
+        }
 
-        Permintaan::whereIn('idpermintaan', $permintaanHeaderIds)
-            ->update(['status' => 'disetujui']);
-
-        return back()->with('success', 'Semua produk berhasil disetujui dan dikirim.');
+        if ($produk->stok_pusat < $jumlahKirim) {
+            return back()->with('error', 'Stok pusat tidak mencukupi. Sisa stok: ' . $produk->stok_pusat);
+        }
     }
+
+    // ===================== PROSES SIMPAN =====================
+    foreach ($request->jumlah_dikirim as $permintaanProdukId => $jumlahKirim) {
+
+        $permintaanProduk = PermintaanProduk::findOrFail($permintaanProdukId);
+        $produk = Produk::findOrFail($permintaanProduk->produk_idproduk);
+
+        DistribusiProduk::create([
+            'permintaan_produk_id' => $permintaanProduk->id,
+            'tanggal_distribusi'   => now(),
+            'jumlah_dikirim'       => $jumlahKirim,
+            'keterangan'           => $request->keterangan,
+            'status_distribusi'    => 'dikirim'
+        ]);
+
+        $produk->stok_pusat -= $jumlahKirim;
+        $produk->save();
+    }
+
+    $permintaanHeaderIds = PermintaanProduk::whereIn('id', array_keys($request->jumlah_dikirim))
+        ->pluck('permintaan_id')
+        ->unique();
+
+    Permintaan::whereIn('idpermintaan', $permintaanHeaderIds)
+        ->update(['status' => 'disetujui']);
+
+    return back()->with('success', 'Semua produk berhasil disetujui dan dikirim.');
+}
 
     // Terima semua distribusi dari satu permintaan
    public function terima($id)

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @php
     $active = 'data.permintaan';
 @endphp
@@ -13,190 +14,203 @@
 @section('content')
 
 <div class="page-container">
-    <div class="section data-permintaan">
+<div class="section data-permintaan">
 
-        <!-- ================= HEADER ================= -->
-        <div class="data-header">
+    <!-- ================= HEADER ================= -->
+    <div class="data-header">
 
-    <!-- kiri -->
-    <div class="data-left">
-        <form method="GET">
-            <select class="per-page" name="per_page" onchange="this.form.submit()">
-                <option value="10" {{ request('per_page')==10?'selected':'' }}>10</option>
-                <option value="25" {{ request('per_page')==25?'selected':'' }}>25</option>
-                <option value="50" {{ request('per_page')==50?'selected':'' }}>50</option>
-                <option value="100" {{ request('per_page')==100?'selected':'' }}>100</option>
-            </select>
-        </form>
-        <span class="per-page-text">Data per halaman</span>
-    </div>
-
-    <!-- kanan -->
-    <div class="data-right">
-        <form method="GET">
-            <input
-                type="text"
-                id="searchInput"
-                name="search"
-                class="search-table"
-                placeholder="Cari tanggal..."
-                value="{{ request('search') }}"
-            >
-        </form>
-
-        <a href="{{ route('permintaan_produk.create') }}" class="btn btn-orange">
-            <i class="fa-solid fa-plus"></i> Ajukan
-        </a>
-    </div>
-
-</div>
-
-        <!-- ================= TABLE ================= -->
-        <div class="table-wrapper">
-
-            <div class="table-header">
-                <div class="col no">No</div>
-                <div class="col tanggal">Tanggal</div>
-                <div class="col total">Jumlah Item</div>
-                <div class="col status">Status</div>
-                <div class="col aksi">Aksi</div>
-            </div>
-
-            <div class="table-body" id="tableBody">
-
-                @php $no = 1; @endphp
-                @foreach($permintaan as $item) <!-- satu item = satu permintaan -->
-
-                <div class="table-row">
-
-                    <div class="col no">{{ $no++ }}</div>
-
-                    <div class="col tanggal">
-    {{ $item->tanggal_permintaan
-        ? \Carbon\Carbon::parse($item->tanggal_permintaan)->translatedFormat('l, d F Y')
-        : '-' }}
-</div>
-
-                    <div class="col total">
-                        {{ $item->produkDetail->count() }} alat
-                    </div>
-
-                    <div class="col status">
-                        @php $status = $item->status; @endphp
-                        @if ($status === 'menunggu')
-                            <span class="badge waiting">
-                                <i class="fa-solid fa-clock"></i> Menunggu
-                            </span>
-                        @elseif ($status === 'disetujui')
-                            <span class="badge success">
-                                <i class="fa-solid fa-circle-check"></i> Disetujui
-                            </span>
-                        @elseif ($status === 'ditolak')
-                            <span class="badge danger">
-                                <i class="fa-solid fa-circle-xmark"></i> Ditolak
-                            </span>
-                        @elseif ($status === 'sampai')
-                            <span class="badge info">
-                                <i class="fa-solid fa-box"></i> Sampai
-                            </span>
-                        @endif
-                    </div>
-
-                    <div class="col aksi">
-
-                        <!-- DETAIL -->
-                        <button
-                            type="button"
-                            class="btn btn-detail"
-                            data-modal="modal{{ $loop->index }}">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-
-                       {{-- KONFIRMASI TERIMA BARANG --}}
-{{-- KONFIRMASI TERIMA BARANG --}}
-@if(strtolower($item->status) === 'disetujui')
-    <form action="{{ route('distribusi_produk.terima', $item->idpermintaan) }}" method="POST">
-    @csrf
-    <button type="submit" class="btn btn-confirm">
-        <i class="fa-solid fa-circle-check"></i> Terima Barang
-    </button>
-</form>
-
-
-@endif
-
-
-
-                    </div>
-                </div>
-
-                <!-- ================= MODAL ================= -->
-                <div class="modal-custom" id="modal{{ $loop->index }}">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h4>Detail Permintaan</h4>
-                            <span class="modal-close">&times;</span>
-                        </div>
-
-                        <div class="modal-body">
-                            <table class="modal-table">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Alat</th>
-                                        <th>Jumlah</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($item->produkDetail as $detail)
-                                        <tr>
-                                            <td>{{ $detail->produk->nama_produk ?? '-' }}</td>
-                                            <td>{{ $detail->jumlah_diminta }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
-
-                @endforeach
-
-            </div>
+        <!-- kiri -->
+        <div class="data-left">
+            <form method="GET">
+                <select class="per-page" name="per_page" onchange="this.form.submit()">
+                    <option value="10" {{ request('per_page')==10?'selected':'' }}>10</option>
+                    <option value="25" {{ request('per_page')==25?'selected':'' }}>25</option>
+                    <option value="50" {{ request('per_page')==50?'selected':'' }}>50</option>
+                    <option value="100" {{ request('per_page')==100?'selected':'' }}>100</option>
+                </select>
+            </form>
+            <span class="per-page-text">Data per halaman</span>
         </div>
-<div class="pagination-simple">
-    {{-- Prev --}}
-    @if ($permintaan->onFirstPage())
-        <span class="nav disabled">«</span>
-    @else
-        <a href="{{ $permintaan->previousPageUrl() }}" class="nav">«</a>
-    @endif
 
-    {{-- Nomor halaman --}}
-    @foreach ($permintaan->getUrlRange(1, $permintaan->lastPage()) as $page => $url)
-        @if ($page == $permintaan->currentPage())
-            <span class="page active">{{ $page }}</span>
+        <!-- kanan -->
+        <div class="data-right">
+            <form method="GET">
+                <input
+                    type="text"
+                    id="searchInput"
+                    name="search"
+                    class="search-table"
+                    placeholder="Cari tanggal..."
+                    value="{{ request('search') }}">
+            </form>
+
+            <a href="{{ route('permintaan_produk.create') }}" class="btn btn-orange">
+                <i class="fa-solid fa-plus"></i> Ajukan
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ================= TABLE ================= -->
+    <div class="table-wrapper">
+
+        <div class="table-header">
+            <div class="col no">No</div>
+            <div class="col tanggal">Tanggal</div>
+            <div class="col total">Jumlah Item</div>
+            <div class="col status">Status</div>
+            <div class="col aksi">Aksi</div>
+        </div>
+
+        <div class="table-body">
+
+        @foreach($permintaan as $item)
+
+        <div class="table-row">
+
+            <div class="col no">{{ $loop->iteration }}</div>
+
+            <div class="col tanggal">
+                {{ $item->tanggal_permintaan
+                    ? \Carbon\Carbon::parse($item->tanggal_permintaan)->translatedFormat('l, d F Y')
+                    : '-' }}
+            </div>
+
+            <div class="col total">
+                {{ $item->produkDetail->count() }} alat
+            </div>
+
+            <div class="col status">
+                @if ($item->status === 'menunggu')
+                    <span class="badge waiting">
+                        <i class="fa-solid fa-clock"></i> Menunggu
+                    </span>
+                @elseif ($item->status === 'disetujui')
+                    <span class="badge success">
+                        <i class="fa-solid fa-circle-check"></i> Disetujui
+                    </span>
+                @elseif ($item->status === 'ditolak')
+                    <span class="badge danger">
+                        <i class="fa-solid fa-circle-xmark"></i> Ditolak
+                    </span>
+                @elseif ($item->status === 'sampai')
+                    <span class="badge info">
+                        <i class="fa-solid fa-box"></i> Sampai
+                    </span>
+                @endif
+            </div>
+
+            <div class="col aksi">
+
+                <!-- DETAIL -->
+                <button
+                    type="button"
+                    class="btn btn-detail"
+                    onclick="openModal({{ $item->idpermintaan }})">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+
+                <!-- TERIMA -->
+                @if(strtolower($item->status) === 'disetujui')
+                <form action="{{ route('distribusi_produk.terima', $item->idpermintaan) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-confirm">
+                        <i class="fa-solid fa-circle-check"></i> Terima
+                    </button>
+                </form>
+                @endif
+
+            </div>
+
+        </div>
+
+        @endforeach
+
+        </div>
+    </div>
+
+    <!-- ================= PAGINATION ================= -->
+    <div class="pagination-simple">
+        @if ($permintaan->onFirstPage())
+            <span class="nav disabled">«</span>
         @else
-            <a href="{{ $url }}" class="page">{{ $page }}</a>
+            <a href="{{ $permintaan->previousPageUrl() }}" class="nav">«</a>
         @endif
-    @endforeach
 
-    {{-- Next --}}
-    @if ($permintaan->hasMorePages())
-        <a href="{{ $permintaan->nextPageUrl() }}" class="nav">»</a>
-    @else
-        <span class="nav disabled">»</span>
-    @endif
+        @foreach ($permintaan->getUrlRange(1, $permintaan->lastPage()) as $page => $url)
+            @if ($page == $permintaan->currentPage())
+                <span class="page active">{{ $page }}</span>
+            @else
+                <a href="{{ $url }}" class="page">{{ $page }}</a>
+            @endif
+        @endforeach
+
+        @if ($permintaan->hasMorePages())
+            <a href="{{ $permintaan->nextPageUrl() }}" class="nav">»</a>
+        @else
+            <span class="nav disabled">»</span>
+        @endif
+    </div>
+
 </div>
+</div>
+
+<!-- ================= MODAL (DI LUAR TABLE) ================= -->
+@foreach($permintaan as $item)
+<div class="modal" id="modal-{{ $item->idpermintaan }}">
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <div>
+                <h4>Detail Distribusi - {{ $item->cabang->nama_cabang ?? '-' }}</h4>
+            </div>
+
+            <span class="close" onclick="closeModal({{ $item->idpermintaan }})">
+                <i class="fa-solid fa-xmark"></i>
+            </span>
+        </div>
+
+        <div class="modal-body">
+            <table class="modal-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Produk</th>
+                        <th>Kategori</th>
+                        <th>Diminta</th>
+                        <th>Dikirim</th>
+                        <th>Catatan Cabang</th>
+                        <th>Catatan Owner</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                @foreach($item->produkDetail as $j => $detail)
+                    <tr>
+                        <td>{{ $j+1 }}</td>
+                        <td>{{ $detail->produk->nama_produk ?? '-' }}</td>
+                        <td>{{ $detail->produk->kategori->nama_kategori ?? '-' }}</td>
+                        <td>{{ $detail->jumlah_diminta }}</td>
+                        <td>
+                            {{ optional($detail->distribusi->first())->jumlah_dikirim ?? '-' }}
+                        </td>
+                        <td>{{ $item->keterangan ?? '-' }}</td>
+                        <td>{{ optional($detail->distribusi->first())->keterangan ?? '-' }}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
+@endforeach
 
 @endsection
 
 @push('scripts')
 <script>
-/* ================= SEARCH + LIMIT ================= */
+/* ================= SEARCH ================= */
 const searchInput = document.getElementById('searchInput');
 
 searchInput.addEventListener('input', function () {
@@ -204,36 +218,27 @@ searchInput.addEventListener('input', function () {
     const rows = document.querySelectorAll('.table-row');
 
     rows.forEach(row => {
-        const text = row.innerText.toLowerCase(); // 🔥 cari semua isi row
-
-        if (text.includes(keyword)) {
-            row.style.display = 'grid';
-        } else {
-            row.style.display = 'none';
-        }
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(keyword) ? 'grid' : 'none';
     });
 });
 
 /* ================= MODAL ================= */
-document.querySelectorAll('.btn-detail').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const modalId = btn.dataset.modal;
-        const modal = document.getElementById(modalId);
-        if(modal) modal.classList.add('active');
-    });
-});
+function openModal(id){
+    document.getElementById('modal-'+id).style.display = 'flex';
+}
 
-document.querySelectorAll('.modal-close').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const modal = btn.closest('.modal-custom');
-        if(modal) modal.classList.remove('active');
-    });
-});
+function closeModal(id){
+    document.getElementById('modal-'+id).style.display = 'none';
+}
 
-document.querySelectorAll('.modal-custom').forEach(modal => {
-    modal.addEventListener('click', e => {
-        if(e.target === modal) modal.classList.remove('active');
+/* klik luar modal */
+window.onclick = function(e){
+    document.querySelectorAll('.modal').forEach(modal=>{
+        if(e.target === modal){
+            modal.style.display = 'none';
+        }
     });
-});
+}
 </script>
 @endpush

@@ -31,11 +31,11 @@ class PenyewaanController extends Controller
         'tanggal_sewa'    => 'required|date',
         'tanggal_selesai' => 'required|date|after_or_equal:tanggal_sewa',
         'metode_bayar'    => 'required|in:cash,transfer',
-        'produk_cabang' => 'nullable|array',
-'produk'        => 'nullable|array',
+        'produk_cabang'   => 'nullable|array',
+        'produk'          => 'nullable|array',
        
-        'qty'             => 'required|array',
-        'type'            => 'required|array',
+        'qty.*'  => 'required|integer|min:1',
+        'type.*' => 'required|in:produk,paket',
     ]);
 
     DB::beginTransaction();
@@ -95,6 +95,7 @@ class PenyewaanController extends Controller
     : ($request->produk ?? []);
 
 foreach ($items as $i => $id) {
+    if (!isset($request->qty[$i], $request->type[$i])) continue;
 
             $qty  = (int) ($request->qty[$i] ?? 0);
             $type = $request->type[$i] ?? 'produk';
@@ -106,8 +107,7 @@ foreach ($items as $i => $id) {
 
     $paket = Paket::findOrFail($id);
 
-    $harga = $paket->harga_paket;
-
+    $harga = $paket->hargaTerbaru->harga ?? 0;
     /* ================= PAKET CABANG ================= */
     if ($tipe === 'cabang') {
 
@@ -149,12 +149,37 @@ foreach ($items as $i => $id) {
 
     ItemPenyewaan::create([
         'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
-        'produk_idproduk' => null,
-        'paket_id' => $paket->id,
-        'type' => 'paket',
-        'harga' => $harga,
-        'qty' => $qty,
-        'subtotal' => $harga * $qty * $durasiHari,
+        'produk_idproduk'       => null,
+        'paket_id'              => $paket->id,
+        'type'                  => 'paket',
+        'nama_paket'            => $paket->nama_paket,
+        'detail_paket' => json_encode(
+            $paket->detail->map(function ($d) use ($tipe) {
+
+                if ($tipe === 'cabang') {
+                    return [
+                        'produk_id'   => $d->stokCabang->produk->idproduk ?? null,
+                        'nama_produk' => $d->stokCabang->produk->nama_produk ?? '-',
+                        'qty'         => $d->qty
+                    ];
+                } elseif ($tipe === 'pusat') {
+                    return [
+                        'produk_id'   => $d->produk->idproduk ?? null,
+                        'nama_produk' => $d->produk->nama_produk ?? '-',
+                        'qty'         => $d->qty
+                    ];
+                }
+
+                return [
+                    'produk_id'   => null,
+                    'nama_produk' => '-',
+                    'qty'         => $d->qty
+                ];
+            })
+        ),
+        'harga'                 => $harga,
+        'qty'                   => $qty,
+        'subtotal'              => $harga * $qty * $durasiHari,
     ]);
 
     $total += $harga * $qty * $durasiHari;
@@ -171,8 +196,9 @@ foreach ($items as $i => $id) {
                     if ($qty > $stok->jumlah) {
                         throw new \Exception('Stok cabang tidak mencukupi');
                     }
+                    $produk = $stok->produk;
+                    $harga = $produk->hargaAktif->harga ?? 0;
 
-                    $harga = $stok->produk->harga;
                     $stok->decrement('jumlah', $qty);
                     $produkId = $stok->produk_idproduk;
 
@@ -184,19 +210,21 @@ foreach ($items as $i => $id) {
                         throw new \Exception('Stok pusat tidak mencukupi');
                     }
 
-                    $harga = $produk->harga;
+                    $harga = $produk->hargaAktif->harga ?? 0;
                     $produk->decrement('stok_pusat', $qty);
                     $produkId = $produk->idproduk;
                 }
 
                 ItemPenyewaan::create([
                     'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
-                    'produk_idproduk' => $produkId,
-                    'paket_id' => null,
-                    'type' => 'produk',
-                    'harga' => $harga,
-                    'qty' => $qty,
-                    'subtotal' => $harga * $qty * $durasiHari,
+                    'produk_idproduk'       => $produkId,
+                    'paket_id'              => null,
+                    'type'                  => 'produk',
+                    'nama_produk'           => $produk->nama_produk,
+                    'jenis_skala'           => $produk->jenis_skala,
+                    'harga'                 => $harga,
+                    'qty'                   => $qty,
+                    'subtotal'              => $harga * $qty * $durasiHari,
                 ]);
 
                 $total += $harga * $qty * $durasiHari;
@@ -222,7 +250,7 @@ if ($tipe === 'pusat') {
     } catch (\Exception $e) {
 
         DB::rollBack();
-        dd($e->getMessage());
+        return back()->with('error', $e->getMessage());
     }
 }
 
@@ -457,20 +485,17 @@ public function selesaiAdmin($id)
     }
 
     // ================= PAKET =================
-    elseif ($item->type === 'paket' && $item->paket_id) {
+    elseif ($item->type === 'paket') {
 
-        $paket = \App\Models\Paket::with('detail')->find($item->paket_id);
+        if (!$item->detail_paket) continue;
 
-        if ($paket) {
-            foreach ($paket->detail as $detail) {
+        $details = json_decode($item->detail_paket, true);
 
-                $stok = StokCabang::find($detail->stok_cabang_id);
+        foreach ($details as $d) {
 
-                if ($stok) {
-                    // 🔥 qty paket × qty item
-                    $stok->increment('jumlah', $detail->qty * $item->qty);
-                }
-            }
+            StokCabang::where('produk_idproduk', $d['produk_id'])
+                ->where('cabang_idcabang', $penyewaan->cabang_idcabang)
+                ->increment('jumlah', $d['qty'] * $item->qty);
         }
     }
 }
@@ -555,20 +580,17 @@ public function cancel($id)
     }
 
     // ================= PAKET =================
-    elseif ($item->type === 'paket' && $item->paket_id) {
+    elseif ($item->type === 'paket') {
 
-        $paket = \App\Models\Paket::with('detail')->find($item->paket_id);
+        if (!$item->detail_paket) continue;
 
-        if ($paket) {
-            foreach ($paket->detail as $detail) {
+        $details = json_decode($item->detail_paket, true);
 
-                $stok = StokCabang::find($detail->stok_cabang_id);
+        foreach ($details as $d) {
 
-                if ($stok) {
-                    // 🔥 qty paket × qty item
-                    $stok->increment('jumlah', $detail->qty * $item->qty);
-                }
-            }
+            StokCabang::where('produk_idproduk', $d['produk_id'])
+                ->where('cabang_idcabang', $penyewaan->cabang_idcabang)
+                ->increment('jumlah', $d['qty'] * $item->qty);
         }
     }
 }
@@ -583,7 +605,7 @@ public function cancel($id)
 
     } catch (\Exception $e) {
         DB::rollBack();
-
+        return redirect()->back()->with('error', 'Gagal membatalkan');
     }
 }
 
@@ -712,8 +734,8 @@ public function reservasi(Request $request, $idpenyewa)
 
         $paket = Paket::with('detail.stokCabang.produk')
             ->findOrFail($id);
-
-        $harga = $paket->harga_paket;
+       
+        $harga = $paket->hargaTerbaru->harga ?? 0;
 
         foreach ($paket->detail as $d) {
 
@@ -755,7 +777,9 @@ public function reservasi(Request $request, $idpenyewa)
             throw new \Exception('Stok tidak mencukupi');
         }
 
-        $harga = $stok->produk->harga;
+        $produk = $stok->produk;
+        $harga = $produk->hargaAktif->harga ?? 0;
+
         $stok->decrement('jumlah', $qty);
 
         ItemPenyewaan::create([
@@ -904,8 +928,8 @@ public function reservasiPusat(Request $request, $idpenyewa)
                     ->with('detail.produk')
                     ->findOrFail($id);
 
-                $harga = $paket->harga_paket;
-
+                $harga = $paket->hargaTerbaru->harga ?? 0;
+                
                 foreach ($paket->detail as $d) {
 
                     if (!$d->produk_idproduk) {
@@ -1110,16 +1134,16 @@ public function selesaiAdminPusat($id)
             }
 
             // ================= PAKET =================
-            elseif ($item->type === 'paket' && $item->paket_id) {
+           elseif ($item->type === 'paket') {
 
-                $paket = Paket::with('detail')->find($item->paket_id);
+                if (!$item->detail_paket) continue;
 
-                if ($paket) {
-                    foreach ($paket->detail as $detail) {
+                $details = json_decode($item->detail_paket, true);
 
-                        Produk::where('idproduk', $detail->produk_idproduk)
-                            ->increment('stok_pusat', $detail->qty * $item->qty);
-                    }
+                foreach ($details as $d) {
+
+                    Produk::where('idproduk', $d['produk_id'])
+                        ->increment('stok_pusat', $d['qty'] * $item->qty);
                 }
             }
         }
@@ -1179,7 +1203,7 @@ public function cancelPusat($id)
     $isOwner = $user->status === 'owner';
 
     if (!$adminPusat && !$isOwner) {
-        return response()->json(['success' => false]);
+        return redirect()->back()->with('error', 'Tidak punya akses');
     }
 
     $query = Penyewaan::with('itemPenyewaan')
@@ -1191,11 +1215,9 @@ public function cancelPusat($id)
 
     $penyewaan = $query->firstOrFail();
 
+    // ❌ tidak bisa cancel
     if ($penyewaan->status_penyewaan !== 'menunggu_pembayaran') {
-        return response()->json([
-            'success' => false,
-            'message' => 'Tidak bisa dibatalkan'
-        ]);
+        return redirect()->back()->with('error', 'Tidak bisa dibatalkan');
     }
 
     DB::beginTransaction();
@@ -1212,16 +1234,16 @@ public function cancelPusat($id)
             }
 
             // ================= PAKET =================
-            elseif ($item->type === 'paket' && $item->paket_id) {
+            elseif ($item->type === 'paket') {
 
-                $paket = Paket::with('detail')->find($item->paket_id);
+                if (!$item->detail_paket) continue;
 
-                if ($paket) {
-                    foreach ($paket->detail as $detail) {
+                $details = json_decode($item->detail_paket, true);
 
-                        Produk::where('idproduk', $detail->produk_idproduk)
-                            ->increment('stok_pusat', $detail->qty * $item->qty);
-                    }
+                foreach ($details as $d) {
+
+                    Produk::where('idproduk', $d['produk_id'])
+                        ->increment('stok_pusat', $d['qty'] * $item->qty);
                 }
             }
         }
@@ -1232,15 +1254,11 @@ public function cancelPusat($id)
 
         DB::commit();
 
-        return response()->json(['success' => true]);
+        return redirect()->back()->with('success', 'Penyewaan dibatalkan');
 
     } catch (\Exception $e) {
         DB::rollBack();
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Gagal membatalkan'
-        ]);
+        return redirect()->back()->with('error', 'Gagal membatalkan');
     }
 }
 public function detailPenyewaPusat($id)

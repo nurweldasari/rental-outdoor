@@ -51,7 +51,12 @@
 
                     <p class="jumlah-produk">
                         Jumlah Produk :
-                        <b>{{ $perm->produkPermintaan->count() }} jenis</b>
+                        <b>{{ $perm->produkDetail->count() }} jenis</b>
+                    </p>
+
+                    <p class="catatan">
+                        <strong>Catatan :</strong>
+                        {{ $perm->keterangan ?? '-' }}
                     </p>
                 </div>
 
@@ -62,32 +67,71 @@
 
 
             {{-- FORM KIRIM --}}
-            @if($perm->status === 'menunggu')
             <div class="produk-box">
-                <form action="{{ route('distribusi_produk.kirim') }}" method="POST">
-                    @csrf
 
-                    @foreach ($perm->produkPermintaan as $item)
-                        <div class="produk-item">
-                            <h4>{{ $item->produk->nama_produk }}</h4>
-                            <p class="diminta">Diminta : {{ $item->jumlah_diminta }} unit</p>
-
-                            <label>Jumlah Dikirim</label>
-                            <input type="number"
-                                   name="jumlah_dikirim[{{ $item->id }}]"
-                                   value="{{ $item->jumlah_diminta }}"
-                                   min="0"
-                                   required>
-                        </div>
-                    @endforeach
-
-                    <button type="submit" class="btn btn-green btn-full">
-                        Setujui & Kirim
-                    </button>
-                </form>
-            </div>
+            @if($perm->status === 'menunggu')
+            <form action="{{ route('distribusi_produk.kirim') }}" method="POST">
+                @csrf
             @endif
 
+            @foreach ($perm->produkDetail as $item)
+                <div class="produk-item">
+
+                    <h4>{{ $item->produk->nama_produk }}</h4>
+                     @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                  @php
+            $dikirim = $item->distribusi->sum('jumlah_dikirim') ?? 0;
+
+            // kalau belum pernah kirim, pakai jumlah diminta
+            $defaultInput = $dikirim > 0 ? $dikirim : $item->jumlah_diminta;
+        @endphp
+
+        {{-- DIMINTA --}}
+        <p>Diminta : {{ $item->jumlah_diminta }}</p>
+
+
+        {{-- INPUT --}}
+        <input type="number"
+            name="jumlah_dikirim[{{ $item->id }}]"
+            value="{{ old('jumlah_dikirim.' . $item->id, $defaultInput) }}"
+            min="1"
+            max="{{ $item->jumlah_diminta }}"
+            required>
+
+                </div>
+            @endforeach
+             @if($perm->status === 'menunggu')
+
+            <p class="catatan-label">Catatan Owner untuk Cabang</p>
+
+            <input type="text"
+                class="catatan-input"
+                name="keterangan"
+                placeholder="Contoh: Barang dikirim bertahap / stok terbatas">
+
+            @else
+
+            <p class="catatan-label">Catatan Owner untuk Cabang</p>
+
+            <input type="text"
+                class="catatan-input"
+                value="{{ $item->distribusi->first()?->keterangan ?? '-' }}"
+                readonly>
+
+            @endif
+            @if($perm->status === 'menunggu')
+                <button type="submit" class="btn btn-green btn-full">
+                    Setujui & Kirim
+                </button>
+            </form>
+            @endif
+
+            </div>
         </div>
 
         @empty
@@ -131,7 +175,7 @@
                         </td>
 
                         <td>{{ $perm->cabang->nama_cabang }}</td>
-                        <td>{{ $perm->produkPermintaan->count() }}</td>
+                        <td>{{ optional($perm->produkDetail)->count() ?? 0 }}</td>
                         <td>{{ ucfirst($perm->status) }}</td>
 
                         <td>
@@ -185,17 +229,21 @@
                         <th>Kategori</th>
                         <th>Diminta</th>
                         <th>Dikirim</th>
+                        <th>Catatan Cabang</th>
+                        <th>Catatan Owner</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                @foreach($perm->produkPermintaan as $j => $item)
+                @foreach($perm->produkDetail as $j => $item)
                     <tr>
                         <td>{{ $j+1 }}</td>
                         <td>{{ $item->produk->nama_produk }}</td>
                         <td>{{ $item->produk->kategori->nama_kategori ?? '-' }}</td>
                         <td>{{ $item->jumlah_diminta }}</td>
-                        <td>{{ $item->distribusi->first()->jumlah_dikirim ?? '-' }}</td>
+                        <td>{{ optional(optional($item->distribusi)->first())->jumlah_dikirim ?? '-' }}</td>
+                        <td>{{ $perm->keterangan ?? '-' }}</td>
+                        <td>{{ optional(optional($item->distribusi)->first())->keterangan ?? '-' }}</td>
                     </tr>
                 @endforeach
                 </tbody>
