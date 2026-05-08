@@ -13,8 +13,7 @@
      {{-- ================= HEADER ================= --}}
 
     <div class="no-print">
-<<<<<<< HEAD
-=======
+
 
     @if(auth()->user()->status !== 'admin_cabang')
     <a href="{{ route('laporan') }}" class="btn-kembali">
@@ -22,7 +21,6 @@
     </a>
     @endif
 
->>>>>>> 9d638b5af2abf4784fd406a8beca5f565d80665d
     <h2>
         Laporan Pendapatan - {{ $cabang->nama_cabang ?? 'Pusat' }}
     </h2>
@@ -122,58 +120,89 @@
     <small>({{ $data->penyewa->user->no_telepon }})</small>
 </div>
 
-            <div class="produk-list">
-
-    @php $noItem = 1; @endphp
+<div class="produk-list">
 
     @foreach($data->itemPenyewaan as $item)
 
-    {{-- ================= PRODUK ================= --}}
-   @if($item->type === 'produk')
-    {{ $loop->iteration }}.
-    {{ $item->nama_produk ?? '-' }}
-    ({{ $item->qty }}) <br>
+        {{-- ================= PRODUK ================= --}}
+        @if($item->type === 'produk')
 
-    {{-- ================= PAKET ================= --}}
-    @elseif($item->type === 'paket')
-    {{ $loop->iteration }}.
-    <strong>{{ $item->nama_paket ?? '-' }}</strong>
-    ({{ $item->qty }}) <br>
+            <div class="produk-item">
 
-    <small style="margin-left:10px;">
-        @php 
-            $detail = json_decode($item->detail_paket ?? '[]', true); 
-        @endphp
+                <span class="produk-nama">
+                    {{ $loop->iteration }}.
+                    {{ $item->nama_produk ?? '-' }}
+                    ({{ $item->qty }})
+                </span>
 
-        @foreach($detail as $d)
-            • {{ $d['nama_produk'] ?? '-' }} ({{ $d['qty'] ?? 0 }})<br>
-        @endforeach
-    </small>
-@endif
-@endforeach
             </div>
 
-            <div>
-                Rp {{ number_format($data->total,0,',','.') }}
-            </div>
-        </div>
-        @endforeach
+        {{-- ================= PAKET ================= --}}
+        @elseif($item->type === 'paket')
 
-        @if($penyewaan->count())
-        <div class="laporan-total">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div class="total-label">Total Pendapatan</div>
-            <div class="total-value">
-                Rp {{ number_format($totalPendapatan,0,',','.') }}
+            <div class="produk-item">
+
+                <div class="paket-nama">
+                    {{ $loop->iteration }}.
+                    <strong>{{ $item->nama_paket ?? '-' }}</strong>
+                    ({{ $item->qty }})
+                </div>
+
+                @php
+                    $detail = json_decode($item->detail_paket ?? '[]', true);
+                @endphp
+
+                <div class="paket-detail">
+
+                    @foreach($detail as $d)
+
+                        <div class="paket-detail-item">
+                            • {{ $d['nama_produk'] ?? '-' }}
+                            ({{ $d['qty'] ?? 0 }})
+                        </div>
+
+                    @endforeach
+
+                </div>
+
             </div>
-        </div>
+
         @endif
 
-    </div>
+    @endforeach
+
 </div>
 
+{{-- TOTAL --}}
+<div class="harga-total">
+    Rp {{ number_format($data->total,0,',','.') }}
+</div>
+
+</div>
+@endforeach
+
+@if($penyewaan->count())
+
+<div class="laporan-total">
+
+    <div></div>
+    <div></div>
+    <div></div>
+
+    <div class="total-label">
+        Total Pendapatan
+    </div>
+
+    <div class="total-value">
+        Rp {{ number_format($totalPendapatan,0,',','.') }}
+    </div>
+
+</div>
+
+@endif
+
+</div>
+</div>
 
 {{-- ================= SCRIPT ================= --}}
 <script>

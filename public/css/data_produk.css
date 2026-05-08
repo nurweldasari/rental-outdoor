@@ -765,7 +765,7 @@ select option:checked {
 
 .item-aksi button {
     border: none;
-    background: #eee;
+    background: transparent;
     padding: 2px 8px;
     cursor: pointer;
     font-size: 14px;
@@ -773,6 +773,7 @@ select option:checked {
 
 .qty {
     min-width: 20px;
+    background: #eee;
     text-align: center;
 }
 
@@ -1592,5 +1593,14 @@ color: #000;
         width: 100%;
         justify-content: center;
         margin-left: 0;
+    }
+      #filterForm{
+        width:100% !important;
+    }
+
+    #filterForm select{
+        width:100% !important;
+        height:44px;
+        box-sizing:border-box;
     }
 }

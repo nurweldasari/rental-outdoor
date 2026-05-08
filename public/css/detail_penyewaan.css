@@ -59,30 +59,37 @@
     overflow: hidden;
 }
 
+/* TABLE */
 .info-table {
     display: grid;
     grid-template-columns: 180px 1fr 180px 1fr;
 }
 
-/* CELL DASAR */
+/* CELL */
 .info-cell {
     padding: 14px 16px;
     font-size: 14px;
+
+    box-sizing: border-box;
+
+    /* 🔥 WAJIB */
+    margin-top: -1px;
+    border-top: 1px solid #7aa488;
 }
 
-/* GARIS VERTIKAL TENGAH SAJA */
+/* HAPUS GARIS PALING ATAS */
+.info-cell:nth-child(-n+4) {
+    border-top: none;
+}
+
+/* GARIS VERTIKAL */
 .info-cell:nth-child(2),
 .info-cell:nth-child(6),
 .info-cell:nth-child(10) {
     border-right: 1px solid #7aa488;
 }
 
-/* GARIS HORIZONTAL PER BARIS */
-.info-cell:nth-child(-n+4),
-.info-cell:nth-child(n+5):nth-child(-n+8) {
-    border-bottom: 1px solid #7aa488;
-}
-
+/* LABEL */
 .label {
     font-weight: 600;
 }

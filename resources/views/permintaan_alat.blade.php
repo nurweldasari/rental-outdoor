@@ -89,8 +89,6 @@
             <!-- ACTION -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-green">Buat Permintaan</button>
-
-                <button type="reset" class="btn btn-red">Batal</button>
                 <a href="{{ $from == 'permintaan' ? route('data_permintaan') : route('produk_cabang') }}" 
                 class="btn btn-red">Batal</a>
 

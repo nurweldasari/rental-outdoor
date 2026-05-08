@@ -454,7 +454,9 @@ function renderCart(cart){
 
                         <span class="badge-paket">Paket</span>
 
-                        <strong>${item.nama}</strong>
+                        <strong>
+${item.nama ?? item.paket?.nama_paket ?? 'Tanpa Nama Paket'}
+</strong>
 
                         <p>Rp ${harga.toLocaleString('id-ID')} / paket</p>
 
@@ -513,7 +515,9 @@ function renderCart(cart){
                 <div class="item-keranjang">
                     <div class="item-info">
 
-                        <strong>${item.nama}</strong>
+                        <strong>
+${item.nama ?? item.produk?.nama_produk ?? 'Tanpa Nama'}
+</strong>
 
                         <p>Rp ${harga.toLocaleString('id-ID')} / hari</p>
 

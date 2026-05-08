@@ -754,14 +754,27 @@ public function reservasi(Request $request, $idpenyewa)
         }
 
         ItemPenyewaan::create([
-            'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
-            'produk_idproduk' => null,
-            'paket_id' => $paket->id,
-            'type' => 'paket',
-            'harga' => $harga,
-            'qty' => $qty,
-            'subtotal' => $harga * $qty * $durasiHari,
-        ]);
+    'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+    'produk_idproduk'       => null,
+    'paket_id'              => $paket->id,
+    'type'                  => 'paket',
+
+    'nama_paket'            => $paket->nama_paket,
+
+    'detail_paket' => json_encode(
+        $paket->detail->map(function ($d) {
+            return [
+                'produk_id'   => $d->stokCabang->produk->idproduk ?? null,
+                'nama_produk' => $d->stokCabang->produk->nama_produk ?? '-',
+                'qty'         => $d->qty,
+            ];
+        })
+    ),
+
+    'harga'    => $harga,
+    'qty'      => $qty,
+    'subtotal' => $harga * $qty * $durasiHari,
+]);
 
         $total += $harga * $qty * $durasiHari;
         $totalProduk += $qty;
@@ -784,14 +797,18 @@ public function reservasi(Request $request, $idpenyewa)
         $stok->decrement('jumlah', $qty);
 
         ItemPenyewaan::create([
-            'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
-            'produk_idproduk'       => $stok->produk_idproduk,
-            'paket_id'              => null,
-            'type'                  => 'produk',
-            'harga'                 => $harga,
-            'qty'                   => $qty,
-            'subtotal'              => $harga * $qty * $durasiHari,
-        ]);
+    'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+    'produk_idproduk'       => $stok->produk_idproduk,
+    'paket_id'              => null,
+    'type'                  => 'produk',
+
+    'nama_produk'           => $produk->nama_produk,
+    'jenis_skala'           => $produk->jenis_skala,
+
+    'harga'    => $harga,
+    'qty'      => $qty,
+    'subtotal' => $harga * $qty * $durasiHari,
+]);
 
         $total += $harga * $qty * $durasiHari;
         $totalProduk += $qty;
@@ -962,14 +979,28 @@ public function reservasiPusat(Request $request, $idpenyewa)
                 }
 
                 ItemPenyewaan::create([
-                    'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
-                    'produk_idproduk' => null,
-                    'paket_id' => $paket->id,
-                    'type' => 'paket',
-                    'harga' => $harga,
-                    'qty' => $qty,
-                    'subtotal' => $harga * $qty * $durasiHari,
-                ]);
+    'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+    'produk_idproduk'       => null,
+    'paket_id'              => $paket->id,
+    'type'                  => 'paket',
+
+    'nama_paket'            => $paket->nama_paket,
+
+    'detail_paket' => json_encode(
+        $paket->detail->map(function ($d) {
+
+            return [
+                'produk_id'   => $d->produk->idproduk ?? null,
+                'nama_produk' => $d->produk->nama_produk ?? '-',
+                'qty'         => $d->qty,
+            ];
+        })
+    ),
+
+    'harga'    => $harga,
+    'qty'      => $qty,
+    'subtotal' => $harga * $qty * $durasiHari,
+]);
 
                 $total += $harga * $qty * $durasiHari;
                 $totalProduk += $qty;
@@ -980,23 +1011,29 @@ public function reservasiPusat(Request $request, $idpenyewa)
 
                 $produk = Produk::findOrFail($id);
 
-                if ($qty > $produk->stok_pusat) {
-                    throw new \Exception('Stok pusat tidak cukup');
-                }
+if ($qty > $produk->stok_pusat) {
+    throw new \Exception('Stok pusat tidak cukup');
+}
 
-                $produk->decrement('stok_pusat', $qty);
+$harga = $produk->hargaAktif->harga ?? 0;
 
-                $subtotal = $produk->harga * $qty * $durasiHari;
+$produk->decrement('stok_pusat', $qty);
 
-                ItemPenyewaan::create([
-                    'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
-                    'produk_idproduk'       => $produk->idproduk,
-                    'paket_id'              => null,
-                    'type'                  => 'produk',
-                    'harga'                 => $produk->harga,
-                    'qty'                   => $qty,
-                    'subtotal'              => $subtotal,
-                ]);
+$subtotal = $harga * $qty * $durasiHari;
+
+ItemPenyewaan::create([
+    'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+    'produk_idproduk'       => $produk->idproduk,
+    'paket_id'              => null,
+    'type'                  => 'produk',
+
+    'nama_produk'           => $produk->nama_produk,
+    'jenis_skala'           => $produk->jenis_skala,
+
+    'harga'                 => $harga,
+    'qty'                   => $qty,
+    'subtotal'              => $subtotal,
+]);
 
                 $total += $subtotal;
                 $totalProduk += $qty;
