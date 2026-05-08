@@ -106,10 +106,10 @@
                 {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('l, d M Y') }}
             </div>
 
-            <div>
-                <strong>{{ $data->penyewa->user->nama }}</strong><br>
-                <small>({{ $data->penyewa->user->no_telepon }})</small>
-            </div>
+            <div class="user-info">
+    <strong>{{ $data->penyewa->user->nama }}</strong>
+    <small>({{ $data->penyewa->user->no_telepon }})</small>
+</div>
 
             <div class="produk-list">
     @foreach($data->itemPenyewaan as $item)

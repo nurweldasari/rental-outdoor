@@ -1367,4 +1367,11 @@ public function uploadBuktiBayarPusat(Request $request, $idpenyewaan)
     return redirect()->route('item_penyewaan_pusat')
                      ->with('success', 'Bukti bayar berhasil diupload, tunggu konfirmasi admin.');
 }
+
+public function struk($id)
+{
+    $data = Penyewaan::with(['cabang', 'penyewa.user', 'itemPenyewaan'])->findOrFail($id);
+
+    return view('struk', compact('data'));
+}
 }

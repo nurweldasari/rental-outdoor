@@ -47,7 +47,10 @@ class Penyewaan extends Model
     );
 }
 
-
+public function adminPusat()
+{
+    return $this->belongsTo(AdminPusat::class, 'admin_pusat_idadmin_pusat');
+}
     public function cabang()
     {
         return $this->belongsTo(Cabang::class, 'cabang_idcabang');

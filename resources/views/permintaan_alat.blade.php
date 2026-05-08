@@ -87,9 +87,7 @@
             <!-- ACTION -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-green">Buat Permintaan</button>
-                <a href="{{ url()->previous() }}" class="btn btn-red" style="text-decoration: none;">
-                    Batal
-                </a>
+                <button type="reset" class="btn btn-red">Batal</button>
             </div>
 
         </form>

@@ -536,12 +536,275 @@
 /* ===============================
    RESPONSIVE
 =================================*/
-@media(max-width:768px){
+@media (max-width: 768px){
+
+    /* ===============================
+       CONTAINER
+    =================================*/
+    .bagi-container{
+        padding:0 0 20px 0;
+    }
+
+    /* ===============================
+       GRID CABANG
+    =================================*/
+    .cabang-grid{
+        grid-template-columns:1fr;
+        gap:16px;
+    }
+
+    .cabang-card{
+        padding:20px 14px;
+        border-radius:12px;
+    }
+
+    .cabang-card h6{
+        font-size:14px;
+        margin-bottom:12px;
+    }
+
+    /* ===============================
+       BUTTON
+    =================================*/
+    .btn,
+    .btn-back{
+        width:100%;
+        height:42px;
+        font-size:13px;
+    }
+
+    .btn-orange,
+    .btn-back-red{
+        width:100%;
+        text-align:center;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    /* ===============================
+       HEADER DETAIL
+    =================================*/
+    .detail-header{
+        margin-bottom:16px;
+    }
+
+    .back-row{
+        margin-bottom:14px;
+    }
 
     .action-row{
         flex-direction:column;
-        align-items:flex-start;
-        gap:15px;
+        align-items:stretch;
+        gap:12px;
     }
 
+    .action-left{
+        width:100%;
+        flex-direction:column;
+        gap:10px;
+    }
+
+    /* ===============================
+       DETAIL CARD
+    =================================*/
+    .detail-card-custom{
+        padding:18px 14px;
+        border-radius:14px;
+    }
+
+    .detail-title-center{
+        font-size:17px;
+        margin-bottom:18px;
+    }
+
+    /* ===============================
+       REKENING
+    =================================*/
+    .rekening-pill{
+        width:100%;
+        font-size:13px;
+        padding:14px;
+        margin-bottom:18px;
+        border-radius:12px;
+    }
+
+    /* ===============================
+       TOTAL
+    =================================*/
+    .total-pill{
+        flex-direction:column;
+        gap:8px;
+        border-radius:16px;
+        padding:14px 16px;
+        font-size:14px;
+    }
+
+    /* ===============================
+       HASIL BOX
+    =================================*/
+    .hasil-box{
+        padding:14px;
+        border-radius:10px;
+    }
+
+    .hasil-header{
+        flex-direction:column;
+        gap:6px;
+        margin-bottom:10px;
+    }
+
+    .row-between{
+        font-size:13px;
+        gap:10px;
+    }
+
+    /* ===============================
+       RIWAYAT
+    =================================*/
+    .riwayat-container{
+        padding:18px 12px;
+        border-radius:12px;
+        overflow-x:auto;
+    }
+
+    .riwayat-title{
+        font-size:16px;
+        margin-bottom:16px;
+    }
+
+    .table-riwayat{
+        min-width:650px;
+        font-size:13px;
+    }
+
+    .table-riwayat th,
+    .table-riwayat td{
+        padding:12px 8px;
+        white-space:nowrap;
+    }
+
+    .btn-eye{
+        width:32px;
+        height:32px;
+    }
+
+    /* ===============================
+       MODAL
+    =================================*/
+    .modal-content,
+    .modal-box{
+        width:95%;
+        padding:18px 14px;
+        border-radius:12px;
+    }
+
+    .bukti-box{
+        width:95% !important;
+    }
+
+    .modal-header{
+        margin-bottom:16px;
+    }
+
+    .modal-close{
+        top:10px;
+        right:14px;
+        font-size:20px;
+    }
+
+    /* ===============================
+       UPLOAD
+    =================================*/
+    .upload-box{
+        padding:22px 14px;
+        border-radius:10px;
+    }
+
+    .upload-icon{
+        font-size:24px;
+    }
+
+    .btn-simpan{
+        height:42px;
+        font-size:13px;
+    }
+
+    /* ===============================
+       TANGGAL
+    =================================*/
+    .tanggal-upload{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+        margin-top:20px;
+    }
+
+    .tanggal-info{
+        width:100%;
+    }
+
+    .badge-menunggu{
+        align-self:flex-start;
+        font-size:12px;
+    }
+
+    /* ===============================
+       BUKTI TABLE
+    =================================*/
+    .bukti-table{
+        min-width:650px;
+        font-size:13px;
+    }
+
+    .bukti-table th,
+    .bukti-table td{
+        white-space:nowrap;
+        padding:12px 8px;
+    }
+
+    .lihat-bukti,
+    .status-menunggu{
+        font-size:12px;
+        padding:7px 12px;
+    }
+
+    /* ===============================
+       KONFIRMASI BUTTON
+    =================================*/
+    .konfirmasi-btns{
+        gap:8px;
+    }
+
+    .btn-bulat{
+        width:28px;
+        height:28px;
+        font-size:12px;
+    }
+
+    /* ===============================
+       MODAL SKALA
+    =================================*/
+    .skala-wrapper{
+        flex-direction:column;
+        gap:18px;
+        margin:18px 0;
+    }
+
+    .skala-box{
+        width:100%;
+    }
+
+    .modal-btn-group{
+        flex-direction:column;
+        gap:10px;
+        margin-top:20px;
+    }
+
+    .btn-save,
+    .btn-cancel{
+        width:100%;
+        padding:12px;
+        font-size:13px;
+    }
 }

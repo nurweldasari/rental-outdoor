@@ -13,10 +13,6 @@
      {{-- ================= HEADER ================= --}}
 
     <div class="no-print">
-    <a href="{{ route('laporan_pusat') }}" class="btn-kembali">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
-
     <h2>
         Laporan Pendapatan - {{ $cabang->nama_cabang ?? ' ' }}
     </h2>
@@ -27,7 +23,7 @@
 
     {{-- ADMIN CABANG (Hanya muncul saat print) --}}
     @if(auth()->user()->status === 'admin_cabang')
-        <h2 class="print-only">Laporan Pendapatan</h2>
+        
     @endif
 
 
@@ -111,10 +107,10 @@
                 {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('l, d M Y') }}
             </div>
 
-            <div>
-                <strong>{{ $data->penyewa->user->nama }}</strong><br>
-                <small>({{ $data->penyewa->user->no_telepon }})</small>
-            </div>
+            <div class="user-info">
+    <strong>{{ $data->penyewa->user->nama }}</strong>
+    <small>({{ $data->penyewa->user->no_telepon }})</small>
+</div>
 
             <div class="produk-list">
 

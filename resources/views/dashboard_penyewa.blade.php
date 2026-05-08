@@ -22,9 +22,14 @@
         OutdoorKriss
     </div>
 
-    <div class="nav-right" id="userBtn">
-        Penyewa <i class="fa-solid fa-chevron-down"></i>
-    </div>
+    <div class="user-dropdown">
+
+    <button class="user-btn" id="userBtn">
+      <span>
+        {{ ucwords(str_replace('_',' ', auth()->user()->status)) }}
+      </span>
+      <i class="fa-solid fa-chevron-down"></i>
+    </button>
 
     <!-- DROPDOWN -->
     <div class="dropdown-menu" id="dropdownMenu">
@@ -39,6 +44,7 @@
         </form>
     </div>
 </div>
+</div>
 
 <!-- HERO -->
 <div class="hero">
@@ -51,7 +57,7 @@
     <div class="grid">
      @if($adminpusat)
     <a href="{{ route('pilih.pusat', $adminpusat->idusers) }}" class="card pusat">
-        <div class="card-title">{{ $adminpusat->nama }}</div>
+        <div class="card-title">Outdoorkriss Tegalsari</div>
 
         <div class="info">
             <i class="fa-solid fa-location-dot"></i>

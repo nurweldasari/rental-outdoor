@@ -23,18 +23,18 @@ class DatabaseSeeder extends Seeder
 {
     // CABANG
     $cabang = Cabang::create([
-        'nama_cabang' => 'Cabang Banyuwangi',
+        'nama_cabang' => 'OutdoorKriss Jember',
         'status_cabang' => 'aktif',
-        'lokasi' => 'Banyuwangi'
+        'lokasi' => 'Jl. kaliwates, No. 67 Jember Kab. Jember'
     ]);
 
     // ADMIN PUSAT
     $adminPusatUser = User::create([
-        'nama' => 'Admin Pusat',
+        'nama' => 'Krisna',
         'username' => 'adminpusat',
         'password' => Hash::make('admin123'),
         'no_telepon'  => '081331623134',
-        'alamat'      => 'Tegalsari',
+        'alamat'      => 'Kec. Tegalsari, Kabupaten Banyuwangi, Jawa Timur',
         'status' => 'admin_pusat'
     ]);
     AdminPusat::create(['users_idusers' => $adminPusatUser->idusers]);
@@ -52,11 +52,11 @@ class DatabaseSeeder extends Seeder
 
     // ADMIN CABANG
     $adminCabangUser = User::create([
-        'nama' => 'Admin Cabang',
+        'nama' => 'Nur Aini',
         'username' => 'admincabang',
         'password' => Hash::make('admin123'),
         'no_telepon'  => '081331623131',
-        'alamat'      => 'Rogojampi',
+        'alamat'      => 'Jl. kaliwates, No. 67 Jember Kab. Jember',
         'status' => 'admin_cabang'
     ]);
     AdminCabang::create([

@@ -1343,3 +1343,254 @@ color: #000;
     padding-left: 10px;
 }
 
+/* =========================
+   RESPONSIVE 768px
+========================= */
+/* =========================
+   RESPONSIVE DATA PRODUK
+   768px KE BAWAH
+========================= */
+@media (max-width: 768px) {
+
+    /* ================= GRID PRODUK ================= */
+    .grid-produk{
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+    }
+
+    /* ================= CARD PRODUK ================= */
+    .card-produk{
+        width: 100%;
+        padding: 10px;
+        border-radius: 12px;
+        box-sizing: border-box;
+    }
+
+    .img-produk{
+        width: 100%;
+        height: 135px;
+        object-fit: cover;
+    }
+
+    .card-produk h4{
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .harga{
+        font-size: 12px;
+    }
+
+    .stok{
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+
+    /* ================= BADGE ================= */
+    .badge-kategori{
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
+    /* ================= DROPDOWN ================= */
+    .dropdown-produk{
+        top: 6px;
+        right: 6px;
+    }
+
+    .btn-dot{
+        font-size: 16px;
+    }
+
+    .dropdown-menu-produk{
+        width: 130px;
+    }
+
+    .dropdown-menu-produk a,
+    .dropdown-menu-produk button{
+        width: 100%;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    /* ================= HEADER ================= */
+    .header-produk{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .left-header,
+    .right-header{
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* ================= SEARCH ================= */
+    .search-box{
+        width: 100%;
+    }
+
+    #searchInput,
+    .search-box input{
+        width: 100%;
+        height: 42px;
+        box-sizing: border-box;
+    }
+
+    /* ================= FILTER ================= */
+    select[name="skala"],
+    select[name="kategori"],
+    .right-header select{
+        width: 100%;
+        height: 42px;
+        box-sizing: border-box;
+    }
+
+    /* ================= BUTTON ================= */
+    .btn-tambah,
+    .btn-tambah-paket{
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+    }
+
+    /* ================= KATALOG ================= */
+    .katalog-wrapper{
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .katalog-area,
+    .produk-section,
+    .keranjang-area,
+    .katalog-wrapper.active .katalog-area,
+    .katalog-wrapper.active .keranjang-area{
+        width: 100% !important;
+    }
+
+    /* ================= KERANJANG ================= */
+    .keranjang-area{
+        margin-top: 0;
+    }
+
+    .item-keranjang{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .item-info{
+        width: 100%;
+    }
+
+    .item-info h4,
+    .item-info p{
+        word-break: break-word;
+    }
+
+    .item-aksi{
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* ================= TANGGAL ================= */
+    .tanggal{
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .tanggal div{
+        width: 100%;
+    }
+
+    /* ================= BUTTON PESAN ================= */
+    .btn-pesan{
+        height: 44px;
+        font-size: 13px;
+    }
+
+    /* ================= MODAL ================= */
+    .modal-content,
+    .modal-bayar-box{
+        width: 92%;
+        max-width: 92%;
+    }
+
+    /* ================= DETAIL PAKET ================= */
+    .modal-img{
+        height: 170px;
+    }
+
+    #modalIsi div{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    /* ================= CARD PENYEWA ================= */
+    .card-penyewa{
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    /* ================= PAGINATION ================= */
+    .pagination-simple{
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+     /* WRAPPER HEADER */
+    .katalog-produk .header-produk{
+        width: 100%;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px;
+    }
+
+    /* RIGHT HEADER */
+    .katalog-produk .right-header{
+        width: 100%;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px;
+    }
+
+    /* SEARCH */
+    .katalog-produk .search-box{
+        width: 100%;
+    }
+
+    .katalog-produk #searchInput,
+    .katalog-produk .search-box input{
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+
+        height: 44px;
+        box-sizing: border-box;
+    }
+
+    /* SELECT */
+    .katalog-produk select[name="kategori"],
+    .katalog-produk select[name="skala"],
+    .katalog-produk .right-header select{
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+
+        height: 44px;
+        box-sizing: border-box;
+    }
+
+    /* BUTTON */
+    .katalog-produk .btn-tambah,
+    .katalog-produk .btn-tambah-paket{
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+    }
+}

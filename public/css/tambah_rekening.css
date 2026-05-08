@@ -206,14 +206,162 @@
 /* ======================
    RESPONSIVE
 ====================== */
+/* ======================
+   RESPONSIVE 768px
+====================== */
 @media (max-width: 768px) {
-    .table-controls {
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
+
+    /* ===== MODAL ===== */
+    .modal {
+        padding: 14px;
+        align-items: center;
     }
 
-    .search-box input {
+    .modal-box {
         width: 100%;
+        max-width: 100%;
+        padding: 18px;
+        border-radius: 12px;
+
+        max-height: 90vh;
+        overflow-y: auto;
+        gap: 12px;
+    }
+
+    .modal-header {
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .modal-header h3,
+    .modal-header h4 {
+        font-size: 16px;
+        line-height: 1.4;
+        word-break: break-word;
+    }
+
+    .btn-lihat-rekening {
+        font-size: 11px;
+        padding: 6px 8px;
+        white-space: nowrap;
+    }
+
+    /* ===== INPUT ===== */
+    .modal select,
+    .modal input {
+        height: 44px;
+        font-size: 14px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+    }
+
+    /* ===== BUTTON FORM ===== */
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    .form-actions button {
+        width: 100%;
+        min-width: 100%;
+        font-size: 14px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    /* ======================
+       CONTAINER
+    ====================== */
+    .container-rekening {
+        padding: 16px 10px;
+    }
+
+    /* ======================
+       CARD
+    ====================== */
+    .card-rekening {
+        padding: 14px;
+        border-radius: 14px;
+        overflow-x: auto;
+    }
+
+    /* ======================
+       HEADER
+    ====================== */
+    .header-rekening {
+        margin-bottom: 14px;
+    }
+
+    .header-rekening h3 {
+        font-size: 16px;
+        text-align: center;
+    }
+
+    /* ======================
+       CONTROLS
+    ====================== */
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .entries-form {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .entries-form select {
+        flex: 1;
+        min-width: 90px;
+    }
+
+    /* SEARCH */
+    .container-rekening .search-box {
+        width: 100%;
+        padding: 8px 10px;
+    }
+
+    .container-rekening .search-box input {
+        width: 100%;
+        font-size: 13px;
+    }
+
+    /* ======================
+       TABLE
+    ====================== */
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .table-rekening {
+        min-width: 650px;
+        font-size: 12px;
+    }
+
+    .table-rekening th,
+    .table-rekening td {
+        padding: 10px;
+        white-space: nowrap;
+    }
+
+    .table-rekening th {
+        font-size: 12px;
+    }
+
+    .table-rekening td {
+        font-size: 12px;
+    }
+
+    /* tombol dalam tabel */
+    .table-rekening button,
+    .table-rekening a {
+        font-size: 11px;
+        padding: 6px 10px;
+        white-space: nowrap;
     }
 }

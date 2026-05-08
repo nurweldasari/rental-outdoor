@@ -209,21 +209,21 @@ max-width: 1200px;
     background: #eaf7f0;
     color: #1f7a4f;
     border: 1.5px solid #1f7a4f;
-    padding: 3px 10px;
-    border-radius: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
     font-size: 11px;
     font-weight: 600;
 }
 
 .badge-disewa {
-    position: absolute;
     top: 18px;
     right: 18px;
 
-    background: #fff3cd;
+    background: #fff7db;
     color: #8a6d1d;
+    border: 1.5px solid #d6a400;
 
-    padding: 5px 12px;
+    padding: 4px 12px;
     border-radius: 20px;
 
     font-size: 11px;
@@ -276,66 +276,171 @@ max-width: 1200px;
 
 @media (max-width: 768px) {
 
-    .card-riwayat {
-        flex-direction: row; /* tetap horizontal */
-        overflow-x: auto;    /* bisa geser */
-        padding-bottom: 20px;
-        gap: 20px;
+    /* CONTAINER */
+    .container-riwayat{
+        padding: 16px;
+        border-radius: 14px;
     }
 
-    /* Biar isi ga mengecil */
-    .card-left,
-    .card-right {
-        min-width: 280px; /* penting */
-        flex-shrink: 0;
+    /* TAB */
+    .tab-header{
+        gap: 10px;
+        margin-bottom: 20px;
     }
 
-    /* divider tetap ada tapi tipis */
-    .divider {
-        display: block;
-        min-width: 1px;
+    .tab{
+        font-size: 13px;
+        padding: 10px 0;
     }
 
-    /* HEADER JADI VERTICAL */
-    .header-cabang {
-        display: flex;
+    /* CARD */
+    .card-riwayat{
+        flex-direction: column;
+        padding: 18px;
+        gap: 14px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        padding-top: 30px; 
+    }
+
+    .card-riwayat::before{
+        width: 100%;
+        height: 4px;
+        top: 0;
+        left: 0;
+        border-radius: 16px 16px 0 0;
+        
+    }
+
+    /* HEADER CABANG */
+    .header-cabang{
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
+
+        padding: 8px 12px;
+        margin-bottom: 2px;
+        border-radius: 7px;
     }
 
-    /* STATUS PINDAH KE ATAS & NORMAL */
+    .cabang-nama{
+        font-size: 13px;
+    }
+
+    .admin-cabang{
+        font-size: 11px;
+    }
+
+    /* STATUS */
+    .status-wrapper{
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        margin: 0;
+        width: auto;
+    }
+
+     /* STATUS BADGE (SAMAKAN POSISI) */
+    .status-wrapper{
+        position: absolute;
+        top: 10px;
+        right: 10px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-end;
+    }
+
     .badge-disewa,
-    .badge-selesai {
-        position: static !important;   /* hilangkan absolute */
-        order: -1;                     /* pindah ke paling atas */
-        align-self: flex-start; 
-        align-self: center;         /* rata kiri */
-        margin-bottom: 4px;
+    .badge-selesai{
+        position: static !important;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
     }
 
 
-    /* NAMA & ADMIN JADI KE BAWAH */
-    .cabang-nama {
-        display: block;
-        font-weight: 700;
+    /* CONTENT */
+    .card-left,
+    .card-right{
+        width: 100%;
+        padding: 0;
+        min-width: unset;
+        font-size: 13px;
+        line-height: 1.7;
     }
 
-    .admin-cabang {
-        display: block;
-        font-size: 12px;
-        color: #666;
+    .card-left p,
+    .card-right p{
+        word-break: break-word;
     }
 
-    /* TIMER JUGA AMANKAN */
-    .timer {
+    /* HILANGKAN GARIS TENGAH */
+    .divider{
+        display: none;
+    }
+
+    /* TIMER */
+     .timer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 10px;
+    padding: 1px 8px;
+    gap: 6px;
+}
+
+    .timer strong{
+        font-size: 13px;
+    }
+
+    /* TOTAL */
+    .total{
+        font-size: 15px;
+        margin-top: 8px;
+    }
+
+    /* ACTION */
+    .action{
         position: static;
-        margin-bottom: 8px;
+        width: 100%;
+
+        margin-top: 12px;
+
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
-    /* action tetap bawah */
-    .action {
-        position: static;
-        margin-top: 10px;
+     .btn {
+        flex: 1 1 auto;   /* jangan full 100% */
+        width: 100%;
+        height: 40px;     /* KUNCI: samakan tinggi */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+        border-radius: 8px;
     }
+
+    /* INFO */
+    .info-riwayat{
+        font-size: 13px;
+        padding: 12px;
+        margin-bottom: 18px;
+    }
+
 }

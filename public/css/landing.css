@@ -315,18 +315,31 @@ html {
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
 
-  /* HERO */
+  /* ================= GLOBAL FIX ================= */
+  body {
+    overflow-x: hidden;
+  }
+
+  section, .cabang, .profil, .syarat {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* ================= HERO ================= */
   .hero-penyewa {
     height: auto;
-    min-height: 70vh;
+    min-height: 65vh;
+    padding: 40px 0;
   }
 
   .hero-content-penyewa {
-    width: 90%;
+    width: 92%;
+    padding: 0 10px;
   }
 
   .hero-penyewa h1 {
-    font-size: 20px;
+    font-size: 18px;
+    line-height: 1.4;
   }
 
   .hero-penyewa p {
@@ -334,14 +347,20 @@ html {
   }
 
   .hero-btn {
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
   }
 
+  .hero-btn-penyewa a {
+    width: 100%;
+    text-align: center;
+  }
 
-  /* PROFIL */
+  /* ================= PROFIL ================= */
   .profil-wrap {
     flex-direction: column;
-    text-align: center;
+    gap: 20px;
+    padding: 0 15px;
   }
 
   .profil-img,
@@ -350,70 +369,83 @@ html {
   }
 
   .profil-img {
-    height: 200px;
+    height: 180px;
   }
 
+  /* ================= CABANG ================= */
+  .cabang {
+    padding: 40px 15px;
+  }
 
-  /* CABANG */
   .cabang-container {
     width: 100%;
-    padding: 0 10px;
+    padding: 0;
   }
 
   .cabang-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .left, .right {
+  .card {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 12px;
+    min-height: auto;
+  }
+
+  .text h4 {
+    font-size: 13px;
+  }
+
+  .text p {
+    font-size: 11px;
+  }
+
+  /* HAPUS ARROW DI MOBILE */
+  .nav-arrow {
     display: none;
   }
 
+  /* ================= SYARAT ================= */
 
- .syarat {
-    display: block;
+   .timeline {
     width: 100%;
-    padding: 40px 15px;
-    overflow: visible;
+    padding-left: 20px;
   }
 
-  .timeline {
-    width: 100%;
-    position: relative;
-    min-height: 300px; /* biar section pasti muncul */
-    margin: 30px auto;
-  }
-
+  /* ubah jadi 1 kolom full vertical */
   .timeline-row {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     position: relative;
-    margin-bottom: 20px;
-    min-height: 70px;
+    margin-bottom: 25px;
   }
 
+  /* box full width */
   .timeline-box {
     width: 100%;
-    margin-left: 35px;
-    display: block;
+    margin-left: 0;
+    text-align: left;
+    padding: 12px;
   }
 
+  /* circle di kiri */
   .timeline-circle {
     position: absolute;
-    left: 0;
-    top: 15px;
+    left: -10px;
+    top: 10px;
   }
 
+  /* garis vertical */
   .timeline-line {
-    left: 13px;
-    top: 0;
-    height: 100%;
+    display: block;
     position: absolute;
-    display: none;
+    left: 0;
+    width: 2px;
+    background: #c87300;
+    height: 100%;
   }
-}
-/* ===== GLOBAL SAFETY ===== */
-.hero-content-penyewa,
-.cabang-container,
-.timeline {
-  max-width: 100%;
-}
 
+}

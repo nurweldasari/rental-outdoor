@@ -134,3 +134,57 @@
     text-align: left;
 }
 
+@media (max-width: 768px) {
+
+    .tambah-penyewa-page {
+        padding: 8px;
+    }
+
+    .form-card {
+        width: 100%;
+        max-width: 100%;
+        padding: 18px 14px;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+    .form-title {
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .form-group input {
+        padding: 12px 14px;
+        font-size: 13px;
+        border-radius: 14px;
+    }
+
+    .upload-box {
+        padding: 22px 12px;
+        font-size: 13px;
+    }
+
+    .upload-box i {
+        font-size: 24px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+        border-radius: 12px;
+    }
+
+    .alert-error {
+        padding: 12px;
+    }
+
+    .alert-error .error-text div {
+        font-size: 12px;
+    }
+}

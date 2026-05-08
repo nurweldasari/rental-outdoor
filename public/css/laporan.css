@@ -48,21 +48,21 @@
 }
 
 .modal-box .btn-cetak {
-    background-color: #056A28; /* hijau */
-    color: #fff;                /* tulisan putih */
-    border: none;               /* hilangkan border hitam */
+    background-color: #056A28;
+    color: #fff;
+    border: none;
     padding: 9px 18px;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;                   /* spasi antara icon dan teks */
+    gap: 6px;
     transition: 0.2s ease;
 }
 
 .modal-box .btn-cetak:hover {
-    background-color: #056A28; /* hijau lebih gelap saat hover */
+    background-color: #056A28;
 }
 
 /* ================= TABLE BOX ================= */
@@ -79,14 +79,9 @@
 .laporan-row,
 .laporan-total {
     display: grid;
-    grid-template-columns:
-        60px
-        160px
-        250px
-        minmax(280px,1fr)
-        160px;
+    grid-template-columns: 60px 160px 250px minmax(280px,1fr) 160px;
     padding: 18px 24px;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 /* ================= HEADER ================= */
@@ -101,7 +96,6 @@
     border-bottom: 1px solid #f2f2f2;
     transition: 0.15s ease;
     align-items: center;
-    
 }
 
 .laporan-row:hover {
@@ -109,72 +103,64 @@
 }
 
 /* ================= ALIGNMENT FIX ================= */
-
-/* semua header div flex start, kecuali nomor & total */
 .laporan-header > div {
     display: flex;
     align-items: flex-start;
 }
 
- .laporan-row > div:nth-child(4),
-    .laporan-header > div:nth-child(4) {
-        padding-left: 0 !important;
-        margin-left: 0 !important;
-        text-align: left;
-    }
-.laporan-row div:nth-child(3) {
-    display: flex;
-    flex-direction: row;   /* 🔥 horizontal */
-    align-items: center;
-    gap: 2px;              /* jarak nama & no hp */
-}
-.laporan-header > div:last-child {
-    justify-content: flex-start;/* Total */
+.laporan-row > div:nth-child(4),
+.laporan-header > div:nth-child(4) {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    text-align: left;
 }
 
-/* semua row div flex start, kecuali nomor & angka total */
+.laporan-row div:nth-child(3) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.laporan-header > div:last-child {
+    justify-content: flex-start;
+}
+
 .laporan-row > div {
     display: flex;
-    align-items: flex-start; 
+    align-items: flex-start;
 }
 
 .laporan-row > div:first-child {
-    justify-content: flex-start; /* No. */
+    justify-content: flex-start;
 }
 
 .laporan-row > div:last-child {
-    justify-content: flex-start; /* Total */
+    justify-content: flex-start;
 }
 
-/* total row */
 .laporan-total > div {
     display: flex;
     align-items: flex-start;
 }
 
 .laporan-total > div:not(:last-child) {
-    justify-content: flex-start; /* label Total Pendapatan rata kiri */
+    justify-content: flex-start;
 }
 
 .laporan-total > div:last-child {
-    justify-content: flex-start;/* angka total rata kanan */
-    
+    justify-content: flex-start;
 }
 
-/* Judul Admin Cabang hanya muncul saat print */
-.print-only {
-    display: none; /* sembunyi di layar */
-}
 /* ================= PRODUK ================= */
 .produk-list {
     display: flex;
     font-size: 13px;
     line-height: 1.7;
     color: #555;
-    padding-left: 6px;
     flex-direction: column;
     gap: 4px;
-    padding-left: 0 !important;   /* 🔥 hapus dorongan ke kanan */
+    padding-left: 0 !important;
     margin-left: 0 !important;
 }
 
@@ -234,7 +220,7 @@
     color: #000;
 }
 
-/* ===== FORM ===== */
+/* FORM */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -258,14 +244,16 @@
     text-align: center;
     margin-top: 10px;
 }
+
 .print-date-range {
     display: none;
     text-align: center;
     font-size: 14px;
-    margin-top: 8px; /* <-- jarak dari judul */
-    margin-bottom: 10px; /* jarak ke tabel */
+    margin-top: 8px;
+    margin-bottom: 10px;
     font-weight: 500;
 }
+
 /* ================= PRINT ================= */
 @media print {
 
@@ -295,6 +283,7 @@
     .laporan-table {
         border: none !important;
         box-shadow: none !important;
+        overflow: visible !important;
     }
 
     .laporan-header,
@@ -302,14 +291,8 @@
     .laporan-total {
         padding: 8px 10px !important;
         font-size: 12px !important;
-          grid-template-columns:
-        40px
-        120px
-        170px
-        220px   /* 🔥 DIPERKECIL */
-        90px;   /* 🔥 TOTAL JUGA DISESUAIKAN */
-   
-    border-bottom: none !important;
+        grid-template-columns: 40px 120px 170px 220px 90px;
+        border-bottom: none !important;
     }
 
     .laporan-header {
@@ -317,68 +300,58 @@
     }
 
     .laporan-total {
-    position: relative;
-    border-bottom: 2px solid #000 !important;
-    margin-top: 16px;
-}
-.laporan-header > div,
-    .laporan-row > div,
-    .laporan-total > div {
-        display: block !important;   /* 🔥 MATIKAN FLEX */
+        position: relative;
+        margin-top: 16px;
+        border-top: 6px double #000 !important;
+        border-bottom: 6px double #000 !important;
     }
 
-    /* MATIKAN SEMUA BORDER ROW */
-.laporan-row {
-    border: none !important;
-}
+    .laporan-header > div,
+    .laporan-row > div,
+    .laporan-total > div {
+        display: block !important;
+    }
 
-/* WRAPPER GARIS DOUBLE ATAS */
-.laporan-total {
-    margin-top: 12px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    border-top: 6px double #000 !important;  /* <- INI double line proper */
-    border-bottom: 6px double #000 !important; /* bawah juga double */
-}
+    .laporan-row {
+        border: none !important;
+    }
 
     @page {
         size: A4;
         margin: 18mm;
     }
+
     .btn-kembali {
         display: none !important;
     }
+
     .print-only {
-        display: block;     /* tampil saat print */
+        display: block;
         text-align: center;
         margin: 0 0 15px 0;
         font-size: 20px;
         font-weight: 600;
     }
+
     .print-date-range {
         display: block;
     }
-.laporan-table {
-    overflow: visible !important; /* 🔥 WAJIB */
-}
 }
 
-/* ================= ANIMATION ================= */
+/* ANIMATION */
 @keyframes fadeIn {
-    from { opacity:0; }
-    to { opacity:1; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* ==========================
-   CARD CABANG (MODE LIST)
-========================== */
-.container-cabang{
+/* ================= CABANG ================= */
+.container-cabang {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
     gap: 25px;
 }
 
-.cabang-card{
+.cabang-card {
     background: #fff;
     border-radius: 14px;
     padding: 25px 15px;
@@ -387,22 +360,22 @@
     transition: .2s ease;
 }
 
-.cabang-card:hover{
+.cabang-card:hover {
     transform: translateY(-4px);
 }
 
-.cabang-card i{
+.cabang-card i {
     font-size: 22px;
     margin-bottom: 10px;
     color: #333;
 }
 
-.card-title{
+.card-title {
     font-weight: 600;
     margin-bottom: 15px;
 }
 
-.btn-lihat{
+.btn-lihat {
     display: inline-block;
     background: #e68a00;
     color: #fff;
@@ -410,49 +383,41 @@
     border-radius: 8px;
     font-size: 13px;
     text-decoration: none;
-    transition: .2s ease;
 }
 
-.btn-lihat:hover{
+.btn-lihat:hover {
     background: #cc7a00;
 }
 
-/* ==========================
-   DETAIL LAPORAN
-========================== */
-/* ================= BUTTON KEMBALI ================= */
+/* DETAIL */
 .btn-kembali {
     display: inline-block;
-    background-color: #e74c3c;  /* merah */
+    background-color: #e74c3c;
     color: #fff;
     padding: 10px 18px;
     border-radius: 6px;
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    transition: background 0.2s ease;
-}
-
-.btn-kembali i {
-    margin-right: 6px;
 }
 
 .btn-kembali:hover {
-    background-color: #c0392b; /* merah lebih gelap saat hover */
+    background-color: #c0392b;
 }
-/* ================= HEADER TENGAH ================= */
+
 .no-print h2 {
-    text-align: center; /* tulisan di tengah */
+    text-align: center;
     margin-top: 15px;
     font-size: 20px;
     font-weight: 600;
-    color: #333;
 }
+
 .item-line,
 .paket-title {
-    display: block;        /* 🔥 bikin normal */
-    text-align: left;      /* pastikan kiri */
+    display: block;
+    text-align: left;
     font-weight: 600;
+    font-size: 15px;
 }
 
 .qty {
@@ -460,20 +425,108 @@
     color: #666;
     margin-left: 6px;
 }
+
 .paket-detail {
     margin-top: 2px;
-     color: #888;
+    color: #888;
 }
 
 .paket-item {
-    display: flex;
-    justify-content: flex-start !important; /* 🔥 jangan space-between */
-    gap: 6px; /* kasih jarak normal */
-    font-size: 12px;
+    display: block !important;
+    font-size: 13px;
     color: #666;
+    margin-top: 1px;
 }
 
-.paket-nama{
-    font-weight:600; /* 🔥 ini bikin bold */
-    color:#565555;
+.paket-nama {
+    font-weight: 600;
+    color: #565555;
+}
+.laporan-row div:nth-child(3) {
+    display: block !important;
+}
+.user-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+/* ================= RESPONSIVE ================= */
+@media (max-width: 992px) {
+    .laporan-container { padding: 15px; }
+    .laporan-top { flex-direction: column; }
+    .filter-box, .btn-submit, .btn-kembali { width: 100%; }
+    .laporan-table { overflow-x: auto; }
+}
+
+@media (max-width: 768px) {
+
+    .laporan-header,
+    .laporan-row,
+    .laporan-total {
+        min-width: 820px;
+        width: 820px;
+        display: grid; /* pastikan tetap grid */
+        grid-template-columns: 50px 140px 180px 300px 150px;
+    }
+
+    /* 🔥 INI KUNCI UTAMA */
+    .laporan-total {
+        display: grid !important;
+        align-items: center;
+        border-top: 1px solid #ddd;
+    }
+    .modal-overlay {
+        padding: 15px;
+        align-items: center;
+    }
+
+    .modal-box {
+        width: 95% !important;
+        max-width: 420px;
+        padding: 18px 15px;
+        border-radius: 12px;
+    }
+
+    .modal-box h3 {
+        font-size: 15px;
+    }
+
+    .form-group input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .modal-box .btn-cetak {
+        width: 100%;
+        justify-content: center;
+    }
+      .laporan-top {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px;
+    }
+
+    .filter-box {
+        width: 100% !important;
+        min-width: 100% !important;
+        box-sizing: border-box !important;
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .laporan-top input[type="month"],
+    .laporan-top select,
+    .laporan-top .filter-box {
+        width: 100% !important;
+        display: block !important;
+    }
+    
+}
+
+@media (max-width: 480px) {
+    .laporan-header,
+    .laporan-row,
+    .laporan-total {
+        min-width: 760px;
+    }
 }

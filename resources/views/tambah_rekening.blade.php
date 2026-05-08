@@ -68,6 +68,7 @@
         </div>
 
         {{-- TABLE --}}
+        <div class="table-wrapper">
         <table class="table-rekening" id="rekeningTable">
             <thead>
                 <tr>
@@ -95,7 +96,7 @@
 
     </div>
 </div>
-
+</div>
 <script>
 function showRekening() {
     document.getElementById('modalRekening').style.display = 'none';

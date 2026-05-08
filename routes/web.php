@@ -477,3 +477,6 @@ Route::delete('/paket_pusat/{id}', [PaketController::class, 'destroyPusat'])->na
 
 Route::post('/paket/{id}/toggle', [PaketController::class, 'toggle'])
     ->name('paket.toggle');
+
+    Route::get('/penyewaan/struk/{id}', [PenyewaanController::class, 'struk'])
+    ->name('struk');

@@ -135,22 +135,32 @@
                 <div class="divider"></div>
 
                 <div class="card-right">
-                    <p>Metode Pembayaran :
-                        <strong>{{ ucfirst($item->metode_bayar) }}</strong>
-                    </p>
 
-                    <div class="badge-disewa">Sedang Disewa</div>
+    <div class="status-wrapper">
+        <div class="badge-disewa">Sedang Disewa</div>
+    </div>
 
-                    <p class="total">
-                        Total : Rp {{ number_format($item->total,0,',','.') }}
-                    </p>
+    <p>Metode Pembayaran :
+        <strong>{{ ucfirst($item->metode_bayar) }}</strong>
+    </p>
 
-                    <div class="action">
-                        <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
-                           class="btn detail">
-                            Detail
-                        </a>
-                    </div>
+    <p class="total">
+        Total : Rp {{ number_format($item->total,0,',','.') }}
+    </p>
+
+    <div class="action">
+    <a href="{{ route('struk', $item->idpenyewaan) }}"
+       class="btn upload"
+       target="_blank">
+        Cetak Struk
+    </a>
+
+    <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
+       class="btn detail">
+        Detail
+    </a>
+</div>
+</div>
                 </div>
             </div>
 
