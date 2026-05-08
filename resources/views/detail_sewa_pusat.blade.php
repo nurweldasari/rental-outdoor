@@ -137,7 +137,7 @@
                 @endforeach
 
                 <tr class="total-row">
-                    <td colspan="6" class="total-label">Total</td>
+                    <td colspan="7" class="total-label">Total</td>
                     <td class="total-value">
                         Rp {{ number_format($penyewaan->total,0,',','.') }}
                     </td>

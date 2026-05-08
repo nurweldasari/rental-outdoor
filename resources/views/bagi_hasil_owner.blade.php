@@ -51,8 +51,11 @@
                 Bukti Fee
             </button>
 
-            <a href="{{ route('bagi_hasil',['view' => 'riwayat',
-            'cabang' => $cabangTerpilih->idcabang]) }}" class="btn btn-riwayat">
+            <a href="{{ route('bagi_hasil',[
+                'view' => 'riwayat',
+                'cabang' => $cabangTerpilih->idcabang
+            ]) }}"
+            class="btn btn-riwayat">
                 Riwayat Bagi Hasil
             </a>
         </div>
@@ -176,7 +179,8 @@
    @if($view == 'riwayat')
 
 <div class="top-action">
-<a href="{{ route('bagi_hasil.detail', request('cabang')) }}" class="btn-back-red">
+<a href="{{ route('bagi_hasil.detail', request('cabang')) }}"
+   class="btn-back-red">
 <i class="fa-solid fa-arrow-left"></i> Kembali
 </a>
 </div>

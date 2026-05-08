@@ -81,7 +81,7 @@ class ProdukController extends Controller
     // ================== EDIT ==================
     public function edit($id)
     {
-        $produk = Produk::findOrFail($id);
+        $produk = Produk::with('hargaAktif')->findOrFail($id);
         $kategori = Kategori::all();
 
         return view('edit_produk', compact('produk', 'kategori'));

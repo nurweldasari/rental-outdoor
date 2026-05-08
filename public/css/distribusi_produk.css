@@ -505,7 +505,7 @@
         font-size: 13px;
         padding: 0 10px;
     }
-
+}
 /* ===== ALERT ===== */
 .alert {
     padding: 12px 16px;
@@ -520,5 +520,4 @@
     background: #fee2e2;
     color: #991b1b;
     border: 1px solid #ef4444;
-}
 }

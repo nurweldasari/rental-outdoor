@@ -186,8 +186,8 @@
         <p class="catatan-bayar" id="catatanBayar"></p>
 
         <div class="info-transfer" id="infoTransfer" style="display:none;">
-            <div class="bank-box"><strong>Nama Bank    :{{ $rekening->nama_bank }}</strong></div>
-            <div class="bank-box"><strong>No. Rekening :{{ $rekening->no_rekening }}</strong></div>
+            <div class="bank-box"><strong>Nama Bank    : {{ $rekening->nama_bank }}</strong></div>
+            <div class="bank-box">No. Rekening : {{ $rekening->no_rekening }}</div>
         </div>
         <button class="btn-konfirmasi">Konfirmasi</button>
     </div>

@@ -86,9 +86,10 @@ public function store(Request $request)
         'status'            => 'terkunci',
     ]);
 
-    return redirect()->route('bagi_hasil', ['view'=>'riwayat'])
-        ->with('success','Bagi hasil berhasil di-close');
-}
+    return redirect()->route('bagi_hasil', ['view' => 'riwayat',
+    'cabang' => $request->cabang_idcabang])
+    ->with('success','Bagi hasil berhasil di-close');
+    }
 // =========================
 // CABANG - DETAIL
 // =========================

@@ -59,7 +59,7 @@
                 <input type="number"
                        name="harga"
                        placeholder="Harga Sewa"
-                       value="{{ $produk->harga }}"
+                       value="{{ old('harga', $produk->hargaAktif->harga ?? '') }}"
                        required>
             </div>
 
