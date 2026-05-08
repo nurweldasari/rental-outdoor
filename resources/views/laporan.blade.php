@@ -13,8 +13,6 @@
      {{-- ================= HEADER ================= --}}
 
     <div class="no-print">
-<<<<<<< HEAD
-=======
 
     @if(auth()->user()->status !== 'admin_cabang')
     <a href="{{ route('laporan') }}" class="btn-kembali">
@@ -22,7 +20,6 @@
     </a>
     @endif
 
->>>>>>> 9d638b5af2abf4784fd406a8beca5f565d80665d
     <h2>
         Laporan Pendapatan - {{ $cabang->nama_cabang ?? 'Pusat' }}
     </h2>
