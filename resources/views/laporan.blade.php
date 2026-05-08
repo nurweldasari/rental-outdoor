@@ -111,7 +111,7 @@
             <div>{{ $no++ }}</div>
 
             <div>
-                {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('d M Y') }}
+                {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('l, d M Y') }}
             </div>
 
             <div>
@@ -120,7 +120,10 @@
             </div>
 
             <div class="produk-list">
-                @foreach($data->itemPenyewaan as $item)
+
+    @php $noItem = 1; @endphp
+
+    @foreach($data->itemPenyewaan as $item)
 
     {{-- ================= PRODUK ================= --}}
    @if($item->type === 'produk')

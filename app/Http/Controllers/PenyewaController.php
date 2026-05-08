@@ -39,13 +39,37 @@ class PenyewaController extends Controller
     public function store(Request $request)
 {
     $validated = $request->validate([
-        'nama'              => 'required|string|max:100',
-        'username'          => 'required|string|max:50|unique:users,username',
-        'password'          => 'required|string|min:6|max:255',
-        'no_telepon'        => 'required|string|max:20',
-        'alamat'            => 'required|string|max:255',
-        'gambar_identitas'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+
+    'nama' => 'required|string|max:100',
+    'username' => 'required|string|max:50|unique:users,username',
+    'password' => 'required|string|min:6|max:255',
+    'no_telepon' => ['required','digits_between:10,15','unique:users,no_telepon','regex:/^08[0-9]{8,11}$/' ],
+    'alamat' => 'required|string|max:255',
+    'gambar_identitas' => 'bail|required|image|mimes:jpg,jpeg,png|max:2048',
+    ],[
+    
+    'username.unique' => 'Username sudah digunakan',
+
+    'password.min' => 'Password minimal 6 karakter',
+
+    'no_telepon.unique' => 'Nomor telepon sudah terdaftar',
+
+    'no_telepon.digits_between' =>
+        'Nomor telepon harus 10-15 digit',
+
+    'no_telepon.regex' =>
+        'Nomor telepon harus diawali 08',
+
+    'gambar_identitas.image' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+    'gambar_identitas.mimes' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+    'gambar_identitas.max' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+]);
 
     DB::beginTransaction();
 
@@ -168,13 +192,38 @@ class PenyewaController extends Controller
     public function storePusat(Request $request)
 {
     $validated = $request->validate([
-        'nama'              => 'required|string|max:100',
-        'username'          => 'required|string|max:50|unique:users,username',
-        'password'          => 'required|string|min:6|max:255',
-        'no_telepon'        => 'required|string|max:20',
-        'alamat'            => 'required|string|max:255',
-        'gambar_identitas'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+
+    'nama' => 'required|string|max:100',
+    'username' => 'required|string|max:50|unique:users,username',
+    'password' => 'required|string|min:6|max:255',
+    'no_telepon' => ['required','digits_between:10,15','unique:users,no_telepon','regex:/^08[0-9]{8,11}$/' ],
+    'alamat' => 'required|string|max:255',
+    'gambar_identitas' => 'bail|required|image|mimes:jpg,jpeg,png|max:2048',
+    ],[
+    
+    'username.unique' => 'Username sudah digunakan',
+
+    'password.min' => 'Password minimal 6 karakter',
+
+    'no_telepon.unique' => 'Nomor telepon sudah terdaftar',
+
+    'no_telepon.digits_between' =>
+        'Nomor telepon harus 10-15 digit',
+
+    'no_telepon.regex' =>
+        'Nomor telepon harus diawali 08',
+
+    'gambar_identitas.image' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+    'gambar_identitas.mimes' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+    'gambar_identitas.max' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+]);
+
 
     DB::beginTransaction();
 

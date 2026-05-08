@@ -208,8 +208,8 @@
         <p class="catatan-bayar" id="catatanBayar"></p>
 
         <div class="info-transfer" id="infoTransfer" style="display:none;">
-            <div class="bank-box"><strong>{{ $rekening->nama_bank }}</strong></div>
-            <p class="rekening">No. Rekening : {{ $rekening->no_rekening }} ({{ $rekening->atas_nama }})</p>
+            <div class="bank-box"><strong>Nama Bank    :{{ $rekening->nama_bank }}</strong></div>
+            <div class="bank-box"><strong>No. Rekening :{{ $rekening->no_rekening }}</strong></div>
         </div>
 
         <button class="btn-konfirmasi">Simpan Reservasi</button>
@@ -469,10 +469,20 @@ function renderCart(cart){
                     </div>
 
                     <div class="item-aksi">
-                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})"><i class="fa-solid fa-minus"></i></button>
+                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+
                         <span class="qty">${qty}</span>
-                        <button onclick="updatePaket(${item.paket_id}, ${qty + 1})" ${disablePlus ? 'disabled' : ''}><i class="fa-solid fa-plus"></i></button>
-                        <button class="btn-hapus" onclick="deletePaket(${item.paket_id})"><i class="fa-solid fa-trash"></i></button>
+
+                        <button onclick="updatePaket(${item.paket_id}, ${qty + 1})"
+                            ${disablePlus ? 'disabled' : ''}>
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <button class="btn-hapus" onclick="deletePaket(${item.paket_id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -512,10 +522,19 @@ function renderCart(cart){
                     </div>
 
                     <div class="item-aksi">
-                        <button onclick="updateCart(${item.idstok},${qty-1})"><i class="fa-solid fa-minus"></i></button>
+                        <button onclick="updateCart(${item.idstok},${qty-1})">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+
                         <span class="qty">${qty}</span>
-                        <button onclick="updateCart(${item.idstok},${qty+1})"><i class="fa-solid fa-plus"></i></button>
-                        <button class="btn-hapus" onclick="deleteCart(${item.idstok})"><i class="fa-solid fa-trash"></i></button>
+
+                        <button onclick="updateCart(${item.idstok},${qty+1})">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <button class="btn-hapus" onclick="deleteCart(${item.idstok})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -527,6 +546,8 @@ function renderCart(cart){
             `;
         }
     });
+
+    const today = new Date().toISOString().split('T')[0];
 
     body.innerHTML = `
         ${html}
@@ -542,11 +563,18 @@ function renderCart(cart){
         <div class="tanggal">
             <div>
                 <label>Tanggal Sewa</label>
-                <input type="date" id="cartTanggalSewa" value="${tglSewa}">
+                <input type="date"
+                    id="cartTanggalSewa"
+                    value="${tglSewa}"
+                    min="${today}">
             </div>
+
             <div>
                 <label>Tanggal Berakhir</label>
-                <input type="date" id="cartTanggalSelesai" value="${tglSelesai}">
+                <input type="date"
+                    id="cartTanggalSelesai"
+                    value="${tglSelesai}"
+                    min="${today}">
             </div>
         </div>
 
@@ -560,14 +588,11 @@ function renderCart(cart){
     document.getElementById('totalItem').textContent = totalItem;
     document.getElementById('totalHarga').textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
 }
-
-/* ================= CHANGE TANGGAL ================= */
 document.addEventListener('change',function(e){
     if(e.target.id === 'cartTanggalSewa' || e.target.id === 'cartTanggalSelesai'){
         renderCart(cartCache);
     }
 });
-
 /* ================= MODAL & SUBMIT ================= */
 document.addEventListener('click',function(e){
 

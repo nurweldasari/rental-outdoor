@@ -66,7 +66,7 @@ class DataPenyewaanTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_melihat_daftar_penyewaan()
+    public function pen_01_admin_dapat_melihat_daftar_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 
@@ -77,7 +77,7 @@ class DataPenyewaanTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_menyetujui_penyewaan()
+    public function pen_02_admin_dapat_menyetujui_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 
@@ -89,7 +89,7 @@ class DataPenyewaanTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_membatalkan_penyewaan()
+    public function pen_03_admin_dapat_membatalkan_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 
@@ -97,11 +97,11 @@ class DataPenyewaanTest extends TestCase
 
         $this->actingAs($user)
             ->post(route('admin.penyewaan.cancel', $penyewaan->idpenyewaan))
-            ->assertJson(['success' => true]);
+            ->assertRedirect();
     }
 
     /** @test */
-    public function admin_dapat_melihat_detail_penyewaan()
+    public function pen_04_admin_dapat_melihat_detail_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 
@@ -114,7 +114,7 @@ class DataPenyewaanTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_menyelesaikan_penyewaan()
+    public function pen_05_admin_dapat_menyelesaikan_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 

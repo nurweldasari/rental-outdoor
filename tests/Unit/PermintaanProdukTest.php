@@ -18,7 +18,7 @@ class PermintaanProdukTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function admin_dapat_menampilkan_form_permintaan_produk()
+    public function per_01_admin_dapat_menampilkan_form_permintaan_produk()
     {
         $user = User::factory()->create();
 
@@ -47,7 +47,7 @@ class PermintaanProdukTest extends TestCase
     }
 
     /** @test */
-    public function store_permintaan_produk_berhasil_disimpan()
+    public function per_02_permintaan_produk_berhasil_disimpan()
     {
         $user = User::factory()->create();
 
@@ -84,7 +84,7 @@ $produk = Produk::factory()->create([
     }
 
     /** @test */
-    public function store_gagal_jika_user_bukan_admin_cabang()
+    public function per_03_gagal_jika_user_bukan_admin_cabang()
     {
         $user = User::factory()->create();
 
@@ -103,7 +103,7 @@ $produk = Produk::factory()->create([
     }
 
     /** @test */
-    public function validasi_store_wajib_diisi()
+    public function per_04_validasi_store_wajib_diisi()
     {
         $user = User::factory()->create();
 
@@ -127,7 +127,7 @@ $produk = Produk::factory()->create([
     }
 
     /** @test */
-    public function riwayat_hanya_bisa_diakses_admin_cabang()
+    public function per_05_riwayat_hanya_bisa_diakses_admin_cabang()
     {
         $user = User::factory()->create();
 
@@ -138,7 +138,7 @@ $produk = Produk::factory()->create([
     }
 
     /** @test */
-    public function riwayat_menampilkan_data_permintaan()
+    public function per_06_riwayat_menampilkan_data_permintaan()
     {
         $user = User::factory()->create();
 

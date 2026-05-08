@@ -51,7 +51,7 @@
 
             <div class="info-cell label">Tanggal sewa</div>
             <div class="info-cell value">
-                {{ \Carbon\Carbon::parse($penyewaan->tanggal_sewa)->format('d M Y') }}
+                {{ \Carbon\Carbon::parse($penyewaan->tanggal_sewa)->translatedFormat('d M Y') }}
             </div>
 
             <div class="info-cell label">No. Telephone</div>
@@ -137,13 +137,13 @@
 
         {{-- ================= TANGGAL SELESAI ================= --}}
         <td>
-            {{ \Carbon\Carbon::parse($penyewaan->tanggal_selesai)->format('d M Y') }}
+            {{ \Carbon\Carbon::parse($penyewaan->tanggal_selesai)->translatedFormat('d M Y') }}
         </td>
 
         {{-- ================= TANGGAL KEMBALI ================= --}}
         <td>
             @if($penyewaan->tanggal_kembali)
-                {{ \Carbon\Carbon::parse($penyewaan->tanggal_kembali)->format('d M Y') }}
+                {{ \Carbon\Carbon::parse($penyewaan->tanggal_kembali)->translatedFormat('d M Y') }}
             @else
                 -
             @endif

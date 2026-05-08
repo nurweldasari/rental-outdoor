@@ -99,28 +99,35 @@ public function tc_dp_03_menambah_data_penyewa()
 {
     Storage::fake('public');
 
-    $file = UploadedFile::fake()->create('ktp.jpg', 100, 'image/jpeg');
+    // ✅ TANPA GD
+    $file = UploadedFile::fake()->create(
+        'ktp.jpg',
+        100,
+        'image/jpeg'
+    );
 
     $response = $this->post(route('tambah_penyewa.store'), [
         'nama' => 'Nur',
         'username' => 'Nadia08',
         'password' => '123456',
-        'no_telepon' => '08123',
+        'no_telepon' => '081234567890',
         'alamat' => 'alamat',
         'gambar_identitas' => $file,
     ]);
 
-    $response->assertStatus(302);
+    // ✅ cek redirect
+    $response->assertRedirect(route('data_penyewa'));
 
+    // ✅ cek users
     $this->assertDatabaseHas('users', [
         'username' => 'Nadia08',
         'status' => 'penyewa'
     ]);
 
+    // ✅ cek penyewa
     $this->assertDatabaseHas('penyewa', [
         'status_penyewa' => 'pending'
     ]);
-    dd($response->status(), $response->getContent());
 }
     // =========================
     // TC-DP-04

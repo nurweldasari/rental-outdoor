@@ -54,7 +54,8 @@ class PaketController extends Controller
             $paket = Paket::create([
                 'nama_paket' => $request->nama_paket,
                 'cabang_id' => $cabangId,
-                'gambar_paket' => $path
+                'gambar_paket' => $path,
+                'is_active' => true 
             ]);
 
             // 💡 SIMPAN HARGA (HISTORY)
@@ -83,6 +84,7 @@ class PaketController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', $e->getMessage());
+            
         }
     }
 
@@ -203,7 +205,8 @@ class PaketController extends Controller
             $paket = Paket::create([
                 'nama_paket' => $request->nama_paket,
                 'cabang_id' => null,
-                'gambar_paket' => $path
+                'gambar_paket' => $path,
+                'is_active' => true
             ]);
 
           Harga::create([
@@ -329,4 +332,15 @@ class PaketController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function toggle($id)
+{
+    $paket = Paket::findOrFail($id);
+
+    $paket->is_active = !$paket->is_active;
+    $paket->save();
+
+    return back();
 }
+}
+

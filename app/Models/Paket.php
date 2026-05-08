@@ -13,7 +13,8 @@ class Paket extends Model
         'nama_paket',
         'cabang_id',
         'is_template',
-        'gambar_paket'
+        'gambar_paket',
+        'is_active' 
     ];
 
         public function harga()

@@ -100,7 +100,7 @@
             <div>{{ $no++ }}</div>
 
             <div>
-                {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('d M Y') }}
+                {{ \Carbon\Carbon::parse($data->tanggal_sewa)->translatedFormat('l, d M Y') }}
             </div>
 
             <div>
@@ -109,7 +109,7 @@
             </div>
 
             <div class="produk-list">
-                @foreach($data->itemPenyewaan as $item)
+    @foreach($data->itemPenyewaan as $item)
 
     {{-- ================= PRODUK ================= --}}
     @if($item->type === 'produk')
@@ -134,8 +134,8 @@
     </small>
     @endif
 
-@endforeach
-            </div>
+    @endforeach
+</div>
             <div>
                 Rp {{ number_format($data->total,0,',','.') }}
             </div>

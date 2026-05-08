@@ -93,16 +93,39 @@ class AuthController extends Controller
    public function registerPenyewa(Request $request)
 {
     $request->validate([
-        'nama' => 'required',
-        'username' => app()->environment('testing') 
-    ? 'required' 
-    : 'required|unique:users,username',
-        'password' => 'required|min:6',
-        'no_telepon' => 'required|numeric',
-        'alamat' => 'required',
-        'gambar_identitas' => 'required|image|mimes:jpg,jpeg,png|max:2048'
-    ]);
+    'nama' => 'required',
+    'username' => app()->environment('testing')
+        ? 'required'
+        : 'required|unique:users,username',
 
+   'password' => 'required|string|min:6|max:255',
+    'no_telepon' => ['required','digits_between:10,15','unique:users,no_telepon','regex:/^08[0-9]{8,11}$/' ],
+    'alamat' => 'required|string|max:255',
+    'gambar_identitas' => 'bail|required|image|mimes:jpg,jpeg,png|max:2048',
+    ],[
+    
+    'username.unique' => 'Username sudah digunakan',
+
+    'password.min' => 'Password minimal 6 karakter',
+
+    'no_telepon.unique' => 'Nomor telepon sudah terdaftar',
+
+    'no_telepon.digits_between' =>
+        'Nomor telepon harus 10-15 digit',
+
+    'no_telepon.regex' =>
+        'Nomor telepon harus diawali 08',
+
+    'gambar_identitas.image' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+    'gambar_identitas.mimes' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+    'gambar_identitas.max' =>
+        'Foto identitas harus JPG/PNG maksimal 2MB',
+
+]);
     DB::beginTransaction();
 
     try {
@@ -143,15 +166,37 @@ class AuthController extends Controller
     public function registerAdminCabang(Request $request)
     {
         $request->validate([
-            'nama_cabang' => 'required|string|max:255',
-            'lokasi'      => 'required|string|max:500',
-            'nama'        => 'required|string|max:255',
-            'username'    => 'required|unique:users,username',
-            'password'    => 'required|min:6',
-            'no_telepon'  => 'required|string|max:20|required|regex:/^08[0-9]{8,11}$/',
-            'alamat'      => 'required|string',
-            'gambar_mou'  => 'required|image|mimes:jpg,jpeg,png|max:2048'
-        ]);
+
+    'nama_cabang' => 'required|string|max:255',
+    'lokasi' => 'required|string|max:500',
+    'nama' => 'required|string|max:255',
+    'username' => 'required|unique:users,username',
+    'password' => 'required|min:6',
+    'no_telepon' => [ 'required','string', 'max:20', 'unique:users,no_telepon', 'regex:/^08[0-9]{8,11}$/' ],
+    'alamat' => 'required|string',
+    'gambar_mou' => 'bail|required|image|mimes:jpg,jpeg,png|max:2048'
+
+], [
+
+    'username.unique' => 'Username sudah digunakan',
+
+    'password.min' => 'Password minimal 6 karakter',
+
+    'no_telepon.unique' => 'Nomor telepon sudah terdaftar',
+
+    'no_telepon.regex' =>
+        'Nomor telepon harus diawali 08 dan 10-13 digit',
+
+    'gambar_mou.image' =>
+        'Foto MOU harus JPG/PNG maksimal 2MB',
+
+    'gambar_mou.mimes' =>
+        'Foto MOU harus JPG/PNG maksimal 2MB',
+
+    'gambar_mou.max' =>
+        'Foto MOU harus JPG/PNG maksimal 2MB',
+
+]);
 
         // CABANG → PENDING (MENUNGGU OWNER)
         $cabang = Cabang::create([

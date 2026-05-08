@@ -40,7 +40,7 @@
         <div class="form-header">
             <span>Daftar Alat yang diminta</span>
             <button type="button" id="tambah-permintaan" class="btn btn-orange small">
-                <i class="fa fa-plus"></i> Tambah
+                <i class="fa-solid fa-circle-plus"></i> Tambah
             </button>
         </div>
 

@@ -108,6 +108,8 @@
            Rp {{ number_format($paket->hargaTerbaru?->harga ?? 0,0,',','.') }} / hari
         </p>
 
+<div class="aksi-wrapper">
+
         <button class="btn-detail"
     onclick="openModal(this)"
     data-nama="{{ $paket->nama_paket }}"
@@ -117,11 +119,22 @@
     : asset('images/placeholder.png') }}"
     data-detail="
     @foreach($paket->detail as $item)
-        {{ optional($item->produk)->nama_produk ?? '-' }} ({{ $item->qty }})|
+         {{ optional($item->produk)->nama_produk ?? '-' }} ({{ $item->qty }})|
     @endforeach
     ">
     Lihat Detail
 </button>
+<form action="{{ route('paket.toggle', $paket->id) }}" method="POST">
+        @csrf
+        <button type="submit"
+            class="btn-toggle {{ $paket->is_active ? 'aktif' : 'nonaktif' }}">
+            <i class="fa-solid
+                {{ $paket->is_active ? 'fa-toggle-on' : 'fa-toggle-off' }}">
+            </i>
+        </button>
+    </form>
+
+</div>
     </div>
 
 @empty

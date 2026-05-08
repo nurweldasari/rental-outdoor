@@ -105,26 +105,39 @@
 
         <h4>{{ $paket->nama_paket }}</h4>
 
-        <p class="harga">
-            Rp {{ number_format($paket->hargaTerbaru?->harga ?? 0,0,',','.') }} / hari
-        </p>
+<p class="harga">
+    Rp {{ number_format($paket->hargaTerbaru?->harga ?? 0,0,',','.') }} / hari
+</p>
 
-        <button class="btn-detail"
-    onclick="openModal(this)"
-    data-nama="{{ $paket->nama_paket }}"
-    data-harga="{{ $paket->hargaTerbaru?->harga ?? 0 }}"
-    data-gambar="{{ $paket->gambar_paket
-            ? asset('storage/'.$paket->gambar_paket)
-            : asset('images/placeholder.png') }}"
-    data-detail="
-        @foreach($paket->detail as $item)
-            {{ optional($item->stokCabang->produk)->nama_produk }}({{ $item->qty }})|
-        @endforeach
-    ">
-    Lihat Detail
-</button>
-    </div>
+<div class="aksi-wrapper">
 
+    <button class="btn-detail"
+        onclick="openModal(this)"
+        data-nama="{{ $paket->nama_paket }}"
+        data-harga="{{ $paket->hargaTerbaru?->harga ?? 0 }}"
+        data-gambar="{{ $paket->gambar_paket
+                ? asset('storage/'.$paket->gambar_paket)
+                : asset('images/placeholder.png') }}"
+        data-detail="
+            @foreach($paket->detail as $item)
+                {{ optional($item->stokCabang->produk)->nama_produk }}({{ $item->qty }})|
+            @endforeach
+        ">
+        Lihat Detail
+    </button>
+
+    <form action="{{ route('paket.toggle', $paket->id) }}" method="POST">
+        @csrf
+        <button type="submit"
+            class="btn-toggle {{ $paket->is_active ? 'aktif' : 'nonaktif' }}">
+            <i class="fa-solid
+                {{ $paket->is_active ? 'fa-toggle-on' : 'fa-toggle-off' }}">
+            </i>
+        </button>
+    </form>
+
+</div>
+</div>
 @empty
 
 @endforelse

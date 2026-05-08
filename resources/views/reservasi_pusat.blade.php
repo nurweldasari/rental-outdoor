@@ -423,6 +423,7 @@ function deletePaket(paketId){
     });
 }
 function renderCart(cart){
+
     const body  = document.getElementById('cartBody');
     const items = document.getElementById('formItemsContainer');
 
@@ -443,28 +444,35 @@ function renderCart(cart){
 
     let totalItem = 0;
     let totalHarga = 0;
+
+    // ================= USED STOCK (FIXED + SAFER) =================
     let usedStock = {};
 
-Object.values(cart).forEach(item => {
-    if(item.type === 'paket'){
-        Object.values(item.items || {}).forEach(i => {
-            if(!usedStock[i.idproduk]){
-                usedStock[i.idproduk] = 0;
-            }
-            usedStock[i.idproduk] += i.qty * item.qty;
-        });
-    }
-});
+    Object.values(cart).forEach(item => {
+        if(item.type === 'paket'){
+            Object.values(item.items || {}).forEach(i => {
 
-// 🔥 LOOP UTAMA
-Object.values(cart).forEach(item => {
+                const key = i.idproduk || i.idstok;
 
-    const qty   = Number(item.qty) || 1;
-    const harga = Number(item.harga) || 0;
-    const max   = item.max ?? null;
+                if(!usedStock[key]){
+                    usedStock[key] = 0;
+                }
+
+                usedStock[key] += (i.qty * item.qty);
+            });
+        }
+    });
+
+    // ================= LOOP UTAMA =================
+    Object.values(cart).forEach(item => {
+
+        const qty   = Number(item.qty) || 1;
+        const harga = Number(item.harga) || 0;
+        const max   = item.max ?? null;
+
         // ================= PAKET =================
         if(item.type === 'paket'){
-    
+
             totalItem += qty;
 
             let subtotal = 0;
@@ -500,11 +508,20 @@ Object.values(cart).forEach(item => {
                     </div>
 
                     <div class="item-aksi">
-                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})"><i class="fa-solid fa-minus"></i></button>
+                        <button onclick="updatePaket(${item.paket_id}, ${qty - 1})">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+
                         <span class="qty">${qty}</span>
+
                         <button onclick="updatePaket(${item.paket_id}, ${qty + 1})"
-                        ${max !== null && qty >= max ? 'disabled' : ''}><i class="fa-solid fa-plus"></i></button>
-                         <button class="btn-hapus" onclick="deletePaket(${item.paket_id})"><i class="fa-solid fa-trash"></i></button>
+                            ${disablePlus ? 'disabled' : ''}>
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <button class="btn-hapus" onclick="deletePaket(${item.paket_id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -531,6 +548,8 @@ Object.values(cart).forEach(item => {
                 subtotalText = `${qty} × ${durasi} hari = <b>Rp ${subtotal.toLocaleString('id-ID')}</b>`;
             }
 
+            const disablePlus = max !== null && qty >= max;
+
             html += `
                 <div class="item-keranjang">
                     <div class="item-info">
@@ -544,13 +563,20 @@ Object.values(cart).forEach(item => {
                     </div>
 
                     <div class="item-aksi">
-                        <button onclick="updateCart(${item.idproduk},${qty-1})"><i class="fa-solid fa-minus"></i></button>
+                        <button onclick="updateCart(${item.idproduk},${qty-1})">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+
                         <span class="qty">${qty}</span>
-                        <button 
-                            onclick="updateCart(${item.idproduk},${qty+1})"
-                            ${max !== null && qty >= max ? 'disabled' : ''}
-                        ><i class="fa-solid fa-plus"></i></button>
-                        <button class="btn-hapus" onclick="deleteCart(${item.idproduk})"><i class="fa-solid fa-trash"></i></button>
+
+                        <button onclick="updateCart(${item.idproduk},${qty+1})"
+                            ${disablePlus ? 'disabled' : ''}>
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <button class="btn-hapus" onclick="deleteCart(${item.idproduk})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -562,6 +588,8 @@ Object.values(cart).forEach(item => {
             `;
         }
     });
+
+    const today = new Date().toISOString().split('T')[0];
 
     body.innerHTML = `
         ${html}
@@ -577,11 +605,18 @@ Object.values(cart).forEach(item => {
         <div class="tanggal">
             <div>
                 <label>Tanggal Sewa</label>
-                <input type="date" id="cartTanggalSewa" value="${tglSewa}">
+                <input type="date"
+                    id="cartTanggalSewa"
+                    value="${tglSewa}"
+                    min="${today}">
             </div>
+
             <div>
                 <label>Tanggal Berakhir</label>
-                <input type="date" id="cartTanggalSelesai" value="${tglSelesai}">
+                <input type="date"
+                    id="cartTanggalSelesai"
+                    value="${tglSelesai}"
+                    min="${today}">
             </div>
         </div>
 
@@ -595,7 +630,6 @@ Object.values(cart).forEach(item => {
     document.getElementById('totalItem').textContent = totalItem;
     document.getElementById('totalHarga').textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
 }
-/* ================= CHANGE TANGGAL ================= */
 document.addEventListener('change',function(e){
     if(e.target.id === 'cartTanggalSewa' || e.target.id === 'cartTanggalSelesai'){
         renderCart(cartCache);

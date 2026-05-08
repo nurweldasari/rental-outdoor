@@ -50,9 +50,9 @@
         <div>No.</div>
         <div>Tanggal Reservasi</div>
         <div>Penyewa</div>
+        <div>Tanggal Kembali</div>
         <div>Total</div>
         <div>Status</div>
-        <div>Tanggal Kembali</div>
         <div>Detail</div>
     </div>
 
@@ -69,7 +69,9 @@
         <strong>{{ optional($p->penyewa->user)->nama ?? '-' }}</strong>
         ({{ optional($p->penyewa->user)->no_telepon ?? '-' }})
     </div>
-
+<div>
+        {{ \Carbon\Carbon::parse($p->tanggal_kembali)->translatedFormat('l, d M Y') }}
+    </div>
     <div>
         Rp {{ number_format($p->total,0,',','.') }}
     </div>
@@ -86,9 +88,6 @@
     </span>
 </div>
 
-<div>
-        {{ \Carbon\Carbon::parse($p->tanggal_kembali)->translatedFormat('l, d M Y') }}
-    </div>
     <div>
         <a href="{{ route('admin.penyewaan.detail', $p->idpenyewaan) }}" 
            class="btn-detail">

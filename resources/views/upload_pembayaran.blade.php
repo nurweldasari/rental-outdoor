@@ -34,12 +34,11 @@
             <div class="info-right">
                 @if($rekening)
                     <span class="badge bank">
-                        {{ $rekening->nama_bank }}
+                        Nama Bank    : {{ $rekening->nama_bank }}
                     </span>
 
                     <span class="badge rekening">
                         No. rekening : {{ $rekening->no_rekening }}
-                        ({{ $rekening->atas_nama }})
                     </span>
                 @endif
             </div>

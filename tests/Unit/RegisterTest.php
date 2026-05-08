@@ -5,72 +5,85 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Session\Store;
 use Illuminate\Session\ArraySessionHandler;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
-use App\Models\User;
-use App\Models\Penyewa;
-use Mockery;
-
 
 class RegisterTest extends TestCase
 {
+    use RefreshDatabase;
+
+    /**
+     * Helper request + session
+     */
     private function getRequestWithSession($data)
     {
         $request = Request::create('/register', 'POST', $data);
 
         $session = new Store('test', new ArraySessionHandler(120));
+
         $request->setLaravelSession($session);
 
         return $request;
     }
 
-#[Test]
-public function tc_reg_01_registrasi_berhasil()
-{
-    Storage::fake('public');
+    /**
+     * Helper upload file fake
+     */
+    private function fakeImage()
+    {
+        return UploadedFile::fake()->create(
+            'ktp.jpg',
+            100,
+            'image/jpeg'
+        );
+    }
 
-    $request = $this->getRequestWithSession([
-        'nama' => 'Nur welda',
-        'username' => 'user',
-        'password' => '123456',
-        'no_telepon' => '08123456789',
-        'alamat' => 'Jakarta',
-    ]);
+    #[Test]
+    public function tc_reg_01_registrasi_berhasil()
+    {
+        Storage::fake('public');
 
-    $request->files->set('gambar_identitas',
-        UploadedFile::fake()->create('ktp.jpg', 100)
-    );
+        $request = $this->getRequestWithSession([
+            'nama' => 'Nur welda',
+            'username' => 'user',
+            'password' => '123456',
+            'no_telepon' => '08123456789',
+            'alamat' => 'Jakarta',
+        ]);
 
-    // ✅ MOCK DB
-    DB::shouldReceive('beginTransaction')->once();
-    DB::shouldReceive('commit')->once();
-    DB::shouldReceive('rollback')->never(); 
+        $request->files->set(
+            'gambar_identitas',
+            $this->fakeImage()
+        );
 
-    // ✅ MOCK MODEL
-    $mockUser = Mockery::mock('alias:App\Models\User');
-    $mockUser->shouldReceive('create')
-        ->once()
-        ->andReturn((object)['idusers' => 1]);
+        DB::beginTransaction();
 
-    $mockPenyewa = Mockery::mock('alias:App\Models\Penyewa');
-    $mockPenyewa->shouldReceive('create')
-        ->once()
-        ->andReturn(true);
+        $controller = new \App\Http\Controllers\AuthController();
 
-    $controller = new \App\Http\Controllers\AuthController();
-    $response = $controller->registerPenyewa($request);
+        $response = $controller->registerPenyewa($request);
 
-    $this->assertEquals(302, $response->getStatusCode());
-}
+        DB::commit();
+
+        $this->assertEquals(
+            302,
+            $response->getStatusCode()
+        );
+
+        $this->assertDatabaseHas('users', [
+            'username' => 'user'
+        ]);
+    }
 
     #[Test]
     public function tc_reg_02_username_kosong()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(
+            \Illuminate\Validation\ValidationException::class
+        );
 
         $request = $this->getRequestWithSession([
             'nama' => 'Nur welda',
@@ -80,14 +93,22 @@ public function tc_reg_01_registrasi_berhasil()
             'alamat' => 'Jakarta',
         ]);
 
+        $request->files->set(
+            'gambar_identitas',
+            $this->fakeImage()
+        );
+
         $controller = new \App\Http\Controllers\AuthController();
+
         $controller->registerPenyewa($request);
     }
 
     #[Test]
     public function tc_reg_03_password_kosong()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(
+            \Illuminate\Validation\ValidationException::class
+        );
 
         $request = $this->getRequestWithSession([
             'nama' => 'Nur welda',
@@ -97,14 +118,22 @@ public function tc_reg_01_registrasi_berhasil()
             'alamat' => 'Jakarta',
         ]);
 
+        $request->files->set(
+            'gambar_identitas',
+            $this->fakeImage()
+        );
+
         $controller = new \App\Http\Controllers\AuthController();
+
         $controller->registerPenyewa($request);
     }
 
     #[Test]
     public function tc_reg_04_nama_kosong()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(
+            \Illuminate\Validation\ValidationException::class
+        );
 
         $request = $this->getRequestWithSession([
             'nama' => '',
@@ -114,14 +143,22 @@ public function tc_reg_01_registrasi_berhasil()
             'alamat' => 'Jakarta',
         ]);
 
+        $request->files->set(
+            'gambar_identitas',
+            $this->fakeImage()
+        );
+
         $controller = new \App\Http\Controllers\AuthController();
+
         $controller->registerPenyewa($request);
     }
 
     #[Test]
     public function tc_reg_05_alamat_kosong()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(
+            \Illuminate\Validation\ValidationException::class
+        );
 
         $request = $this->getRequestWithSession([
             'nama' => 'Nur welda',
@@ -131,14 +168,22 @@ public function tc_reg_01_registrasi_berhasil()
             'alamat' => '',
         ]);
 
+        $request->files->set(
+            'gambar_identitas',
+            $this->fakeImage()
+        );
+
         $controller = new \App\Http\Controllers\AuthController();
+
         $controller->registerPenyewa($request);
     }
 
     #[Test]
     public function tc_reg_06_no_telepon_kosong()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(
+            \Illuminate\Validation\ValidationException::class
+        );
 
         $request = $this->getRequestWithSession([
             'nama' => 'Nur welda',
@@ -148,14 +193,22 @@ public function tc_reg_01_registrasi_berhasil()
             'alamat' => 'Jakarta',
         ]);
 
+        $request->files->set(
+            'gambar_identitas',
+            $this->fakeImage()
+        );
+
         $controller = new \App\Http\Controllers\AuthController();
+
         $controller->registerPenyewa($request);
     }
 
     #[Test]
     public function tc_reg_07_gambar_kosong()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(
+            \Illuminate\Validation\ValidationException::class
+        );
 
         $request = $this->getRequestWithSession([
             'nama' => 'Nur welda',
@@ -166,13 +219,16 @@ public function tc_reg_01_registrasi_berhasil()
         ]);
 
         $controller = new \App\Http\Controllers\AuthController();
+
         $controller->registerPenyewa($request);
     }
 
     #[Test]
     public function tc_reg_09_password_kurang_dari_6()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(
+            \Illuminate\Validation\ValidationException::class
+        );
 
         $request = $this->getRequestWithSession([
             'nama' => 'Nur welda',
@@ -182,7 +238,13 @@ public function tc_reg_01_registrasi_berhasil()
             'alamat' => 'Jakarta',
         ]);
 
+        $request->files->set(
+            'gambar_identitas',
+            $this->fakeImage()
+        );
+
         $controller = new \App\Http\Controllers\AuthController();
+
         $controller->registerPenyewa($request);
     }
 }

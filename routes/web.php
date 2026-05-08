@@ -478,3 +478,6 @@ Route::post('/paket_pusat/store', [PaketController::class, 'storePusat'])->name(
 Route::get('/paket_pusat/{id}/edit', [PaketController::class, 'editPusat'])->name('paket_pusat.edit');
 Route::put('/paket_pusat/{id}', [PaketController::class, 'updatePusat'])->name('paket_pusat.update');
 Route::delete('/paket_pusat/{id}', [PaketController::class, 'destroyPusat'])->name('paket_pusat.destroy');
+
+Route::post('/paket/{id}/toggle', [PaketController::class, 'toggle'])
+    ->name('paket.toggle');
