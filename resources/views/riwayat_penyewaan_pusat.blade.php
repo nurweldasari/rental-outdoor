@@ -38,7 +38,7 @@
     <span class="badge-selesai">Selesai</span>
 </div>
 
-            <p class="total">Total : Rp {{ number_format($item->total) }}</p>
+            <p class="total">Total : Rp {{ number_format($item->total, 0, ',', '.') }}</p>
 
             <div class="action">
                 <a href="{{ route('detail_sewa_pusat', $item->idpenyewaan) }}" class="btn detail">Detail</a>

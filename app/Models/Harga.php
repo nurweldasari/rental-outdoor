@@ -2,6 +2,7 @@
 
 namespace App\Models;
 use App\Models\Produk;
+use App\Models\Paket;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,20 +12,32 @@ class Harga extends Model
     protected $table = 'harga';
     protected $primaryKey = 'idharga';
 
-    public $incrementing = true;
-    protected $keyType = 'int';
-
-    // Karena tabel TIDAK pakai timestamps
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
-        'harga_sewa',
+        'type',
+        'produk_id',
+        'paket_id',
+        'harga',
         'tanggal_berlaku',
     ];
+    public function scopeProduk($query)
+{
+    return $query->where('type', 'produk');
+}
 
-    // Relasi ke produk (satu harga bisa dipakai banyak produk)
+public function scopePaket($query)
+{
+    return $query->where('type', 'paket');
+}
+
     public function produk()
     {
-        return $this->hasMany(Produk::class, 'harga_idharga', 'idharga');
+        return $this->belongsTo(Produk::class, 'produk_id', 'idproduk');
+    }
+
+    public function paket()
+    {
+        return $this->belongsTo(Paket::class, 'paket_id', 'id');
     }
 }

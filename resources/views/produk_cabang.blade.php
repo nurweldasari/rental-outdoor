@@ -33,7 +33,7 @@
             <i class="fa-solid fa-plus"></i> Tambah Paket
         </a>
 
-        <a href="{{ route('permintaan_produk.create') }}" class="btn-tambah">
+        <a href="{{ route('permintaan_produk.create', ['from' => 'produk']) }}" class="btn-tambah">
             <i class="fa-solid fa-plus"></i> Permintaan Alat
         </a>
 
@@ -106,7 +106,7 @@
         <h4>{{ $paket->nama_paket }}</h4>
 
 <p class="harga">
-    Rp {{ number_format($paket->harga_paket) }}
+    Rp {{ number_format($paket->hargaTerbaru?->harga ?? 0,0,',','.') }} / hari
 </p>
 
 <div class="aksi-wrapper">
@@ -114,13 +114,13 @@
     <button class="btn-detail"
         onclick="openModal(this)"
         data-nama="{{ $paket->nama_paket }}"
-        data-harga="{{ $paket->harga_paket }}"
+        data-harga="{{ $paket->hargaTerbaru?->harga ?? 0 }}"
         data-gambar="{{ $paket->gambar_paket
                 ? asset('storage/'.$paket->gambar_paket)
                 : asset('images/placeholder.png') }}"
         data-detail="
             @foreach($paket->detail as $item)
-                {{ optional($item->stokCabang->produk)->nama_produk }} ({{ $item->qty }})|
+                {{ optional($item->stokCabang->produk)->nama_produk }}({{ $item->qty }})|
             @endforeach
         ">
         Lihat Detail
@@ -166,7 +166,7 @@
             <h4>{{ $produk->nama_produk }}</h4>
 
             <p class="harga">
-                Rp {{ number_format($produk->harga) }} / hari
+                Rp {{ number_format($produk->hargaAktif?->harga ?? 0, 0, ',', '.') }} / hari
             </p>
 
             <div class="stok-wrapper">

@@ -70,11 +70,17 @@
 <div class="detail-wrapper">
     <div class="detail-card-custom">
 
-        {{-- REKENING --}}
-        <div class="rekening-pill">
-            Rekening Tujuan Fee:<br>
-            Mandiri - 98767896540 <br>
-            a.n OwnerOutdoorKriss
+        <div class="top-info-row">
+            <div class="rekening-pill">
+                Rekening Tujuan Fee:<br>
+                Mandiri - 98767896540 <br>
+                a.n OwnerOutdoorKriss
+            </div>
+
+            <div class="bulan-box">
+                <label>Pilih Bulan</label>
+                <input type="month" name="bulan" value="{{ $bulan }}" id="bulanFilter">
+            </div>
         </div>
 
         {{-- JUDUL --}}
@@ -94,14 +100,14 @@
         <div class="hasil-box">
             <div class="hasil-header">
                 <strong>Owner</strong>
-                <span><span id="cardPersenOwner">{{ $persenOwner }}</span>%</span>
+                <span><span id="cardPersenOwner">{{ (int) $persenOwner }}</span>%</span>
             </div>
 
             <div class="row-between">
                 <span>Perhitungan:</span>
                 <span>
                     Rp {{ number_format($totalPendapatan,0,',','.') }}
-                    × {{ $persenOwner }}%
+                    × {{ (int) $persenOwner }}%
                 </span>
             </div>
 
@@ -119,14 +125,14 @@
         <div class="hasil-box">
             <div class="hasil-header">
                 <strong>Admin Cabang</strong>
-                <span><span id="cardPersenCabang">{{ $persenCabang }}</span>%</span>
+                <span><span id="cardPersenCabang">{{ (int) $persenCabang }}</span>%</span>
             </div>
 
              <div class="row-between">
                 <span>Perhitungan:</span>
                 <span>
                     Rp {{ number_format($totalPendapatan,0,',','.') }}
-                    × {{ $persenCabang }}%
+                    × {{ (int) $persenCabang }}%
                 </span>
             </div>
 
@@ -146,21 +152,18 @@
 
     <input type="hidden" name="cabang_idcabang"
            value="{{ $cabangTerpilih->idcabang }}">
-
+           
     <input type="hidden" name="bulan"
            value="{{ $bulan }}">
-
-    <input type="hidden" name="presentase_owner" id="inputOwner"
-           value="{{ $persenOwner }}">
-
-    <input type="hidden" name="presentase_cabang" id="inputCabang"
-           value="{{ $persenCabang }}">
 
     <input type="hidden" name="nominal_owner" id="nominalOwner"
            value="{{ $hasilOwner }}">
 
     <input type="hidden" name="nominal_cabang" id="nominalCabang"
            value="{{ $hasilCabang }}">
+
+    <input type="hidden" name="presentase_owner" value="{{ $persenOwner ?? 0 }}">
+    <input type="hidden" name="presentase_cabang" value="{{ $persenCabang ?? 0 }}">
 
     <button class="btn-green-full">Simpan</button>
 </form>
@@ -191,6 +194,7 @@ Riwayat Bagi Hasil
 <th>Tanggal Upload</th>
 <th>Total Pendapatan</th>
 <th>Bagi Hasil Owner</th>
+<th>Bagi Hasil Admin Cabang</th>
 <th>Bukti Transfer</th>
 <th>Status</th>
 </tr>
@@ -212,6 +216,10 @@ Rp {{ number_format($item->total_pendapatan ?? 0,0,',','.') }}
 
 <td>
 Rp {{ number_format($item->nominal_owner,0,',','.') }}
+</td>
+
+<td>
+Rp {{ number_format($item->nominal_cabang,0,',','.') }}
 </td>
 
 <td>
@@ -289,6 +297,8 @@ Lihat Bukti
 
 <div class="konfirmasi-btns">
 
+@if($item->status == 'menunggu')
+
 <form action="{{ route('bagi_hasil.konfirmasi',$item->idbagi_hasil) }}" method="POST">
 @csrf
 <button class="btn-bulat hijau">
@@ -303,6 +313,20 @@ Lihat Bukti
 </button>
 </form>
 
+@elseif($item->status == 'terkonfirmasi')
+
+<button class="btn-bulat hijau" disabled>
+<i class="fa-solid fa-check"></i>
+</button>
+
+@elseif($item->status == 'ditolak')
+
+<button class="btn-bulat merah" disabled>
+<i class="fa-solid fa-xmark"></i>
+</button>
+
+@endif
+
 </div>
 
 </td>
@@ -316,25 +340,38 @@ Lihat Bukti
 </div>
 
 <div class="modal-overlay" id="modalSkala">
-    <div class="modal-box">
+
+<form action="{{ route('skala_bagi_hasil.store') }}"
+      method="POST"
+      class="modal-box">
+
+@csrf
         <span class="modal-close" onclick="closeSkala()">&times;</span>
 
         <h4 class="modal-title">Pengaturan Skala</h4>
         <p class="skala-nb">NB : Jika Terjadi Perubahan MoU</p>
+        <input type="hidden"
+        name="cabang_idcabang"
+        value="{{ $cabangTerpilih->idcabang }}">
+
+        <input type="hidden"
+            name="owner"
+            id="ownerInput"
+            value="{{ (int) $persenOwner }}">
 
         <div class="skala-wrapper">
 
             <div class="skala-box">
                 <div class="skala-title">Owner</div>
                 <div class="skala-percent">
-                    <span id="ownerVal">{{ $persenOwner }}</span>%
+                    <span id="ownerVal">{{ (int) $persenOwner }}</span>%
                 </div>
             </div>
 
             <div class="skala-box">
                 <div class="skala-title">Admin Cabang</div>
                 <div class="skala-percent">
-                    <span id="cabangVal">{{ $persenCabang }}</span>%
+                    <span id="cabangVal">{{ (int) $persenCabang }}</span>%
                 </div>
             </div>
 
@@ -344,15 +381,15 @@ Lihat Bukti
                class="skala-range"
                min="0"
                max="100"
-               value="{{ $persenOwner }}"
+               value="{{ (int) $persenOwner }}"
                oninput="updateRange(this.value)">
 
         <div class="modal-btn-group">
-            <button class="btn-save" onclick="closeSkala()">Simpan</button>
-            <button class="btn-cancel" onclick="closeSkala()">Batal</button>
+            <button type="submit" class="btn-save">Simpan</button>
+            <button type="button" class="btn-cancel" onclick="closeSkala()">Batal</button>
         </div>
     </div>
-</div>
+</form>
 
 @endif
 <script>
@@ -382,13 +419,12 @@ function updateRange(val){
     document.getElementById('cardPersenOwner').innerText = persenOwner;
     document.getElementById('cardPersenCabang').innerText = persenCabang;
 
-    document.getElementById('inputOwner').value = persenOwner;
-    document.getElementById('inputCabang').value = persenCabang;
+    document.getElementById('ownerInput').value = persenOwner;
 
     let total = {{ $totalPendapatan ?? 0 }};
 
-    let hasilOwner = total * persenOwner / 100;
-    let hasilCabang = total * persenCabang / 100;
+    let hasilOwner = Math.round(total * persenOwner / 100);
+    let hasilCabang = Math.round(total * persenCabang / 100);
 
     document.getElementById('nominalOwner').value = hasilOwner;
     document.getElementById('nominalCabang').value = hasilCabang;
@@ -400,6 +436,14 @@ function updateRange(val){
     document.getElementById('cardNominalCabang').innerText =
         "Rp " + hasilCabang.toLocaleString('id-ID');
 }
+document.getElementById('bulanFilter').addEventListener('change', function () {
+    let bulan = this.value;
+
+    let url = new URL(window.location.href);
+    url.searchParams.set('bulan', bulan);
+
+    window.location.href = url.toString();
+});
 </script>
 
 @endsection

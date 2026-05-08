@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('paket', function (Blueprint $table) {
     $table->id();
     $table->string('nama_paket');
-    $table->integer('harga_paket');
     $table->string('gambar_paket')->nullable();
     $table->boolean('is_active')->default(true);
     

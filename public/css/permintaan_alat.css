@@ -181,6 +181,7 @@ textarea:focus {
 .btn-red {
     background: #dc2626;
     color: #fff;
+    text-decoration: none;
 }
 
 .btn-red:hover {

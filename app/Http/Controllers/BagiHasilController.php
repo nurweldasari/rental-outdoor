@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BagiHasil;
 use Illuminate\Http\Request;
+use App\Models\BagiHasil;
+use App\Models\SkalaBagiHasil;
 use App\Models\AdminCabang;
 use App\Models\Cabang;
 use App\Models\Penyewaan;
@@ -49,40 +50,45 @@ public function index(Request $request)
 // =========================
 public function store(Request $request)
 {
+    $request->validate([
+        'cabang_idcabang' => 'required',
+        'bulan' => 'required',
+        'presentase_owner' => 'required|numeric',
+        'presentase_cabang' => 'required|numeric',
+        'nominal_owner' => 'required|numeric',
+        'nominal_cabang' => 'required|numeric',
+    ]);
 
-$request->validate([
-'cabang_idcabang'=>'required',
-'bulan'=>'required',
-'nominal_owner'=>'required',
-'nominal_cabang'=>'required'
-]);
+    $sudahClosing = BagiHasil::where('cabang_idcabang', $request->cabang_idcabang)
+        ->where('bulan', $request->bulan)
+        ->exists();
 
-$sudahAda = BagiHasil::where('cabang_idcabang',$request->cabang_idcabang)
-->where('bulan',$request->bulan)
-->exists();
+    if ($sudahClosing) {
+        return back()->with('error', 'Bulan ini sudah closing');
+    }
 
-if($sudahAda){
-return back()->with('error','Bagi hasil bulan ini sudah dibuat');
+    $skala = SkalaBagiHasil::aktif(
+        $request->cabang_idcabang,
+        $request->bulan.'-01'
+    )->first();
+
+    BagiHasil::create([
+        'cabang_idcabang'   => $request->cabang_idcabang,
+        'skala_id'          => $skala?->id,
+        'bulan'             => $request->bulan,
+
+        'presentase_owner'  => $request->presentase_owner ?? 0,
+        'presentase_cabang' => $request->presentase_cabang ?? 0,
+
+        'nominal_owner'     => (int) $request->nominal_owner,
+        'nominal_cabang'    => (int) $request->nominal_cabang,
+
+        'status'            => 'terkunci',
+    ]);
+
+    return redirect()->route('bagi_hasil', ['view'=>'riwayat'])
+        ->with('success','Bagi hasil berhasil di-close');
 }
-
-BagiHasil::create([
-
-'cabang_idcabang'=>$request->cabang_idcabang,
-'bulan'=>$request->bulan,
-'presentase_owner'=>$request->presentase_owner,
-'presentase_cabang'=>$request->presentase_cabang,
-'nominal_owner'=>$request->nominal_owner,
-'nominal_cabang'=>$request->nominal_cabang,
-'status'=>'menunggu'
-
-]);
-
-return redirect()->route('bagi_hasil',['view'=>'riwayat'])
-->with('success','Bagi hasil berhasil disimpan');
-
-}
-
-
 // =========================
 // CABANG - DETAIL
 // =========================
@@ -103,7 +109,7 @@ $cabang = Cabang::find($adminCabang->cabang_idcabang);
 
 // DATA YANG MASIH MENUNGGU (untuk halaman upload)
     $bagiHasilAktif = BagiHasil::where('cabang_idcabang',$cabang->idcabang)
-        ->where('status','menunggu')
+        ->whereIn('status',['terkunci','menunggu']) // atau "menunggu_bukti"
         ->latest()
         ->first();
 
@@ -180,11 +186,15 @@ $totalPendapatan = Penyewaan::where('cabang_idcabang',$id)
 ->where('status_penyewaan','selesai')
 ->sum('total');
 
-$persenOwner = $request->presentase_owner ?? 50;
-$persenCabang = $request->presentase_cabang ?? 50;
+$skala = SkalaBagiHasil::where('cabang_idcabang',$id)
+    ->orderByDesc('id')
+    ->first();
 
-$hasilOwner = $totalPendapatan * $persenOwner / 100;
-$hasilCabang = $totalPendapatan * $persenCabang / 100;
+$persenOwner = $skala?->owner ?? 50;
+$persenCabang = $skala?->cabang ?? 50;
+
+$hasilOwner = round($totalPendapatan * $persenOwner / 100);
+$hasilCabang = round($totalPendapatan * $persenCabang / 100);
 
 // AMBIL DATA BUKTI FEE DARI DB
 $buktiFee = BagiHasil::where('cabang_idcabang',$id)

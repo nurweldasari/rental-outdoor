@@ -19,6 +19,14 @@ return new class extends Migration
     $table->unsignedBigInteger('penyewaan_idpenyewaan');
 
     $table->enum('type', ['produk', 'paket'])->default('produk');
+    
+     // SNAPSHOT
+    $table->string('nama_produk')->nullable();
+    $table->string('jenis_skala')->nullable();
+    $table->string('nama_paket')->nullable();
+    $table->text('detail_paket')->nullable();
+
+    // DATA TRANSAKSI 
 
     $table->integer('harga');
     $table->integer('qty');

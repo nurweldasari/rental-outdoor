@@ -62,8 +62,9 @@
             <input type="password"
                    name="password"
                    placeholder="Password"
-                   required
+                   id="password" required
                    minlength="6">
+        <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
         </div>
 
         <!-- TELEPON -->
@@ -105,7 +106,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-submit">Tambah Penyewa</button>
-            <button type="button" class="btn-cancel" onclick="history.back()">Batal</button>
+            <a href="{{ route('data_penyewa') }}" class="btn-cancel">Batal</a>
         </div>
 
     </form>
@@ -126,6 +127,18 @@ function showFileName(input) {
 
         document.querySelector('.upload-box')
             .classList.add('file-selected');
+    }
+}
+function togglePassword() {
+    const input = document.getElementById("password");
+    const icon = document.querySelector(".toggle-password");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
     }
 }
 </script>

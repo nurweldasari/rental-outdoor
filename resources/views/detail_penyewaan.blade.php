@@ -111,18 +111,21 @@
         {{-- ================= NAMA ================= --}}
         <td>
     {{-- ================= PRODUK ================= --}}
-    @if($item->type === 'produk')
-        {{ optional($item->produk)->nama_produk ?? '-' }}
+     @if($item->type === 'produk')
+        {{ $item->nama_produk ?? '-' }}
 
     {{-- ================= PAKET ================= --}}
-    @elseif($item->type === 'paket')
+     @elseif($item->type === 'paket')
 
-        {{ optional($item->paket)->nama_paket ?? 'Paket tidak ditemukan' }}
+        {{ $item->nama_paket ?? 'Paket tidak ditemukan' }}
 
         <div style="font-size:12px;color:#666;">
-            @foreach(optional($item->paket)->detail ?? [] as $d)
-                • {{ optional($d->stokCabang->produk)->nama_produk ?? 'Produk hilang' }}
-                ({{ $d->qty }}) <br>
+            @php 
+                $detail = json_decode($item->detail_paket ?? '[]', true); 
+            @endphp
+
+            @foreach($detail as $d)
+                • {{ $d['nama_produk'] ?? '-' }} ({{ $d['qty'] ?? 0 }}) <br>
             @endforeach
         </div>
 

@@ -13,9 +13,6 @@
      {{-- ================= HEADER ================= --}}
 
     <div class="no-print">
-    <a href="{{ route('laporan_pusat') }}" class="btn-kembali">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
 
     <h2>
         Laporan Pendapatan - {{ $cabang->nama_cabang ?? 'Pusat' }}
@@ -114,40 +111,27 @@
             <div class="produk-list">
     @foreach($data->itemPenyewaan as $item)
 
-    {{-- PRODUK --}}
-    @if($item->type === 'produk' && $item->produk)
-        <div class="item-line">
-            {{ $loop->iteration }}.
-            <span class="produk-nama">
-                {{ $item->produk->nama_produk }}
-            </span>
-            <span class="qty">({{ $item->qty }})</span>
-        </div>
+    {{-- ================= PRODUK ================= --}}
+    @if($item->type === 'produk')
+    {{ $loop->iteration }}.
+    {{ $item->nama_produk }}
+    ({{ $item->qty }}) <br>
 
-    {{-- PAKET --}}
-    @elseif($item->type === 'paket' && $item->paket)
-        <div class="item-paket">
+    {{-- ================= PAKET ================= --}}
+   @elseif($item->type === 'paket')
+    {{ $loop->iteration }}.
+    <strong>{{ $item->nama_paket }}</strong>
+    ({{ $item->qty }}) <br>
 
-            <!-- 🔥 HANYA NAMA PAKET YANG DITENGAH -->
-            <div class="paket-title-center">
-                {{ $loop->iteration }}.
-                <span class="paket-nama">
-                    {{ $item->paket->nama_paket }}
-                </span>
-                <span class="qty">({{ $item->qty }})</span>
-            </div>
+    <small style="margin-left:10px;">
+        @php
+            $detail = json_decode($item->detail_paket ?? '[]', true);
+        @endphp
 
-            <!-- DETAIL PAKET -->
-            <div class="paket-detail">
-                @foreach($item->paket->detail as $detail)
-                    <div class="paket-item">
-                        • {{ $detail->produk->nama_produk ?? 'Produk tidak ditemukan' }}
-                        <span class="qty">({{ $detail->qty }})</span>
-                    </div>
-                @endforeach
-            </div>
-
-        </div>
+        @foreach($detail as $d)
+            {{ $d['nama_produk'] }} ({{ $d['qty'] }}) |
+        @endforeach
+    </small>
     @endif
 
     @endforeach

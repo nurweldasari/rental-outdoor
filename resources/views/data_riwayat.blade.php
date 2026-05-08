@@ -73,7 +73,7 @@
         {{ \Carbon\Carbon::parse($p->tanggal_kembali)->translatedFormat('l, d M Y') }}
     </div>
     <div>
-        Rp {{ number_format($p->total) }}
+        Rp {{ number_format($p->total,0,',','.') }}
     </div>
     <!-- STATUS (Tambahan baru) -->
     @php

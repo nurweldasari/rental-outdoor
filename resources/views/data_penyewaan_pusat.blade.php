@@ -64,7 +64,7 @@
 </div>
 
 
-            <div>Rp {{ number_format($p->total) }}</div>
+            <div>Rp {{ number_format($p->total,0,',','.') }}</div>
             <div>
                 @php
                     $statusClass = match($p->status_penyewaan) {

@@ -295,6 +295,17 @@
     padding:10px;
     border-bottom:1px solid #f1f1f1;
 }
+.catatan-label{
+    font-size: 13px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #8B5E3C; 
+}
+.produk-item .catatan-input{
+    border: 2px solid #8B5E3C;
+    outline: none; 
+}
 
 /* =========================
    RESPONSIVE 768px
@@ -494,4 +505,20 @@
         font-size: 13px;
         padding: 0 10px;
     }
+
+/* ===== ALERT ===== */
+.alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* ERROR ALERT */
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
 }
