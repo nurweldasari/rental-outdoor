@@ -171,6 +171,7 @@ Belum ada perhitungan bagi hasil dari owner
 
 <thead>
 <tr>
+<th>Bagi Hasil Bulan</th>
 <th>Tanggal Upload</th>
 <th>Total Pendapatan</th>
 <th>Bagi Hasil Owner</th>
@@ -184,6 +185,10 @@ Belum ada perhitungan bagi hasil dari owner
 
 @forelse($riwayat as $item)
 <tr>
+
+<td>
+{{ \Carbon\Carbon::parse($item->bulan)->translatedFormat('F Y') }}
+</td>
 
 <td>{{ \Carbon\Carbon::parse($item->updated_at)->format('d F Y') }}</td>
 
@@ -217,7 +222,7 @@ Rp {{ number_format($item->nominal_cabang,0,',','.') }}
 
 @empty
 <tr>
-<td colspan="6" style="text-align:center;">
+<td colspan="7" style="text-align:center;">
 Belum ada riwayat bagi hasil
 </td>
 </tr>

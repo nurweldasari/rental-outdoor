@@ -34,7 +34,10 @@ class PenyewaanController extends Controller
         'produk_cabang'   => 'nullable|array',
         'produk'          => 'nullable|array',
        
+        'qty'    => 'required|array',
         'qty.*'  => 'required|integer|min:1',
+
+        'type'   => 'required|array',
         'type.*' => 'required|in:produk,paket',
     ]);
 
@@ -768,7 +771,7 @@ public function reservasi(Request $request, $idpenyewa)
                 'nama_produk' => $d->stokCabang->produk->nama_produk ?? '-',
                 'qty'         => $d->qty,
             ];
-        })
+        })->values()
     ),
 
     'harga'    => $harga,
@@ -805,16 +808,15 @@ public function reservasi(Request $request, $idpenyewa)
     'nama_produk'           => $produk->nama_produk,
     'jenis_skala'           => $produk->jenis_skala,
 
-    'harga'    => $harga,
-    'qty'      => $qty,
-    'subtotal' => $harga * $qty * $durasiHari,
+    'harga'                 => $harga,
+    'qty'                   => $qty,
+    'subtotal'              => $harga * $qty * $durasiHari,
 ]);
 
-        $total += $harga * $qty * $durasiHari;
-        $totalProduk += $qty;
+$total += $harga * $qty * $durasiHari;
+$totalProduk += $qty;
     }
-}
-
+    }
         $penyewaan->update([
             'total'        => $total,
             'total_produk' => $totalProduk,
@@ -978,7 +980,7 @@ public function reservasiPusat(Request $request, $idpenyewa)
                     $produk->decrement('stok_pusat', $jumlahPotong);
                 }
 
-                ItemPenyewaan::create([
+               ItemPenyewaan::create([
     'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
     'produk_idproduk'       => null,
     'paket_id'              => $paket->id,
@@ -988,13 +990,12 @@ public function reservasiPusat(Request $request, $idpenyewa)
 
     'detail_paket' => json_encode(
         $paket->detail->map(function ($d) {
-
             return [
                 'produk_id'   => $d->produk->idproduk ?? null,
                 'nama_produk' => $d->produk->nama_produk ?? '-',
                 'qty'         => $d->qty,
             ];
-        })
+        })->values()
     ),
 
     'harga'    => $harga,
@@ -1002,8 +1003,8 @@ public function reservasiPusat(Request $request, $idpenyewa)
     'subtotal' => $harga * $qty * $durasiHari,
 ]);
 
-                $total += $harga * $qty * $durasiHari;
-                $totalProduk += $qty;
+$total += $harga * $qty * $durasiHari;
+$totalProduk += $qty;
             }
 
             // ================= PRODUK =================
@@ -1016,6 +1017,7 @@ if ($qty > $produk->stok_pusat) {
 }
 
 $harga = $produk->hargaAktif->harga ?? 0;
+
 
 $produk->decrement('stok_pusat', $qty);
 
@@ -1034,6 +1036,23 @@ ItemPenyewaan::create([
     'qty'                   => $qty,
     'subtotal'              => $subtotal,
 ]);
+
+                $harga = $produk->hargaAktif->harga ?? 0;
+                $subtotal = $harga * $qty * $durasiHari;
+
+                ItemPenyewaan::create([
+                    'penyewaan_idpenyewaan' => $penyewaan->idpenyewaan,
+                    'produk_idproduk'       => $produk->idproduk,
+                    'paket_id'              => null,
+                    'type'                  => 'produk',
+
+                    'nama_produk'           => $produk->nama_produk,
+                    'jenis_skala'           => $produk->jenis_skala,
+
+                    'harga'                 => $harga,
+                    'qty'                   => $qty,
+                    'subtotal'              => $subtotal,
+                ]);
 
                 $total += $subtotal;
                 $totalProduk += $qty;
@@ -1374,7 +1393,7 @@ public function selesaiPusat() {
         ->orderBy('created_at', 'desc')
         ->get();
 
-    return view('riwayat_penyewaan_Pusat', compact('penyewaanSelesai'));
+    return view('riwayat_penyewaan_pusat', compact('penyewaanSelesai'));
 }
 
 public function uploadPusat($id)

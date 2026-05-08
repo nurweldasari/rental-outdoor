@@ -51,8 +51,8 @@
                 Bukti Fee
             </button>
 
-            <a href="{{ route('bagi_hasil',['view'=>'riwayat']) }}"
-               class="btn btn-riwayat">
+            <a href="{{ route('bagi_hasil',['view' => 'riwayat',
+            'cabang' => $cabangTerpilih->idcabang]) }}" class="btn btn-riwayat">
                 Riwayat Bagi Hasil
             </a>
         </div>
@@ -176,7 +176,7 @@
    @if($view == 'riwayat')
 
 <div class="top-action">
-<a href="{{ route('bagi_hasil') }}" class="btn-back-red">
+<a href="{{ route('bagi_hasil.detail', request('cabang')) }}" class="btn-back-red">
 <i class="fa-solid fa-arrow-left"></i> Kembali
 </a>
 </div>
@@ -191,6 +191,7 @@ Riwayat Bagi Hasil
 
 <thead>
 <tr>
+<th>Bagi Hasil Bulan</th>
 <th>Tanggal Upload</th>
 <th>Total Pendapatan</th>
 <th>Bagi Hasil Owner</th>
@@ -205,6 +206,9 @@ Riwayat Bagi Hasil
 @forelse($riwayat as $item)
 
 <tr>
+<td>
+{{ \Carbon\Carbon::parse($item->bulan)->translatedFormat('F Y') }}
+</td>
 
 <td>
 {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y') }}
@@ -241,7 +245,7 @@ Rp {{ number_format($item->nominal_cabang,0,',','.') }}
 @empty
 
 <tr>
-<td colspan="5" style="text-align:center;">
+<td colspan="7" style="text-align:center;">
 Belum ada riwayat bagi hasil
 </td>
 </tr>
