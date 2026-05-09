@@ -101,74 +101,72 @@
     </div>
 
     <!-- ================= TAB PENYEWAAN ================= -->
-    <div class="tab-content" id="penyewaan">
+<div class="tab-content" id="penyewaan">
 
-        @forelse ($penyewaanAktif as $item)
-            @php
-                $admins = $item->cabang->adminCabang ?? collect();
-            @endphp
+    @forelse ($penyewaanAktif as $item)
+        @php
+            $admins = $item->cabang->adminCabang ?? collect();
+        @endphp
 
-            <!-- HEADER CABANG -->
-            <div class="header-cabang">
-                <span class="cabang-nama">
-                    {{ $item->cabang->nama_cabang ?? '-' }}
-                </span>
+        <!-- HEADER CABANG -->
+        <div class="header-cabang">
+            <span class="cabang-nama">
+                {{ $item->cabang->nama_cabang ?? '-' }}
+            </span>
 
-                <span class="admin-cabang">
-                    Admin:
-                    @foreach ($admins as $admin)
-                        {{ $admin->user->nama ?? '-' }}@if (!$loop->last), @endif
-                    @endforeach
-                </span>
+            <span class="admin-cabang">
+                Admin:
+                @foreach ($admins as $admin)
+                    {{ $admin->user->nama ?? '-' }}@if (!$loop->last), @endif
+                @endforeach
+            </span>
+        </div>
+
+        <div class="card-riwayat aktif">
+            <div class="card-left">
+                <p><strong>Nama</strong> : {{ auth()->user()->nama }}</p>
+                <p><strong>No. Telephone</strong> : {{ auth()->user()->no_telepon ?? '-' }}</p>
+                <p>
+                    <strong>Tanggal Sewa</strong> :
+                    {{ \Carbon\Carbon::parse($item->tanggal_sewa)->translatedFormat('d F Y') }}
+                </p>
             </div>
 
-            <div class="card-riwayat aktif">
-                <div class="card-left">
-                    <p><strong>Nama</strong> : {{ auth()->user()->nama }}</p>
-                    <p><strong>No. Telephone</strong> : {{ auth()->user()->no_telepon ?? '-' }}</p>
-                    <p>
-                        <strong>Tanggal Sewa</strong> :
-                        {{ \Carbon\Carbon::parse($item->tanggal_sewa)->translatedFormat('d F Y') }}
-                    </p>
+            <div class="divider"></div>
+
+            <div class="card-right">
+
+                <div class="status-wrapper">
+                    <div class="badge-disewa">Sedang Disewa</div>
                 </div>
 
-                <div class="divider"></div>
+                <p>Metode Pembayaran :
+                    <strong>{{ ucfirst($item->metode_bayar) }}</strong>
+                </p>
 
-                <div class="card-right">
+                <p class="total">
+                    Total : Rp {{ number_format($item->total,0,',','.') }}
+                </p>
 
-    <div class="status-wrapper">
-        <div class="badge-disewa">Sedang Disewa</div>
-    </div>
+                <div class="action">
+                    <a href="{{ route('struk', $item->idpenyewaan) }}"
+                       class="btn upload"
+                       target="_blank">
+                        Cetak Struk
+                    </a>
 
-    <p>Metode Pembayaran :
-        <strong>{{ ucfirst($item->metode_bayar) }}</strong>
-    </p>
+                    <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
+                       class="btn detail">
+                        Detail
+                    </a>
+                </div>
 
-    <p class="total">
-        Total : Rp {{ number_format($item->total,0,',','.') }}
-    </p>
+            </div>
+        </div>
 
-    <div class="action">
-    <a href="{{ route('struk', $item->idpenyewaan) }}"
-       class="btn upload"
-       target="_blank">
-        Cetak Struk
-    </a>
-
-    <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
-       class="btn detail">
-        Detail
-    </a>
-</div>
-</div>
-</div>
-
-
-        @empty
-            <p class="empty">Tidak ada penyewaan aktif</p>
-        @endforelse
-
-    </div>
+    @empty
+        <p class="empty">Tidak ada penyewaan aktif</p>
+    @endforelse
 
 </div>
 @endsection
