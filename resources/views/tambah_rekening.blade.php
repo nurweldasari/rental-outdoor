@@ -40,7 +40,10 @@
 
 {{-- CONTAINER TABEL REKENING --}}
 <div class="container-rekening" id="containerRekening" style="display:none;">
-
+<a href="/cabang" class="btn-back-red">
+    <i class="fa-solid fa-arrow-left"></i>
+    Kembali
+</a>
     <div class="card-rekening">
 
         {{-- JUDUL --}}

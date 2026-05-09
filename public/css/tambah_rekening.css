@@ -85,7 +85,26 @@
 .btn-batal {
     background-color: #DB2C00;
 }
+.btn-back-red{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
 
+    background:#DB2C00;
+    color:#fff;
+    border:none;
+
+    padding:10px 18px;
+    border-radius:10px;
+
+    font-size:14px;
+    font-weight:500;
+    text-decoration:none;
+    margin-bottom:25px;
+
+    cursor:pointer;
+    transition:.2s;
+}
 /* ======================
   TABEL REKENING 
 ====================== */
@@ -93,7 +112,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 30px 20px;
+    padding: 0 20px 30px;
 }
 
 

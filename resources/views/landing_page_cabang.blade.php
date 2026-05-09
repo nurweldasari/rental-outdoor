@@ -9,18 +9,25 @@
 @section('content')
 
 <!-- ================= HERO ================= -->
-<section class="hero">
-    <img src="{{ asset('assets\images\lokasipusat.jpeg') }}" class="hero-img">
+<section class="hero-cabang">
 
-    <div class="hero-overlay">
+    <div class="overlay-cabang"></div>
+
+    <div class="hero-content-cabang">
         <h1>Kemitraan Franchise OutdoorKriss</h1>
+
         <p>
-            Kerja sama operasional penyewaan perlengkapan outdoor dengan<br> sistem terkelola dan transparan.
+            Kerja sama operasional penyewaan perlengkapan outdoor dengan<br>
+            sistem terkelola dan transparan.
         </p>
 
-        <a href="{{ route('register.admin_cabang.form') }}" class="btn-cta">Ajukan Kerja Sama</a>
+        <a href="{{ route('register.admin_cabang.form') }}" class="btn-cta">
+            Ajukan Kerja Sama
+        </a>
+
         <small>Pengajuan akan direview oleh owner</small>
     </div>
+
 </section>
 
 <!-- ================= GAMBARAN ================= -->

@@ -16,7 +16,8 @@ class ProdukFactory extends Factory
         return [
             'nama_produk' => $this->faker->word(),
             'stok_pusat' => 10,
-            'harga' => 100000,
+
+            // HAPUS harga dari sini
             'jenis_skala' => 'unit',
             'gambar_produk' => null,
 
@@ -24,5 +25,18 @@ class ProdukFactory extends Factory
             'kategori_idkategori' => Kategori::factory(),
             'admin_pusat_idadmin_pusat' => AdminPusat::factory(),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function ($produk) {
+
+            $produk->harga()->create([
+                'type' => 'produk',
+                'harga' => 100000,
+                'tanggal_berlaku' => now(),
+            ]);
+
+        });
     }
 }

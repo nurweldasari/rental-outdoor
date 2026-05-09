@@ -161,8 +161,8 @@
     </a>
 </div>
 </div>
-                </div>
-            </div>
+</div>
+
 
         @empty
             <p class="empty">Tidak ada penyewaan aktif</p>
