@@ -551,7 +551,13 @@ ${item.nama ?? item.produk?.nama_produk ?? 'Tanpa Nama'}
         }
     });
 
-    const today = new Date().toISOString().split('T')[0];
+    const todayDate = new Date();
+
+const tomorrowDate = new Date();
+tomorrowDate.setDate(todayDate.getDate() + 1);
+
+const minSewa = todayDate.toISOString().split('T')[0];
+const minSelesai = tomorrowDate.toISOString().split('T')[0];
 
     body.innerHTML = `
         ${html}
@@ -566,20 +572,20 @@ ${item.nama ?? item.produk?.nama_produk ?? 'Tanpa Nama'}
 
         <div class="tanggal">
             <div>
-                <label>Tanggal Sewa</label>
-                <input type="date"
-                    id="cartTanggalSewa"
-                    value="${tglSewa}"
-                    min="${today}">
-            </div>
+    <label>Tanggal Sewa</label>
+    <input type="date"
+        id="cartTanggalSewa"
+        value="${tglSewa}"
+        min="${minSewa}">
+</div>
 
-            <div>
-                <label>Tanggal Berakhir</label>
-                <input type="date"
-                    id="cartTanggalSelesai"
-                    value="${tglSelesai}"
-                    min="${today}">
-            </div>
+<div>
+    <label>Tanggal Berakhir</label>
+    <input type="date"
+        id="cartTanggalSelesai"
+        value="${tglSelesai}"
+        min="${minSelesai}">
+</div>
         </div>
 
         <button class="btn-pesan" ${durasi === 0 ? 'disabled' : ''}>
