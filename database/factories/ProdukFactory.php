@@ -16,11 +16,9 @@ class ProdukFactory extends Factory
         return [
             'nama_produk' => $this->faker->word(),
             'stok_pusat' => 10,
-            'harga' => 100000,
             'jenis_skala' => 'unit',
             'gambar_produk' => null,
 
-            // penting: jangan null
             'kategori_idkategori' => Kategori::factory(),
             'admin_pusat_idadmin_pusat' => AdminPusat::factory(),
         ];

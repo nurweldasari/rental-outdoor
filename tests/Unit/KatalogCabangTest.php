@@ -45,16 +45,15 @@ class KatalogCabangTest extends TestCase
 
     // ✅ 4. PRODUK (ISI SEMUA FIELD WAJIB)
     DB::table('produk')->insert([
-        'idproduk' => 1,
-        'nama_produk' => 'Tenda',
-        'stok_pusat' => 10,
-        'harga' => 50000,
-        'jenis_skala' => 'harian',
-        'kategori_idkategori' => 1,
-        'admin_pusat_idadmin_pusat' => 1,
-        'created_at' => now(),
-        'updated_at' => now()
-    ]);
+    'idproduk' => 1,
+    'nama_produk' => 'Tenda',
+    'stok_pusat' => 10,
+    'jenis_skala' => 'harian',
+    'kategori_idkategori' => 1,
+    'admin_pusat_idadmin_pusat' => 1,
+    'created_at' => now(),
+    'updated_at' => now()
+]);
 
     // ✅ 5. CABANG
     DB::table('cabang')->insert([
@@ -65,6 +64,13 @@ class KatalogCabangTest extends TestCase
         'created_at' => now(),
         'updated_at' => now()
     ]);
+    DB::table('harga')->insert([
+    'idharga' => 1,
+    'produk_id' => 1,
+    'harga' => 50000,
+    'type' => 'produk',
+    'tanggal_berlaku' => now(),
+]);
 }
 
     // =========================

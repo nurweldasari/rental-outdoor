@@ -46,14 +46,13 @@ class PenyewaanTest extends TestCase
         ]);
 
         DB::table('produk')->insert([
-            'idproduk' => 1,
-            'nama_produk' => 'Tenda',
-            'stok_pusat' => 10,
-            'harga' => 50000,
-            'jenis_skala' => 'harian',
-            'kategori_idkategori' => 1,
-            'admin_pusat_idadmin_pusat' => 1,
-        ]);
+    'idproduk' => 1,
+    'nama_produk' => 'Tenda',
+    'stok_pusat' => 10,
+    'jenis_skala' => 'harian',
+    'kategori_idkategori' => 1,
+    'admin_pusat_idadmin_pusat' => 1,
+]);
 
         DB::table('cabang')->insert([
             'idcabang' => 1,
