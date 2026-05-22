@@ -215,16 +215,15 @@ if ($user->status === 'owner') {
         ->whereYear('penyewaan.tanggal_sewa', $tahunCard);
 
     // ================= PENDAPATAN =================
-    $pendapatanList = (clone $pendapatanQuery)
-        ->selectRaw('
-            CASE
-                WHEN admin_pusat_idadmin_pusat IS NOT NULL THEN "Pusat"
-                ELSE "Cabang"
-            END as nama,
-            SUM(total) as total
-        ')
-        ->groupBy('nama')
-        ->get();
+   $pendapatanList = Penyewaan::leftJoin('cabang', 'penyewaan.cabang_idcabang', '=', 'cabang.idcabang')
+    ->selectRaw('
+        COALESCE(cabang.nama_cabang, "OutdoorKriss Tegalsari (Pusat)") as nama,
+        SUM(penyewaan.total) as total
+    ')
+    ->where('status_penyewaan', 'selesai')
+    ->whereYear('tanggal_sewa', $tahunPendapatan)
+    ->groupBy('cabang.idcabang', 'cabang.nama_cabang')
+    ->get();
 
     $grandTotal = $pendapatanList->sum('total');
 
