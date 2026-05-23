@@ -713,6 +713,13 @@ public function reservasi(Request $request, $idpenyewa)
             $durasiHari = 1;
         }
 
+        if (
+        $request->metode_bayar === 'transfer' &&
+        !$adminCabang->cabang->rekening
+        ) {
+            return back()->with('error', 'Rekening cabang belum tersedia');
+        }
+
         // 🔥 Buat penyewaan
         $penyewaan = Penyewaan::create([
             'tanggal_sewa'    => $tanggalSewa,

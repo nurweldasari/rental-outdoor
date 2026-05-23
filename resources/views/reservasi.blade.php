@@ -212,10 +212,17 @@
 
         <p class="catatan-bayar" id="catatanBayar"></p>
 
+        @if($rekening)
         <div class="info-transfer" id="infoTransfer" style="display:none;">
-            <div class="bank-box"><strong>Nama Bank    : {{ $rekening->nama_bank }}</strong></div>
-            <div class="bank-box">No. Rekening : {{ $rekening->no_rekening }}</div>
+            <div class="bank-box">
+                <strong>Nama Bank : {{ $rekening->nama_bank }}</strong>
+            </div>
+
+            <div class="bank-box">
+                No. Rekening : {{ $rekening->no_rekening }}
+            </div>
         </div>
+        @endif
 
         <button class="btn-konfirmasi">Simpan Reservasi</button>
     </div>
@@ -654,7 +661,19 @@ document.addEventListener('DOMContentLoaded', function(){
             info.style.display = 'none';
         }
         else if(this.value === 'transfer'){
-            catatan.textContent = 'Transfer ke rekening ';
+
+            @if(!$rekening)
+                alert('Rekening cabang belum tersedia');
+
+                this.value = '';
+
+                catatan.textContent = '';
+                info.style.display = 'none';
+
+                return;
+            @endif
+
+            catatan.textContent = 'Transfer ke rekening';
             info.style.display = 'block';
         }
         else{
