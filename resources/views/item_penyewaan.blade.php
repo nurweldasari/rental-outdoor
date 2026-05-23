@@ -72,22 +72,26 @@
                         @if ($item->metode_bayar === 'transfer')
                             @if ($item->bukti_bayar)
                                 <span class="btn waiting no-click">
+                                    <i class="fa-solid fa-clock-rotate-left" style="color: white; margin-right: 5px;"></i>
                                     Menunggu Konfirmasi Admin
                                 </span>
                             @else
                                 <a href="{{ route('penyewaan.upload_pembayaran', $item->idpenyewaan) }}"
                                    class="btn upload">
+                                   <i class="fa-solid fa-cloud-arrow-up" style="color: white; margin-right: 5px;"></i>
                                     Upload Bukti Transfer
                                 </a>
                             @endif
                         @else
                             <span class="btn waiting no-click">
+                                <i class="fa-solid fa-clock-rotate-left" style="color: brown; margin-right: 5px;"></i>
                                 Menunggu Pembayaran di toko
                             </span>
                         @endif
 
                         <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
                            class="btn detail">
+                           <i class="fa-solid fa-circle-info" style="color: white; margin-right: 5px;"></i>
                             Detail
                         </a>
                     </div>
@@ -175,11 +179,13 @@
                     <a href="{{ route('struk', $item->idpenyewaan) }}"
                        class="btn upload"
                        target="_blank">
+                       <i class="fa-solid fa-print" style="color: white; margin-right: 5px;"></i>
                         Cetak Struk
                     </a>
 
                     <a href="{{ route('detail_sewa', $item->idpenyewaan) }}"
                        class="btn detail">
+                       <i class="fa-solid fa-circle-info" style="color: white; margin-right: 5px;"></i>
                         Detail
                     </a>
                 </div>

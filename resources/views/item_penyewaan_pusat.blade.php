@@ -60,6 +60,7 @@
                             @else
                                 <a href="{{ route('penyewaan_pusat.upload_pembayaran', $item->idpenyewaan) }}"
                                    class="btn upload">
+                                    <i class="fa-solid fa-cloud-arrow-up" style="color: white; margin-right: 5px;"></i>
                                     Upload Bukti Transfer
                                 </a>
                             @endif
@@ -69,6 +70,7 @@
 
                         <a href="{{ route('detail_sewa_pusat', $item->idpenyewaan) }}"
                            class="btn detail">
+                           <i class="fa-solid fa-circle-info" style="color: white; margin-right: 5px;"></i>
                             Detail
                         </a>
                     </div>
@@ -137,11 +139,13 @@
         <a href="{{ route('struk', $item->idpenyewaan) }}"
            class="btn upload"
            target="_blank">
+           <i class="fa-solid fa-print" style="color: white; margin-right: 5px;"></i>
             Cetak Struk
         </a>
 
         <a href="{{ route('detail_sewa_pusat', $item->idpenyewaan) }}"
            class="btn detail">
+           <i class="fa-solid fa-circle-info" style="color: white; margin-right: 5px;"></i>
             Detail
         </a>
     </div>

@@ -103,4 +103,5 @@ public function riwayat(Request $request)
         ->withQueryString();
 
     return view('data_permintaan', compact('permintaan'));
-}}
+}
+}
