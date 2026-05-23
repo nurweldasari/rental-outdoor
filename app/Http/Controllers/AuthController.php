@@ -17,8 +17,8 @@ class AuthController extends Controller
    public function login(Request $request)
     {
         $request->validate([
-            'username' => 'required',
-            'password' => 'required'
+            'username' => 'required|string|max:255',
+            'password' => 'required|string|min:6|max:255'
         ]);
 
         if (!Auth::attempt($request->only('username', 'password'))) {
@@ -93,7 +93,7 @@ class AuthController extends Controller
    public function registerPenyewa(Request $request)
     {
         $request->validate([
-        'nama' => 'required',
+        'nama' => 'required|string|max:255',
         'username' => app()->environment('testing')
             ? 'required'
             : 'required|unique:users,username',
@@ -161,7 +161,7 @@ class AuthController extends Controller
     'lokasi' => 'required|string|max:500',
     'nama' => 'required|string|max:255',
     'username' => 'required|unique:users,username',
-    'password' => 'required|min:6',
+    'password' => 'required|string|min:6|max:255',
     'no_telepon' => [ 'required','string', 'max:20', 'unique:users,no_telepon', 'regex:/^08[0-9]{8,11}$/' ],
     'alamat' => 'required|string',
     'gambar_mou' => 'bail|required|image|mimes:jpg,jpeg,png|max:2048'
@@ -334,13 +334,11 @@ public function verifikasiOtp(Request $request)
 }
 public function resetPassword(Request $request)
 {
-    
     $request->validate([
         'password' => 'required|min:6|confirmed'
     ]);
 
-    // 🔥 pastikan OTP sudah diverifikasi
-    if (!session('otp_verified')) {
+    if (!session('otp_verified') || !session('user_id')) {
         return back()->with('error', 'OTP belum diverifikasi');
     }
 
@@ -353,7 +351,12 @@ public function resetPassword(Request $request)
     $user->password = Hash::make($request->password);
     $user->save();
 
-    session()->forget(['otp', 'user_id', 'otp_expired', 'otp_verified']);
+    session()->forget([
+        'otp',
+        'user_id',
+        'otp_expired',
+        'otp_verified'
+    ]);
 
     return redirect('/login')->with('success', 'Password berhasil diubah');
 }

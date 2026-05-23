@@ -27,6 +27,35 @@
             </a>
         @endforeach
     </div>
+    @if(method_exists($cabangs, 'links'))
+
+<div class="pagination-simple">
+
+    @if ($cabangs->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $cabangs->previousPageUrl() }}" class="nav">«</a>
+    @endif
+
+    @foreach ($cabangs->getUrlRange(1, $cabangs->lastPage()) as $page => $url)
+
+        @if ($page == $cabangs->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+
+    @endforeach
+
+    @if ($cabangs->hasMorePages())
+        <a href="{{ $cabangs->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+
+</div>
+
+@endif
     @endif
 
 
@@ -179,9 +208,13 @@
    @if($view == 'riwayat')
 
 <div class="top-action">
+ <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Pencarian...">
+    </div>
 <a href="{{ route('bagi_hasil.detail', request('cabang')) }}"
    class="btn-back-red">
-<i class="fa-solid fa-arrow-left"></i> Kembali
+ Kembali <i class="fa-solid fa-arrow-right"></i>
 </a>
 </div>
 
@@ -191,8 +224,8 @@
 Riwayat Bagi Hasil
 </h3>
 
-<table class="table-riwayat">
-
+<table class="table-riwayat" id="dataTable">
+    
 <thead>
 <tr>
 <th>Bagi Hasil Bulan</th>
@@ -259,7 +292,34 @@ Belum ada riwayat bagi hasil
 </tbody>
 
 </table>
+@if(method_exists($riwayat, 'links'))
+<div class="pagination-simple">
 
+    {{-- Prev --}}
+    @if ($riwayat->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $riwayat->previousPageUrl() }}" class="nav">«</a>
+    @endif
+
+    {{-- Nomor halaman --}}
+    @foreach ($riwayat->getUrlRange(1, $riwayat->lastPage()) as $page => $url)
+        @if ($page == $riwayat->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+    @endforeach
+
+    {{-- Next --}}
+    @if ($riwayat->hasMorePages())
+        <a href="{{ $riwayat->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+
+</div>
+@endif
 </div>
 
 @endif
@@ -444,14 +504,42 @@ function updateRange(val){
     document.getElementById('cardNominalCabang').innerText =
         "Rp " + hasilCabang.toLocaleString('id-ID');
 }
-document.getElementById('bulanFilter').addEventListener('change', function () {
-    let bulan = this.value;
+const bulanFilter = document.getElementById('bulanFilter');
 
-    let url = new URL(window.location.href);
-    url.searchParams.set('bulan', bulan);
+if (bulanFilter) {
+    bulanFilter.addEventListener('change', function () {
+        let bulan = this.value;
 
-    window.location.href = url.toString();
+        let url = new URL(window.location.href);
+        url.searchParams.set('bulan', bulan);
+
+        window.location.href = url.toString();
+    });
+}
+</script>
+@if($view == 'riwayat')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const input = document.getElementById('searchInput');
+    const table = document.getElementById('dataTable');
+
+    if (!input || !table) return;
+
+    input.addEventListener('input', function () {
+
+        const value = this.value.toLowerCase().trim();
+        const rows = table.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(value) ? '' : 'none';
+        });
+
+    });
+
 });
 </script>
+@endif
 
 @endsection

@@ -26,9 +26,34 @@
         </div>
     @endforeach
 </div>
+@if(method_exists($cabangList, 'links'))
+
+<div class="pagination-simple">
+
+    @if ($cabangList->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $cabangList->previousPageUrl() }}" class="nav">«</a>
+    @endif
+
+    @foreach ($cabangList->getUrlRange(1, $cabangList->lastPage()) as $page => $url)
+
+        @if ($page == $cabangList->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+
+    @endforeach
+
+    @if ($cabangList->hasMorePages())
+        <a href="{{ $cabangList->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+
+</div>
 
 @endif
-
-
-
+@endif
 @endsection

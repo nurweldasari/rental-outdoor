@@ -143,17 +143,23 @@
     {{--RIWAYAT--}}
     @if($view == 'riwayat')
 
-    <div class="riwayat-card">
     <div class="kelola-header">
-        <a href="{{ route('distribusi_produk') }}"
-           class="btn btn-red">
-            Kembali
-        </a>
+
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Pencarian...">
+    </div>
+
+    <a href="{{ route('distribusi_produk') }}"
+       class="btn btn-red">
+        Kembali <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
     </div>
 
     <div class="riwayat-wrapper">
         <h3 class="riwayat-title">Riwayat Distribusi Produk</h3>
-        <table class="riwayat-table">
+        <table class="riwayat-table" id="dataTable">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -168,7 +174,7 @@
                 <tbody>
                 @forelse($riwayat as $i => $perm)
                     <tr>
-                        <td>{{ $i+1 }}</td>
+                        <td>{{ $riwayat->firstItem() + $i }}</td>
 
                         <td>
                             {{ \Carbon\Carbon::parse($perm->created_at)->translatedFormat('d F Y H:i') }}
@@ -187,14 +193,41 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6">Belum ada riwayat</td>
+                        <td colspan="6" class="empty-table">Belum ada riwayat distribusi produk</td>
                     </tr>
                 @endforelse
                 </tbody>
             </table>
+             @if(method_exists($riwayat, 'links'))
+<div class="pagination-simple">
+
+    {{-- Prev --}}
+    @if ($riwayat->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $riwayat->previousPageUrl() }}" class="nav">«</a>
+    @endif
+
+    {{-- Nomor halaman --}}
+    @foreach ($riwayat->getUrlRange(1, $riwayat->lastPage()) as $page => $url)
+        @if ($page == $riwayat->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+    @endforeach
+
+    {{-- Next --}}
+    @if ($riwayat->hasMorePages())
+        <a href="{{ $riwayat->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+
+</div>
+@endif
         </div>
     </div>
-
 
 {{-- ================= MODAL ================= --}}
 @foreach($riwayat as $perm)
@@ -262,6 +295,23 @@ function openModal(id){
 function closeModal(id){
     document.getElementById('modal-'+id).style.display='none'
 }
+document.getElementById('searchInput').addEventListener('keyup', function () {
+
+    let value = this.value.toLowerCase();
+
+    let rows = document.querySelectorAll('#dataTable tbody tr');
+
+    rows.forEach(row => {
+
+        let text = row.innerText.toLowerCase();
+
+        row.style.display =
+            text.includes(value)
+            ? ''
+            : 'none';
+    });
+
+});
 </script>
 
 @endsection

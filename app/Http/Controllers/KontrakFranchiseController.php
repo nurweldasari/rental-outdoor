@@ -2,18 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdminCabang;
 
 class KontrakFranchiseController extends Controller
 {
-public function index()
-{
-    $adminCabang = AdminCabang::where(
-        'users_idusers',
-        Auth::user()->idusers
-    )->first();
+    public function index()
+    {
+        $user = Auth::user();
 
-    return view('kontrak_franchise', compact('adminCabang'));
-}
+        $adminCabang = AdminCabang::where(
+            'users_idusers',
+            $user->idusers
+        )->first();
+
+        if (!$user || !$adminCabang) {
+            abort(403, 'Akun ini bukan admin cabang');
+        }
+
+        return view('kontrak_franchise', compact('adminCabang'));
+    }
 }

@@ -17,28 +17,35 @@ class CabangController extends Controller
 
     /* ================= INDEX ================= */
     public function index(Request $request)
-    {
-        // HANYA OWNER
-    if(auth()->user()->status != 'owner'){
-        abort(403,'Akses ditolak');
+{
+    if (auth()->user()->status != 'owner') {
+        abort(403, 'Akses ditolak');
     }
-        // Batasi entries agar tidak bisa manipulasi ekstrem
-        $entries = min((int) $request->get('entries', 20), 100);
 
-        $cabang = Cabang::with('adminCabang.user')
-            ->paginate($entries)
-            ->withQueryString();
+    $tab = $request->get('tab', 'cabang');
 
-        $listCabang = Cabang::where('status_cabang', 'aktif')->get();
-        $rekening   = Rekening::with('cabang')->get();
+    $entriesCabang = min((int) $request->get('entries_cabang', 10), 100);
+    $entriesRekening = min((int) $request->get('entries_rekening', 10), 100);
 
-        return view('data_cabang', compact(
-            'cabang',
-            'listCabang',
-            'entries',
-            'rekening'
-        ));
-    }
+    $cabang = Cabang::with('adminCabang.user')
+        ->paginate($entriesCabang)
+        ->withQueryString();
+
+    $rekening = Rekening::with('cabang')
+        ->paginate($entriesRekening)
+        ->withQueryString();
+
+    $listCabang = Cabang::where('status_cabang', 'aktif')->get();
+
+    return view('data_cabang', compact(
+    'cabang',
+    'rekening',
+    'listCabang',
+    'entriesCabang',
+    'entriesRekening',
+    'tab'
+))->with('tab', $tab);
+}
 
     /* ================= STORE ================= */
     public function store(Request $request)

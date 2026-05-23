@@ -72,7 +72,7 @@
             <div class="info-cell label">Bukti Pembayaran</div>
             <div class="info-cell value">
                 @if($penyewaan->bukti_bayar)
-                    <a href="{{ asset($penyewaan->bukti_bayar) }}" 
+                    <a href="{{ asset('storage/' . $penyewaan->bukti_bayar) }}" 
                        target="_blank" 
                        class="btn-bukti">
                         Lihat Bukti Pembayaran

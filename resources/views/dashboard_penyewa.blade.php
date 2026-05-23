@@ -55,7 +55,7 @@
 
 <div class="container">
     <div class="grid">
-     @if($adminpusat)
+     @if($cabang->currentPage() == 1 && $adminpusat)
     <a href="{{ route('pilih.pusat', $adminpusat->idusers) }}" class="card pusat">
         <div class="card-title">Outdoorkriss Tegalsari</div>
 

@@ -13,27 +13,34 @@ use Illuminate\Support\Facades\DB;
 class DistribusiProdukController extends Controller
 {
     // Tampilkan semua permintaan
-  public function index(Request $request)
+ public function index(Request $request)
 {
     // HANYA OWNER
     if(auth()->user()->status != 'owner'){
         abort(403,'Akses ditolak');
     }
-    $view = $request->get('view', 'permintaan'); 
-    // default = permintaan
 
+    $view = $request->get('view', 'permintaan');
+
+    // ================= PERMINTAAN =================
     $permintaan = Permintaan::whereIn('status', ['menunggu','disetujui'])
-        ->with(['produkDetail.produk','produkDetail.distribusi','cabang','adminCabang.user'])
+        ->with([
+            'produkDetail.produk',
+            'produkDetail.distribusi',
+            'cabang',
+            'adminCabang.user'
+        ])
         ->get();
-
+    // ================= RIWAYAT =================
     $riwayat = Permintaan::where('status','sampai')
-                    ->with(['produkDetail.produk','cabang'])
-                    ->get();
+    ->with(['produkDetail.produk', 'cabang', 'adminCabang.user'])
+    ->latest()
+    ->paginate(10);
 
     return view('distribusi_produk', compact(
         'permintaan',
         'riwayat',
-        'view'   
+        'view',
     ));
 }
 

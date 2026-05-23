@@ -45,7 +45,7 @@
                 </tr>
             </thead>
 <tbody>
-@foreach ($penyewa as $i => $p)
+@forelse ($penyewa as $i => $p)
 <tr>
     <td>{{ $i + 1 }}</td>
     <td>{{ $p->nama }}</td>
@@ -112,7 +112,13 @@
         </button>
     </td>
 </tr>
-@endforeach
+@empty
+<tr>
+    <td colspan="7" class="empty-table">
+        Belum ada data penyewa.
+    </td>
+</tr>
+@endforelse
 </tbody>
         </table>
 <div class="pagination-simple">

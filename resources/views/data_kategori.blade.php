@@ -49,9 +49,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($kategori as $no => $item)
+            @forelse($kategori as $no => $item)
             <tr>
-                <td>{{ $no + 1 }}</td>
+                <td>{{ $kategori->firstItem() + $no }}</td>
                 <td>{{ $item->nama_kategori }}</td>
                 <td>{{ $item->produk_sum_stok_pusat ?? 0 }}</td>
                 <td>
@@ -71,7 +71,11 @@
                     </form>
                 </td>
             </tr>
-            @endforeach
+           @empty
+            <tr>
+                <td colspan="4" class="empty-table">Belum ada data kategori. Tambahkan kategori terlebih dahulu.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>
@@ -116,7 +120,34 @@
         </form>
     </div>
 </div>
+@if(method_exists($kategori, 'links'))
+<div class="pagination-simple">
 
+    {{-- Prev --}}
+    @if ($kategori->onFirstPage())
+        <span class="nav disabled">«</span>
+    @else
+        <a href="{{ $kategori->previousPageUrl() }}" class="nav">«</a>
+    @endif
+
+    {{-- Nomor halaman --}}
+    @foreach ($kategori->getUrlRange(1, $kategori->lastPage()) as $page => $url)
+        @if ($page == $kategori->currentPage())
+            <span class="page active">{{ $page }}</span>
+        @else
+            <a href="{{ $url }}" class="page">{{ $page }}</a>
+        @endif
+    @endforeach
+
+    {{-- Next --}}
+    @if ($kategori->hasMorePages())
+        <a href="{{ $kategori->nextPageUrl() }}" class="nav">»</a>
+    @else
+        <span class="nav disabled">»</span>
+    @endif
+
+</div>
+@endif
 @endsection
 
 @push('scripts')

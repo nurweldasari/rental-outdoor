@@ -39,12 +39,13 @@
 
 
 {{-- CONTAINER TABEL REKENING --}}
-<div class="container-rekening" id="containerRekening" style="display:none;">
-<a href="/cabang" class="btn-back-red">
-    <i class="fa-solid fa-arrow-left"></i>
-    Kembali
-</a>
+<div class="container-rekening" id="containerRekening" style="{{ ($tab ?? 'cabang') == 'rekening' ? '' : 'display:none;' }}">
+
     <div class="card-rekening">
+        <a href="/cabang" class="btn-back-red">
+            <i class="fa-solid fa-arrow-left"></i>
+            Kembali
+        </a>
 
         {{-- JUDUL --}}
         <div class="header-rekening">
@@ -54,11 +55,13 @@
         {{-- FILTER --}}
         <div class="table-controls">
             <div class="entries-box">
-                <form method="GET" class="entries-form">
-                    <select name="entries" onchange="this.form.submit()">
-                        <option value="20" {{ $entries == 20 ? 'selected' : '' }}>20</option>
-                        <option value="50" {{ $entries == 50 ? 'selected' : '' }}>50</option>
-                        <option value="100" {{ $entries == 100 ? 'selected' : '' }}>100</option>
+                <form method="GET">
+                    <input type="hidden" name="tab" value="rekening">
+                    <select name="entries_rekening" onchange="this.form.submit()">
+                    <option value="10" {{ request('entries_rekening')==10?'selected':'' }}>10</option>
+                    <option value="25" {{ request('entries_rekening')==25?'selected':'' }}>25</option>
+                    <option value="50" {{ request('entries_rekening')==50?'selected':'' }}>50</option>
+                    <option value="100" {{ request('entries_rekening')==100?'selected':'' }}>100</option>
                     </select>
                     <span>Data Per Halaman</span>
                 </form>
@@ -84,20 +87,59 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach ($rekening as $i => $r)
+             @if ($rekening->count() > 0)
+
+                @foreach ($rekening as $i => $r)
+                    <tr>
+                        <td>{{ $rekening->firstItem() + $i }}</td>
+                        <td>{{ $r->cabang->nama_cabang }}</td>
+                        <td>{{ $r->cabang->lokasi }}</td>
+                        <td>{{ $r->nama_bank }}</td>
+                        <td>{{ $r->no_rekening }}</td>
+                        <td>{{ $r->atas_nama }}</td>
+                    </tr>
+                @endforeach
+
+            @else
                 <tr>
-                    <td>{{ $i+1 }}</td>
-                    <td>{{ $r->cabang->nama_cabang }}</td>
-                    <td>{{ $r->cabang->lokasi }}</td>
-                    <td>{{ $r->nama_bank }}</td>
-                    <td>{{ $r->no_rekening }}</td>
-                    <td>{{ $r->atas_nama }}</td>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <p>Belum ada data rekening cabang</p>
+                        </div>
+                    </td>
                 </tr>
-            @endforeach
+            @endif
             </tbody>
         </table>
 
     </div>
+     {{-- PAGINATION --}}
+        @if(method_exists($rekening, 'links'))
+        <div class="pagination-simple">
+
+            @if ($rekening->onFirstPage())
+                <span class="nav disabled">«</span>
+            @else
+                <a href="{{ $rekening->previousPageUrl() }}" class="nav">«</a>
+            @endif
+
+            @foreach ($rekening->getUrlRange(1, $rekening->lastPage()) as $page => $url)
+                @if ($page == $rekening->currentPage())
+                    <span class="page active">{{ $page }}</span>
+                @else
+                    <a href="{{ $url }}" class="page">{{ $page }}</a>
+                @endif
+            @endforeach
+
+            @if ($rekening->hasMorePages())
+                <a href="{{ $rekening->nextPageUrl() }}" class="nav">»</a>
+            @else
+                <span class="nav disabled">»</span>
+            @endif
+
+        </div>
+        @endif
+    </div> 
 </div>
 </div>
 <script>

@@ -14,6 +14,7 @@ use App\Models\Cabang;
 use App\Models\Paket;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class PenyewaanController extends Controller
@@ -356,14 +357,17 @@ public function uploadBuktiBayar(Request $request, $idpenyewaan)
 
     $penyewaan = Penyewaan::findOrFail($idpenyewaan);
 
-    if($request->hasFile('bukti_bayar')){
-        $file = $request->file('bukti_bayar');
-        $filename = 'bukti_'.$idpenyewaan.'_'.time().'.'.$file->getClientOriginalExtension();
-        $file->move(public_path('uploads/bukti_bayar'), $filename);
-
-        $penyewaan->bukti_bayar = 'uploads/bukti_bayar/'.$filename;
-        $penyewaan->save(); // status tetap menunggu konfirmasi
-    }
+    if ($request->hasFile('bukti_bayar')) {
+    $file = $request->file('bukti_bayar');
+    $filename = 'bukti_'.$idpenyewaan.'_'.time().'.'.$file->getClientOriginalExtension();
+    $path = $file->storeAs(
+        'bukti_bayar',
+        $filename,
+        'public'
+    );
+    $penyewaan->bukti_bayar = $path;
+    $penyewaan->save();
+}
 
     return redirect()->route('item_penyewaan')
                      ->with('success', 'Bukti bayar berhasil diupload, tunggu konfirmasi admin.');
@@ -1070,13 +1074,14 @@ public function pusatIndex(Request $request)
     }
 
     $query = Penyewaan::with(['penyewa.user'])
-        ->whereNull('cabang_idcabang')
-        ->whereIn('status_penyewaan', [
-            'menunggu_pembayaran',
-            'sedang_disewa',
-            'dibatalkan'
-        ])
-        ->orderBy('tanggal_sewa', 'desc');
+    ->whereNull('cabang_idcabang')
+    ->whereIn('status_penyewaan', [
+        'menunggu_pembayaran',
+        'sedang_disewa',
+        'dibatalkan'
+    ])
+    ->orderByDesc('tanggal_sewa')
+    ->orderByDesc('created_at'); 
 
     if (!$isOwner) {
     $query->where(function ($q) use ($adminPusat) {
@@ -1413,14 +1418,17 @@ public function uploadBuktiBayarPusat(Request $request, $idpenyewaan)
 
     $penyewaan = Penyewaan::findOrFail($idpenyewaan);
 
-    if($request->hasFile('bukti_bayar')){
-        $file = $request->file('bukti_bayar');
-        $filename = 'bukti_'.$idpenyewaan.'_'.time().'.'.$file->getClientOriginalExtension();
-        $file->move(public_path('uploads/bukti_bayar'), $filename);
-
-        $penyewaan->bukti_bayar = 'uploads/bukti_bayar/'.$filename;
-        $penyewaan->save(); // status tetap menunggu konfirmasi
-    }
+    if ($request->hasFile('bukti_bayar')) {
+    $file = $request->file('bukti_bayar');
+    $filename = 'bukti_'.$idpenyewaan.'_'.time().'.'.$file->getClientOriginalExtension();
+    $path = $file->storeAs(
+        'bukti_bayar',
+        $filename,
+        'public'
+    );
+    $penyewaan->bukti_bayar = $path;
+    $penyewaan->save();
+}
 
     return redirect()->route('item_penyewaan_pusat')
                      ->with('success', 'Bukti bayar berhasil diupload, tunggu konfirmasi admin.');

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('kategori', function (Blueprint $table) {
             $table->id('idkategori');
             $table->string('nama_kategori',45);
+            $table->timestamps();
+            $table->softDeletes();
         });        
     }
 

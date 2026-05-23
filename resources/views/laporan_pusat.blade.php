@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@php $active = 'laporan_pendataan'; @endphp
+@php $active = 'laporan_pendapatan'; @endphp
 
 @section('title','Laporan Pendapatan')
 

@@ -278,6 +278,54 @@
     border-radius: 10px;
     cursor: pointer;
 }
+.pagination-simple {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    gap: 1px; /* lebih renggang */
+}
+
+/* default (angka & panah) */
+.pagination-simple .page,
+.pagination-simple .nav {
+    padding: 4px 6px;
+    text-decoration: none;
+    color: #151516; /* abu */
+    font-size: 16px;
+    font-weight: 500;
+    border: none; /* 🔥 hapus kotak */
+    background: none;
+}
+
+/* halaman aktif */
+.pagination-simple .page.active {
+    color: #d97706; /* 🔥 orange seperti gambar */
+    font-weight: 700;
+}
+
+/* panah */
+.pagination-simple .nav {
+    font-size: 18px;
+}
+
+/* disable */
+.pagination-simple .nav.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    text-align: center;
+}
+.empty-state p {
+    font-size: 14px;
+    margin: 0;
+}
 /* ============================= */
 /* RESPONSIVE MOBILE            */
 /* ============================= */

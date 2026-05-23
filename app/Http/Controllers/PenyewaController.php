@@ -16,17 +16,13 @@ class PenyewaController extends Controller
 {
    public function index(Request $request)
 {
-    $userId = auth()->user()->idusers;
+    $user = auth()->user();
 
-    $isOwner = Owner::where('users_idusers', $userId)->exists();
-    $isAdminPusat = AdminPusat::where('users_idusers', $userId)->exists();
-    $isAdminCabang = AdminCabang::where('users_idusers', $userId)->exists();
+    if ($user->status !== 'admin_cabang') {
+        abort(403, 'Hanya admin cabang yang boleh akses');
+    }
 
-// hanya owner, admin pusat, dan admin cabang
-if (!$isOwner && !$isAdminPusat && !$isAdminCabang) {
-    abort(403, 'Akses ditolak');
-}
-    $perPage = $request->get('per_page', 10); // optional (biar bisa dinamis)
+    $perPage = $request->get('per_page', 10);
 
     $penyewa = DB::table('users')
         ->join('penyewa', 'penyewa.users_idusers', '=', 'users.idusers')
@@ -36,8 +32,8 @@ if (!$isOwner && !$isAdminPusat && !$isAdminCabang) {
             'penyewa.gambar_identitas',
             'penyewa.status_penyewa'
         )
-        ->paginate($perPage) // 🔥 INI YANG PENTING
-        ->withQueryString(); // biar parameter tetap kebawa
+        ->paginate($perPage)
+        ->withQueryString();
 
     return view('data_penyewa', compact('penyewa'));
 }
@@ -45,6 +41,12 @@ if (!$isOwner && !$isAdminPusat && !$isAdminCabang) {
     // FORM
     public function create()
     {
+        $user = auth()->user();
+
+        if ($user->status !== 'admin_cabang') {
+            abort(403, 'Hanya admin cabang yang boleh akses');
+        }
+
         return view('tambah_penyewa');
     }
 

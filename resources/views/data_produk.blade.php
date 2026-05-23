@@ -146,7 +146,7 @@
 
                 {{-- Badge Kategori --}}
                 <span class="badge-kategori">
-                    {{ $item->kategori->nama_kategori }}
+                    {{ $item->kategori->nama_kategori ?? '-' }}
                 </span>
 
                 {{-- Dropdown Aksi --}}

@@ -45,7 +45,7 @@
                 </tr>
             </thead>
 <tbody>
-@foreach ($penyewa as $i => $p)
+@forelse ($penyewa as $i => $p)
 <tr>
     <td>{{ $i + 1 }}</td>
     <td>{{ $p->nama }}</td>
@@ -97,9 +97,9 @@
 
     {{-- AKSI --}}
     <td class="aksi">
-       <a href="{{ route('reservasi', $p->idusers) }}" class="btn-green">
-    Reservasi
-</a>
+        <a href="{{ route('reservasi', $p->idusers) }}" class="btn-green">
+            Reservasi
+        </a>
 
         <button
             class="btn-yellow btn-detail"
@@ -112,7 +112,14 @@
         </button>
     </td>
 </tr>
-@endforeach
+
+@empty
+<tr>
+    <td colspan="7" class="empty-table">
+        Belum ada data penyewa.
+    </td>
+</tr>
+@endforelse
 </tbody>
         </table>
 <div class="pagination-simple">

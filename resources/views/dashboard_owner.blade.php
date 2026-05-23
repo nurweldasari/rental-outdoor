@@ -7,7 +7,23 @@
 @section('title','Dashboard Owner')
 
 @section('content')
+<form method="GET" class="filter">
+  <input type="hidden" name="tahun_pendapatan" value="{{ $tahunPendapatan }}">
+  <input type="hidden" name="bulan_pendapatan" value="{{ $bulanPendapatan }}">
+  @php
+    $currentYear = date('Y');
+@endphp
 
+<select name="tahun_card" onchange="this.form.submit()">
+    <option value="">Pilih Tahun</option>
+
+    @for ($i = $currentYear + 10; $i >= $currentYear - 5; $i--)
+        <option value="{{ $i }}" {{ ($tahunCard ?? '') == $i ? 'selected' : '' }}>
+            {{ $i }}
+        </option>
+    @endfor
+</select>
+</form>
 <div class="content-wrapper">
 
   <!-- ================= CARDS ================= -->
@@ -48,23 +64,42 @@
 
       <h3>Pendapatan</h3>
 
-      <div class="periode">
-        <span>Periode</span>
-        <select>
-          <option>Bulanan</option>
-        </select>
-      </div>
-
       <form method="GET">
 
-  <div class="periode">
-    <span>Pilih Tahun</span>
-    <select name="tahun" onchange="this.form.submit()">
-      <option value="2024" {{ $tahun == 2024 ? 'selected' : '' }}>2024</option>
-      <option value="2025" {{ $tahun == 2025 ? 'selected' : '' }}>2025</option>
-      <option value="2026" {{ $tahun == 2026 ? 'selected' : '' }}>2026</option>
-    </select>
-  </div>
+    {{-- biar filter card tetap kebawa --}}
+    <input type="hidden" name="tahun_card" value="{{ $tahunCard }}">
+
+    <div class="periode">
+        <span>Pilih Bulan</span>
+
+        <select name="bulan_pendapatan" onchange="this.form.submit()">
+
+            <option value="">Semua Bulan</option>
+
+            @for($i=1; $i<=12; $i++)
+                <option value="{{ $i }}"
+                    {{ $bulanPendapatan == $i ? 'selected' : '' }}>
+                    {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
+                </option>
+            @endfor
+
+        </select>
+    </div>
+
+    <div class="periode">
+        <span>Pilih Tahun</span>
+
+        <select name="tahun_pendapatan" onchange="this.form.submit()">
+
+            @for($y=date('Y'); $y>=2023; $y--)
+                <option value="{{ $y }}"
+                    {{ $tahunPendapatan == $y ? 'selected' : '' }}>
+                    {{ $y }}
+                </option>
+            @endfor
+
+        </select>
+    </div>
 
 </form>
 
@@ -93,7 +128,7 @@
 
       <div class="sewa-header">
         <h3>Alat Banyak Disewa</h3>
-        <div class="tahun">{{ $tahun }}</div>
+        <div class="tahun">{{ $tahunCard }}</div>
       </div>
 
       <div class="donut-wrapper">

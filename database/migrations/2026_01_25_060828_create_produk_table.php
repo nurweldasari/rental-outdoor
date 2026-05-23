@@ -23,6 +23,7 @@ return new class extends Migration
 
     $table->unsignedBigInteger('admin_pusat_idadmin_pusat');
     $table->timestamps();
+    $table->softDeletes();
 
     // foreign key
     $table->foreign('kategori_idkategori')

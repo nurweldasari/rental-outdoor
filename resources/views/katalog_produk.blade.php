@@ -90,11 +90,11 @@
 
 @endforeach
                 @forelse($produkList as $pc)
-                    @php
+                   @php
                         $produk = $pc->produk;
                         $stok = $pc->jumlah ?? 0;
 
-                        $gambar = $produk->gambar_produk
+                        $gambar = optional($produk)->gambar_produk
                             ? asset('storage/'.$produk->gambar_produk)
                             : asset('images/placeholder.png');
                     @endphp
@@ -102,7 +102,7 @@
                     <div class="card-produk">
                         <span class="badge-kategori">{{ $produk->kategori->nama_kategori ?? '-' }}</span>
                         <img src="{{ $gambar }}" class="img-produk">
-                        <h4 class="nama-produk">{{ $produk->nama_produk }}</h4>
+                        <h4 class="nama-produk">{{ optional($produk)->nama_produk ?? '-' }}</h4>
                         <p class="harga">Rp {{ number_format($produk->hargaAktif?->harga ?? 0, 0, ',', '.') }} / hari</p>
 
                         <div class="stok-wrapper">

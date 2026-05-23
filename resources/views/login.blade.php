@@ -108,12 +108,14 @@
             <form method="POST" action="/reset-password">
                 @csrf
 
-                <div class="reset-group">
-                    <input type="password" name="password" placeholder="Password Baru" required>
+                <div class="reset-group password-group">
+                    <input type="password" name="password" id="new_password" placeholder="Password Baru" required>
+                    <i class="fa-solid fa-eye toggle-new-pass" onclick="toggleNewPassword()"></i>
                 </div>
 
-                <div class="reset-group">
-                    <input type="password" name="password_confirmation" placeholder="Konfirmasi Password" required>
+                <div class="reset-group password-group">
+                    <input type="password" name="password_confirmation" id="confirm_password" placeholder="Konfirmasi Password" required>
+                    <i class="fa-solid fa-eye toggle-confirm-pass" onclick="toggleConfirmPassword()"></i>
                 </div>
 
                 <button type="submit" class="btn-green reset-btn">Simpan</button>
@@ -189,6 +191,36 @@ function verifikasiOtp() {
 function togglePassword() {
     const input = document.getElementById("password");
     const icon = document.querySelector(".toggle-password");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+
+function toggleNewPassword() {
+    const input = document.getElementById("new_password");
+    const icon = document.querySelector(".toggle-new-pass");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+
+function toggleConfirmPassword() {
+    const input = document.getElementById("confirm_password");
+    const icon = document.querySelector(".toggle-confirm-pass");
 
     if (input.type === "password") {
         input.type = "text";

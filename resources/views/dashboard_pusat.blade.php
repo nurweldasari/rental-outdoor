@@ -9,11 +9,19 @@
 @section('content')
 
 <form method="GET" class="filter">
-  <select name="tahun" onchange="this.form.submit()">
+  @php
+    $currentYear = date('Y');
+@endphp
+
+<select name="tahun" onchange="this.form.submit()">
     <option value="">Pilih Tahun</option>
-    <option value="2024" {{ ($tahun ?? '') == 2024 ? 'selected' : '' }}>2024</option>
-    <option value="2025" {{ ($tahun ?? '') == 2025 ? 'selected' : '' }}>2025</option>
-  </select>
+
+    @for ($i = $currentYear + 10; $i >= $currentYear - 5; $i--)
+        <option value="{{ $i }}" {{ ($tahun ?? '') == $i ? 'selected' : '' }}>
+            {{ $i }}
+        </option>
+    @endfor
+</select>
 </form>
 
 <section class="cards">

@@ -27,9 +27,10 @@ public function permintaan()
 
     // Relasi ke produk
     public function produk()
-    {
-        return $this->belongsTo(Produk::class, 'produk_idproduk', 'idproduk');
-    }
+{
+    return $this->belongsTo(Produk::class, 'produk_idproduk', 'idproduk')
+        ->withTrashed();
+}
 
     // Relasi admin cabang lewat cabang
     public function adminCabang()

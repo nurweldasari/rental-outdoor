@@ -306,7 +306,72 @@
     border: 2px solid #8B5E3C;
     outline: none; 
 }
+/* SEARCH */
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:8px;
 
+    background:#fff;
+    border:1px solid #666;
+    border-radius:12px;
+
+    width:140px;
+
+    padding:8px 12px;
+
+    position:relative;
+    top:-8px;   
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    font-size: 13px;
+    width: 100%;
+}
+.pagination-simple {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    gap: 1px; /* lebih renggang */
+}
+
+/* default (angka & panah) */
+.pagination-simple .page,
+.pagination-simple .nav {
+    padding: 4px 6px;
+    text-decoration: none;
+    color: #151516; /* abu */
+    font-size: 16px;
+    font-weight: 500;
+    border: none; /* 🔥 hapus kotak */
+    background: none;
+}
+
+/* halaman aktif */
+.pagination-simple .page.active {
+    color: #d97706; /* 🔥 orange seperti gambar */
+    font-weight: 700;
+}
+
+/* panah */
+.pagination-simple .nav {
+    font-size: 18px;
+}
+
+/* disable */
+.pagination-simple .nav.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+.empty-table{
+    text-align: center;
+    padding: 30px;
+    font-weight: 500;
+    color: #777;
+}
 /* =========================
    RESPONSIVE 768px
 ========================= */

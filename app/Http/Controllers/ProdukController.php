@@ -95,6 +95,10 @@ class ProdukController extends Controller
     // ================== EDIT ==================
     public function edit($id)
     {
+        $user = auth()->user();
+        if (!$user->adminPusat && $user->status !== 'owner') {
+            abort(403, 'Akses ditolak');
+        }
         $produk = Produk::with('hargaAktif')->findOrFail($id);
         $kategori = Kategori::all();
 

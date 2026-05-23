@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\BagiHasil;
 use App\Models\SkalaBagiHasil;
 use App\Models\AdminCabang;
@@ -25,11 +26,11 @@ public function index(Request $request)
     }
     $view = $request->view ?? 'list';
 
-    $cabangs = Cabang::all();
+    $cabangs = Cabang::paginate(12)->withQueryString();
 
-    $riwayat = BagiHasil::latest()->get();
+    $riwayat = BagiHasil::latest()->paginate(10)->withQueryString();
 
-    foreach ($riwayat as $item) {
+    $riwayat->getCollection()->transform(function ($item) {
 
         $tahun = date('Y', strtotime($item->bulan));
         $bulan = date('m', strtotime($item->bulan));
@@ -38,10 +39,12 @@ public function index(Request $request)
         $akhir = Carbon::create($tahun,$bulan)->endOfMonth();
 
         $item->total_pendapatan = Penyewaan::where('cabang_idcabang',$item->cabang_idcabang)
-        ->whereBetween('tanggal_sewa',[$awal,$akhir])
-        ->where('status_penyewaan','selesai')
-        ->sum('total');
-    }
+            ->whereBetween('tanggal_sewa',[$awal,$akhir])
+            ->where('status_penyewaan','selesai')
+            ->sum('total');
+
+        return $item;
+    });
 
     return view('bagi_hasil_owner',compact(
         'view',

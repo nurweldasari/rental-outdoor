@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Cabang;
 use App\Models\Kategori;
@@ -16,6 +17,10 @@ class KatalogController extends Controller
 {
   public function pilihCabang($id)
 {
+     if (!Auth::check() || Auth::user()->status !== 'penyewa') {
+        abort(403, 'Hanya penyewa yang dapat mengakses halaman ini');
+    }
+
     $cabang = Cabang::where('idcabang', $id)->firstOrFail();
 
     // ⛔ CEK STATUS CABANG (HANYA BOLEH AKTIF)
@@ -41,6 +46,10 @@ class KatalogController extends Controller
 
 public function katalogCabang(Request $request)
 {
+     if (!Auth::check() || Auth::user()->status !== 'penyewa') {
+        abort(403, 'Hanya penyewa yang dapat mengakses halaman ini');
+    }
+
     // proteksi
     if (!session()->has('cabang_id')) {
         return redirect()->route('dashboard');
@@ -48,10 +57,16 @@ public function katalogCabang(Request $request)
 
     $cabangId = session('cabang_id');
 
-    $produkList = StokCabang::with('produk') // biar bisa search nama produk
-        ->where('cabang_idcabang', $cabangId)
-        ->where('is_active', 1)
-        ->where('jumlah', '>', 0)
+    $produkList = StokCabang::with(['produk' => function ($q) {
+        $q->whereNull('deleted_at');
+    }])
+    ->where('cabang_idcabang', $cabangId)
+    ->where('is_active', 1)
+    ->where('jumlah', '>', 0)
+    ->whereHas('produk', function ($q) {
+        $q->whereNull('deleted_at');
+    })
+    
 
         // 🔍 SEARCH
         ->when($request->search, function ($q) use ($request) {
@@ -94,6 +109,10 @@ public function katalogCabang(Request $request)
 }
 public function pilihPusat($id)
 {
+     if (!Auth::check() || Auth::user()->status !== 'penyewa') {
+        abort(403, 'Hanya penyewa yang dapat mengakses halaman ini');
+    }
+
     $pusat = User::where('idusers', $id)->firstOrFail();
 
     // simpan ke session
@@ -112,6 +131,10 @@ public function pilihPusat($id)
 }
 public function katalogPusat(Request $request)
 {
+     if (!Auth::check() || Auth::user()->status !== 'penyewa') {
+        abort(403, 'Hanya penyewa yang dapat mengakses halaman ini');
+    }
+
     if (!session()->has('pusat_id')) {
         return redirect()->route('dashboard');
     }

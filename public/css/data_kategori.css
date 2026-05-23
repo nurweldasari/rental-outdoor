@@ -197,7 +197,47 @@
 .btn-batal:hover {
     background: #DB2C00;
 }
+.pagination-simple {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    gap: 1px; /* lebih renggang */
+}
 
+/* default (angka & panah) */
+.pagination-simple .page,
+.pagination-simple .nav {
+    padding: 4px 6px;
+    text-decoration: none;
+    color: #151516; /* abu */
+    font-size: 16px;
+    font-weight: 500;
+    border: none; /* 🔥 hapus kotak */
+    background: none;
+}
+
+/* halaman aktif */
+.pagination-simple .page.active {
+    color: #d97706; /* 🔥 orange seperti gambar */
+    font-weight: 700;
+}
+
+/* panah */
+.pagination-simple .nav {
+    font-size: 18px;
+}
+
+/* disable */
+.pagination-simple .nav.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+.empty-table{
+    text-align:center;
+    padding:25px;
+    color:#777;
+}
 /* ============================= */
 /* ANIMASI MODAL                */
 /* ============================= */

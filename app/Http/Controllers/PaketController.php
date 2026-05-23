@@ -90,6 +90,11 @@ class PaketController extends Controller
 
     public function edit($id)
     {
+        $user = auth()->user();
+
+        if (!$user->adminCabang) {
+            abort(403, 'Akses ditolak');
+        }
         $paket = Paket::with('detail.stokCabang.produk')->findOrFail($id);
 
         $stokCabang = StokCabang::with('produk')
@@ -176,7 +181,7 @@ class PaketController extends Controller
         $user = Auth::user();
 
         if (!$user->adminPusat && $user->status !== 'owner') {
-            abort(403);
+            abort(403, 'Akses ditolak');
         }
 
         $produk = Produk::where('stok_pusat', '>', 0)->get();
@@ -189,7 +194,7 @@ class PaketController extends Controller
         $user = Auth::user();
 
         if (!$user->adminPusat && $user->status !== 'owner') {
-            abort(403);
+            abort(403, 'Akses ditolak');
         }
 
         DB::beginTransaction();
@@ -242,7 +247,7 @@ class PaketController extends Controller
         $user = Auth::user();
 
         if (!$user->adminPusat && $user->status !== 'owner') {
-            abort(403);
+            abort(403, 'Akses ditolak');
         }
 
         $paket = Paket::with('detail.produk')->findOrFail($id);

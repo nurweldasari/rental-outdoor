@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Kategori extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     // Nama tabel
     protected $table = 'kategori';
@@ -15,8 +17,6 @@ class Kategori extends Model
     // Primary key custom
     protected $primaryKey = 'idkategori';
 
-    // Karena tidak pakai created_at & updated_at
-    public $timestamps = false;
 
     // Kolom yang boleh diisi mass assignment
     protected $fillable = [

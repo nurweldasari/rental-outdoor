@@ -23,7 +23,7 @@ public function index(Request $request)
     /* ================= PENYEWA ================= */
     if ($user->status === 'penyewa') {
 
-        $perPage = $request->get('per_page', 6); // jumlah card per halaman
+        $perPage = $request->get('per_page', 7); // jumlah card per halaman
 
         $cabang = Cabang::where('status_cabang', 'aktif')
             ->paginate($perPage)
@@ -46,19 +46,25 @@ public function index(Request $request)
         abort(404, 'Cabang tidak ditemukan');
     }
 
+        // ================= FILTER TAHUN =================
+    $tahun = $request->tahun ?? date('Y');
+
     // ================= CARD =================
     $totalPenyewa = Penyewaan::where('cabang_idcabang', $cabangId)
+        ->whereYear('tanggal_sewa', $tahun)
         ->distinct('penyewa_idpenyewa')
         ->count('penyewa_idpenyewa');
 
-    $totalPenyewaan = Penyewaan::where('cabang_idcabang', $cabangId)->count();
+    $totalPenyewaan = Penyewaan::where('cabang_idcabang', $cabangId)
+        ->whereYear('tanggal_sewa', $tahun)
+        ->count();
 
-    $totalAlat = StokCabang::where('cabang_idcabang', $cabangId)->count();
+    $totalAlat = StokCabang::where('cabang_idcabang', $cabangId)
+        ->whereYear('created_at', $tahun)
+        ->count();
 
-    $totalKategori = Kategori::count();
-
-    // ================= CHART BULANAN =================
-    $tahun = $request->tahun ?? date('Y');
+    $totalKategori = Kategori::whereYear('created_at', $tahun)
+        ->count();
 
     $pendapatan = Penyewaan::selectRaw('MONTH(tanggal_sewa) as bulan, SUM(total) as total')
         ->where('cabang_idcabang', $cabangId)
@@ -77,7 +83,12 @@ public function index(Request $request)
     ->join('produk', 'produk.idproduk', '=', 'item_penyewaan.produk_idproduk')
     ->join('penyewaan', 'penyewaan.idpenyewaan', '=', 'item_penyewaan.penyewaan_idpenyewaan')
     ->where('penyewaan.cabang_idcabang', $cabangId)
-    ->select('produk.nama_produk', DB::raw('SUM(item_penyewaan.qty) as total'))
+    ->where('penyewaan.status_penyewaan', 'selesai')
+    ->whereYear('penyewaan.tanggal_sewa', $tahun) 
+    ->select(
+        'produk.nama_produk',
+        DB::raw('SUM(item_penyewaan.qty) as total')
+    )
     ->groupBy('produk.nama_produk')
     ->orderByDesc('total')
     ->limit(3)
@@ -112,22 +123,24 @@ if ($user->status === 'admin_pusat') {
         abort(404, 'Pusat tidak ditemukan');
     }
 
-    // ================= TOTAL PENYEWA =================
+   // ================= FILTER TAHUN =================
+    $tahun = $request->tahun ?? date('Y');
+
     $totalPenyewa = Penyewaan::where('admin_pusat_idadmin_pusat', $pusatId)
+        ->whereYear('tanggal_sewa', $tahun)
         ->distinct('penyewa_idpenyewa')
         ->count('penyewa_idpenyewa');
 
-    // ================= TOTAL PENYEWAAN (INI YANG BENAR) =================
-    $totalPenyewaan = Penyewaan::where('admin_pusat_idadmin_pusat', $pusatId)->count();
+    $totalPenyewaan = Penyewaan::where('admin_pusat_idadmin_pusat', $pusatId)
+        ->whereYear('tanggal_sewa', $tahun)
+        ->count();
 
-    // ================= TOTAL ALAT (PAKAI PRODUK PUSAT, BUKAN STOKCABANG) =================
-    $totalAlat = Produk::where('admin_pusat_idadmin_pusat', $pusatId)->count();
+    $totalAlat = Produk::where('admin_pusat_idadmin_pusat', $pusatId)
+        ->whereYear('created_at', $tahun)
+        ->count();
 
-    // ================= KATEGORI (GLOBAL OK ATAU DI FILTER JUGA BOLEH) =================
-    $totalKategori = Kategori::count();
-
-    // ================= CHART BULANAN =================
-    $tahun = $request->tahun ?? date('Y');
+    $totalKategori = Kategori::whereYear('created_at', $tahun)
+        ->count();
 
     $pendapatan = Penyewaan::selectRaw('MONTH(tanggal_sewa) as bulan, SUM(total) as total')
         ->where('admin_pusat_idadmin_pusat', $pusatId)
@@ -143,14 +156,19 @@ if ($user->status === 'admin_pusat') {
 
     // ================= TOP PRODUK PUSAT =================
     $alat = DB::table('item_penyewaan')
-        ->join('produk', 'produk.idproduk', '=', 'item_penyewaan.produk_idproduk')
-        ->join('penyewaan', 'penyewaan.idpenyewaan', '=', 'item_penyewaan.penyewaan_idpenyewaan')
-        ->where('penyewaan.admin_pusat_idadmin_pusat', $pusatId)
-        ->select('produk.nama_produk', DB::raw('SUM(item_penyewaan.qty) as total'))
-        ->groupBy('produk.nama_produk')
-        ->orderByDesc('total')
-        ->limit(3)
-        ->get();
+    ->join('produk', 'produk.idproduk', '=', 'item_penyewaan.produk_idproduk')
+    ->join('penyewaan', 'penyewaan.idpenyewaan', '=', 'item_penyewaan.penyewaan_idpenyewaan')
+    ->where('penyewaan.admin_pusat_idadmin_pusat', $pusatId)
+    ->where('penyewaan.status_penyewaan', 'selesai')
+    ->whereYear('penyewaan.tanggal_sewa', $tahun) 
+    ->select(
+        'produk.nama_produk',
+        DB::raw('SUM(item_penyewaan.qty) as total')
+    )
+    ->groupBy('produk.nama_produk')
+    ->orderByDesc('total')
+    ->limit(3)
+    ->get();
 
     $totalQty = $alat->sum('total');
 
@@ -172,55 +190,55 @@ if ($user->status === 'admin_pusat') {
     ));
 }
         /* ================= OWNER ================= */
-        if ($user->status === 'owner') {
+if ($user->status === 'owner') {
 
-    $tahun = $request->tahun ?? date('Y');
+    // ================= FILTER =================
+    $tahunCard = $request->tahun_card ?? date('Y');
 
-    // ================= PENDAPATAN =================
-    $pusat = Penyewaan::whereNotNull('admin_pusat_idadmin_pusat')
-        ->where('status_penyewaan', 'selesai')
-        ->whereYear('tanggal_sewa', $tahun)
-        ->sum('total');
+    $tahunPendapatan = $request->tahun_pendapatan ?? date('Y');
+    $bulanPendapatan = $request->bulan_pendapatan;
 
-    $cabang = DB::table('penyewaan')
-        ->join('cabang', 'cabang.idcabang', '=', 'penyewaan.cabang_idcabang')
-        ->whereNotNull('penyewaan.cabang_idcabang')
-        ->where('penyewaan.status_penyewaan', 'selesai')
-        ->whereYear('penyewaan.tanggal_sewa', $tahun)
-        ->select('cabang.nama_cabang', DB::raw('SUM(penyewaan.total) as total'))
-        ->groupBy('cabang.nama_cabang')
-        ->get();
+    // ================= QUERY PENDAPATAN =================
+    $pendapatanQuery = Penyewaan::where('status_penyewaan', 'selesai');
 
-    $pendapatanList = collect([
-        [
-            'nama' => 'Pusat',
-            'total' => $pusat
-        ]
-    ])->merge(
-        $cabang->map(function($c){
-            return [
-                'nama' => $c->nama_cabang,
-                'total' => $c->total
-            ];
-        })
-    );
+    $pendapatanQuery->whereYear('tanggal_sewa', $tahunPendapatan);
 
-    $grandTotal = $pendapatanList->sum('total');
+    if ($bulanPendapatan) {
+        $pendapatanQuery->whereMonth('tanggal_sewa', $bulanPendapatan);
+    }
 
-    $pendapatanList = $pendapatanList->map(function($item) use ($grandTotal){
-        return [
-            'nama' => $item['nama'],
-            'total' => $item['total'],
-            'persen' => $grandTotal > 0 ? round(($item['total'] / $grandTotal) * 100) : 0
-        ];
-    });
-
-    // ================= DONUT (FIX UTAMA) =================
-    $alat = DB::table('item_penyewaan')
+    // ================= QUERY DONUT =================
+    $itemQuery = DB::table('item_penyewaan')
         ->join('produk', 'produk.idproduk', '=', 'item_penyewaan.produk_idproduk')
         ->join('penyewaan', 'penyewaan.idpenyewaan', '=', 'item_penyewaan.penyewaan_idpenyewaan')
         ->where('penyewaan.status_penyewaan', 'selesai')
-        ->whereYear('penyewaan.tanggal_sewa', $tahun)
+        ->whereYear('penyewaan.tanggal_sewa', $tahunCard);
+
+    // ================= PENDAPATAN =================
+   $pendapatanList = Penyewaan::leftJoin('cabang', 'penyewaan.cabang_idcabang', '=', 'cabang.idcabang')
+    ->selectRaw('
+        COALESCE(cabang.nama_cabang, "OutdoorKriss Tegalsari (Pusat)") as nama,
+        SUM(penyewaan.total) as total
+    ')
+    ->where('status_penyewaan', 'selesai')
+    ->whereYear('tanggal_sewa', $tahunPendapatan)
+    ->groupBy('cabang.idcabang', 'cabang.nama_cabang')
+    ->get();
+
+    $grandTotal = $pendapatanList->sum('total');
+
+    $pendapatanList = $pendapatanList->map(function ($item) use ($grandTotal) {
+        return [
+            'nama' => $item->nama,
+            'total' => $item->total,
+            'persen' => $grandTotal > 0
+                ? round(($item->total / $grandTotal) * 100)
+                : 0
+        ];
+    });
+
+    // ================= DONUT =================
+    $alat = (clone $itemQuery)
         ->select('produk.nama_produk', DB::raw('SUM(item_penyewaan.qty) as total'))
         ->groupBy('produk.nama_produk')
         ->orderByDesc('total')
@@ -232,15 +250,17 @@ if ($user->status === 'admin_pusat') {
     $alatPersen = $alat->map(function ($a) use ($totalQty) {
         return [
             'nama' => $a->nama_produk,
-            'persen' => $totalQty > 0 ? round(($a->total / $totalQty) * 100) : 0
+            'persen' => $totalQty > 0
+                ? round(($a->total / $totalQty) * 100)
+                : 0
         ];
     });
 
-    // ================= CARD =================
-    $totalCabang = Cabang::count();
-    $totalPenyewaan = Penyewaan::count();
-    $totalAlat = Produk::count();
-    $totalKategori = Kategori::count();
+    // ================= CARD GLOBAL =================
+    $totalCabang = Cabang::whereYear('created_at', $tahunCard)->count();
+    $totalPenyewaan = Penyewaan::whereYear('tanggal_sewa', $tahunCard)->count();
+    $totalAlat = Produk::whereYear('created_at', $tahunCard)->count();
+    $totalKategori = Kategori::whereYear('created_at', $tahunCard)->count();
 
     return view('dashboard_owner', compact(
         'pendapatanList',
@@ -248,11 +268,11 @@ if ($user->status === 'admin_pusat') {
         'totalPenyewaan',
         'totalAlat',
         'totalKategori',
-        'tahun',
-        'alatPersen' 
+        'tahunCard',
+        'tahunPendapatan',
+        'bulanPendapatan',
+        'alatPersen'
     ));
 }
-        abort(403);
-    }
- 
+}
 }

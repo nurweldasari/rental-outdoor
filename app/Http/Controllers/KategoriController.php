@@ -20,7 +20,8 @@ class KategoriController extends Controller
     $perPage = $request->get('per_page', 10);
 
     $kategori = Kategori::withSum('produk', 'stok_pusat')
-                    ->paginate($perPage);
+                    ->paginate($perPage)
+                    ->withQueryString();
 
     return view('data_kategori', compact('kategori'));
 }
