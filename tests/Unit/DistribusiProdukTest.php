@@ -3,55 +3,139 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use App\Models\User;
+use App\Models\Cabang;
+use App\Models\Produk;
+use App\Models\Permintaan;
+use App\Models\PermintaanProduk;
+use App\Models\DistribusiProduk;
+use App\Models\StokCabang;
 
 class DistribusiProdukTest extends TestCase
 {
-    /* =========================================
-       TC-DIST-01 Kirim sesuai jumlah permintaan
-    ========================================= */
+    use RefreshDatabase;
+
+    // ================================
+    // TC-DIST-01: Kirim sesuai permintaan
+    // ================================
     public function test_tc_dist_01_kirim_sesuai_jumlah_permintaan()
     {
-        $diminta = 10;
-        $dikirim = 10;
+        $owner = User::factory()->create(['status' => 'owner']);
 
-        $this->assertEquals($diminta, $dikirim);
+        $produk = Produk::factory()->create([
+            'stok_pusat' => 20
+        ]);
+
+        $permintaan = Permintaan::factory()->create();
+
+        $permintaanProduk = PermintaanProduk::factory()->create([
+            'permintaan_id' => $permintaan->idpermintaan,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah_diminta' => 10
+        ]);
+
+        $response = $this->actingAs($owner)->post(route('distribusi_produk.kirim'), [
+            'jumlah_dikirim' => [
+                $permintaanProduk->id => 10
+            ],
+            'keterangan' => 'test kirim'
+        ]);
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('distribusi_produk', [
+            'permintaan_produk_id' => $permintaanProduk->id,
+            'jumlah_dikirim' => 10,
+            'status_distribusi' => 'dikirim'
+        ]);
     }
 
-    /* =========================================
-       TC-DIST-02 Kirim sebagian
-    ========================================= */
+    // ================================
+    // TC-DIST-02: Kirim sebagian
+    // ================================
     public function test_tc_dist_02_kirim_sebagian()
     {
-        $diminta = 10;
-        $dikirim = 8;
+        $owner = User::factory()->create(['status' => 'owner']);
 
-        $this->assertTrue($dikirim < $diminta);
+        $produk = Produk::factory()->create(['stok_pusat' => 20]);
+
+        $permintaan = Permintaan::factory()->create();
+
+        $permintaanProduk = PermintaanProduk::factory()->create([
+            'permintaan_id' => $permintaan->idpermintaan,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah_diminta' => 10
+        ]);
+
+        $response = $this->actingAs($owner)->post(route('distribusi_produk.kirim'), [
+            'jumlah_dikirim' => [
+                $permintaanProduk->id => 5
+            ]
+        ]);
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('distribusi_produk', [
+            'jumlah_dikirim' => 5
+        ]);
     }
 
-    /* =========================================
-       TC-DIST-03 Kirim melebihi permintaan
-    ========================================= */
+    // ================================
+    // TC-DIST-03: Melebihi permintaan
+    // ================================
     public function test_tc_dist_03_kirim_melebihi_permintaan()
     {
-        $diminta = 10;
-        $dikirim = 15;
+        $owner = User::factory()->create(['status' => 'owner']);
 
-        $this->assertTrue($dikirim > $diminta);
+        $produk = Produk::factory()->create(['stok_pusat' => 20]);
+
+        $permintaan = Permintaan::factory()->create();
+
+        $permintaanProduk = PermintaanProduk::factory()->create([
+            'permintaan_id' => $permintaan->idpermintaan,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah_diminta' => 10
+        ]);
+
+        $response = $this->actingAs($owner)->post(route('distribusi_produk.kirim'), [
+            'jumlah_dikirim' => [
+                $permintaanProduk->id => 15
+            ]
+        ]);
+
+        $response->assertSessionHas('error');
     }
 
-    /* =========================================
-       TC-DIST-04 Jumlah tidak valid
-    ========================================= */
+    // ================================
+    // TC-DIST-04: Jumlah tidak valid
+    // ================================
     public function test_tc_dist_04_jumlah_tidak_valid()
-    {
-        $jumlah = 0;
+{
+    $owner = User::factory()->create(['status' => 'owner']);
 
-        $this->assertTrue($jumlah <= 0);
-    }
+    $produk = Produk::factory()->create(['stok_pusat' => 20]);
 
-    /* =========================================
-       TC-DIST-05 Stok pusat mencukupi
-    ========================================= */
+    $permintaan = Permintaan::factory()->create();
+
+    $permintaanProduk = PermintaanProduk::factory()->create([
+        'permintaan_id' => $permintaan->idpermintaan,
+        'produk_idproduk' => $produk->idproduk,
+        'jumlah_diminta' => 10
+    ]);
+
+    $response = $this->actingAs($owner)->post(route('distribusi_produk.kirim'), [
+        'jumlah_dikirim' => [
+            $permintaanProduk->id => 0
+        ]
+    ]);
+
+    $response->assertInvalid(['jumlah_dikirim.1']);
+}
+    // ================================
+    // TC-DIST-05: Stok cukup
+    // ================================
     public function test_tc_dist_05_stok_cukup()
     {
         $stok = 20;
@@ -60,31 +144,47 @@ class DistribusiProdukTest extends TestCase
         $this->assertTrue($stok >= $kirim);
     }
 
-    /* =========================================
-       TC-DIST-06 Pengurangan stok pusat
-    ========================================= */
+    // ================================
+    // TC-DIST-06: Pengurangan stok pusat
+    // ================================
     public function test_tc_dist_06_pengurangan_stok()
     {
-        $stok_awal = 20;
-        $kirim = 5;
+        $produk = Produk::factory()->create([
+            'stok_pusat' => 20
+        ]);
 
-        $this->assertEquals(15, $stok_awal - $kirim);
+        $produk->stok_pusat -= 5;
+        $produk->save();
+
+        $this->assertDatabaseHas('produk', [
+            'idproduk' => $produk->idproduk,
+            'stok_pusat' => 15
+        ]);
     }
 
-    /* =========================================
-       TC-DIST-07 Penambahan stok cabang
-    ========================================= */
+    // ================================
+    // TC-DIST-07: Stok cabang bertambah
+    // ================================
     public function test_tc_dist_07_stok_cabang()
     {
-        $stok_awal = 0;
-        $diterima = 10;
+        $cabang = Cabang::factory()->create();
+        $produk = Produk::factory()->create();
 
-        $this->assertEquals(10, $stok_awal + $diterima);
+        $stok = StokCabang::create([
+            'cabang_idcabang' => $cabang->idcabang,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah' => 0
+        ]);
+
+        $stok->jumlah += 10;
+        $stok->save();
+
+        $this->assertEquals(10, $stok->jumlah);
     }
 
-    /* =========================================
-       TC-DIST-08 Status permintaan disetujui
-    ========================================= */
+    // ================================
+    // TC-DIST-08: Status disetujui
+    // ================================
     public function test_tc_dist_08_status_disetujui()
     {
         $status = 'disetujui';
@@ -92,9 +192,9 @@ class DistribusiProdukTest extends TestCase
         $this->assertEquals('disetujui', $status);
     }
 
-    /* =========================================
-       TC-DIST-09 Status dikirim
-    ========================================= */
+    // ================================
+    // TC-DIST-09: Status dikirim
+    // ================================
     public function test_tc_dist_09_status_dikirim()
     {
         $status = 'dikirim';
@@ -102,9 +202,9 @@ class DistribusiProdukTest extends TestCase
         $this->assertEquals('dikirim', $status);
     }
 
-    /* =========================================
-       TC-DIST-10 Status diterima
-    ========================================= */
+    // ================================
+    // TC-DIST-10: Status diterima
+    // ================================
     public function test_tc_dist_10_status_diterima()
     {
         $status = 'diterima';

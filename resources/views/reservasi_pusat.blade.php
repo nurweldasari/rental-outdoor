@@ -191,7 +191,6 @@
 </div>
 
 {{-- ================= FORM SUBMIT ================= --}}
-{{-- ================= FORM SUBMIT ================= --}}
 <form id="formPenyewaan"
       method="POST"
       action="{{ route('reservasi_pusat.store', $penyewa->users_idusers) }}" 

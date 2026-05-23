@@ -3,18 +3,15 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Session\Store;
-use Illuminate\Session\ArraySessionHandler;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
 
 class RegisterAdminCabangTest extends TestCase
 {
     use RefreshDatabase;
+
     /* =========================================
        TC-REG-01
        Registrasi berhasil
@@ -25,28 +22,27 @@ class RegisterAdminCabangTest extends TestCase
 
         $file = UploadedFile::fake()->image('mou.jpg');
 
-        $request = Request::create('/register-admin', 'POST', [
+        $response = $this->post(route('register.admin_cabang'), [
             'nama_cabang' => 'OutdoorKriss Glagah',
             'lokasi' => 'Banyuwangi',
             'nama' => 'Putri Novita',
             'username' => 'novitaadminbaru',
             'password' => 'qwerty12',
             'no_telepon' => '081234567890',
-            'alamat' => 'Jl. Cluring 12'
-        ], [], [
+            'alamat' => 'Jl. Cluring 12',
             'gambar_mou' => $file
         ]);
 
-        $session = new Store('test', new ArraySessionHandler(120));
-        $request->setLaravelSession($session);
+        $response->assertStatus(302);
 
-        $controller = new \App\Http\Controllers\AuthController();
+        $this->assertDatabaseHas('users', [
+            'username' => 'novitaadminbaru'
+        ]);
 
-        $response = $controller->registerAdminCabang($request);
-
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertDatabaseHas('cabang', [
+            'nama_cabang' => 'OutdoorKriss Glagah'
+        ]);
     }
-
 
     /* =========================================
        TC-REG-02
@@ -54,32 +50,23 @@ class RegisterAdminCabangTest extends TestCase
     ========================================= */
     public function test_tc_reg_02_field_wajib_kosong()
     {
-        $this->expectException(ValidationException::class);
-
         Storage::fake('public');
 
         $file = UploadedFile::fake()->image('mou.jpg');
 
-        $request = Request::create('/register-admin', 'POST', [
+        $response = $this->post(route('register.admin_cabang'), [
             'nama_cabang' => '',
             'lokasi' => 'Banyuwangi',
             'nama' => 'Putri Novita',
             'username' => 'novitaadmin',
             'password' => 'qwerty12',
             'no_telepon' => '081234567890',
-            'alamat' => 'Jl. Cluring 12'
-        ], [], [
+            'alamat' => 'Jl. Cluring 12',
             'gambar_mou' => $file
         ]);
 
-        $session = new Store('test', new ArraySessionHandler(120));
-        $request->setLaravelSession($session);
-
-        $controller = new \App\Http\Controllers\AuthController();
-
-        $controller->registerAdminCabang($request);
+        $response->assertSessionHasErrors('nama_cabang');
     }
-
 
     /* =========================================
        TC-REG-03
@@ -87,8 +74,6 @@ class RegisterAdminCabangTest extends TestCase
     ========================================= */
     public function test_tc_reg_03_username_sudah_digunakan()
     {
-        $this->expectException(ValidationException::class);
-
         User::create([
             'nama' => 'User Lama',
             'username' => 'novitaadmin',
@@ -102,26 +87,19 @@ class RegisterAdminCabangTest extends TestCase
 
         $file = UploadedFile::fake()->image('mou.jpg');
 
-        $request = Request::create('/register-admin', 'POST', [
+        $response = $this->post(route('register.admin_cabang'), [
             'nama_cabang' => 'OutdoorKriss Glagah',
             'lokasi' => 'Banyuwangi',
             'nama' => 'Putri Novita',
             'username' => 'novitaadmin',
             'password' => 'qwerty12',
             'no_telepon' => '081234567890',
-            'alamat' => 'Jl. Cluring 12'
-        ], [], [
+            'alamat' => 'Jl. Cluring 12',
             'gambar_mou' => $file
         ]);
 
-        $session = new Store('test', new ArraySessionHandler(120));
-        $request->setLaravelSession($session);
-
-        $controller = new \App\Http\Controllers\AuthController();
-
-        $controller->registerAdminCabang($request);
+        $response->assertSessionHasErrors('username');
     }
-
 
     /* =========================================
        TC-REG-04
@@ -129,32 +107,23 @@ class RegisterAdminCabangTest extends TestCase
     ========================================= */
     public function test_tc_reg_04_nomor_tidak_valid()
     {
-        $this->expectException(ValidationException::class);
-
         Storage::fake('public');
 
         $file = UploadedFile::fake()->image('mou.jpg');
 
-        $request = Request::create('/register-admin', 'POST', [
+        $response = $this->post(route('register.admin_cabang'), [
             'nama_cabang' => 'OutdoorKriss Glagah',
             'lokasi' => 'Banyuwangi',
             'nama' => 'Putri Novita',
             'username' => 'novitaadmin',
             'password' => 'qwerty12',
             'no_telepon' => '08abc123',
-            'alamat' => 'Jl. Cluring 12'
-        ], [], [
+            'alamat' => 'Jl. Cluring 12',
             'gambar_mou' => $file
         ]);
 
-        $session = new Store('test', new ArraySessionHandler(120));
-        $request->setLaravelSession($session);
-
-        $controller = new \App\Http\Controllers\AuthController();
-
-        $controller->registerAdminCabang($request);
+        $response->assertSessionHasErrors('no_telepon');
     }
-
 
     /* =========================================
        TC-REG-05
@@ -162,32 +131,23 @@ class RegisterAdminCabangTest extends TestCase
     ========================================= */
     public function test_tc_reg_05_password_kurang()
     {
-        $this->expectException(ValidationException::class);
-
         Storage::fake('public');
 
         $file = UploadedFile::fake()->image('mou.jpg');
 
-        $request = Request::create('/register-admin', 'POST', [
+        $response = $this->post(route('register.admin_cabang'), [
             'nama_cabang' => 'OutdoorKriss Glagah',
             'lokasi' => 'Banyuwangi',
             'nama' => 'Putri Novita',
             'username' => 'novitaadmin',
             'password' => '123',
             'no_telepon' => '081234567890',
-            'alamat' => 'Jl. Cluring 12'
-        ], [], [
+            'alamat' => 'Jl. Cluring 12',
             'gambar_mou' => $file
         ]);
 
-        $session = new Store('test', new ArraySessionHandler(120));
-        $request->setLaravelSession($session);
-
-        $controller = new \App\Http\Controllers\AuthController();
-
-        $controller->registerAdminCabang($request);
+        $response->assertSessionHasErrors('password');
     }
-
 
     /* =========================================
        TC-REG-06
@@ -195,9 +155,7 @@ class RegisterAdminCabangTest extends TestCase
     ========================================= */
     public function test_tc_reg_06_mou_tidak_diupload()
     {
-        $this->expectException(ValidationException::class);
-
-        $request = Request::create('/register-admin', 'POST', [
+        $response = $this->post(route('register.admin_cabang'), [
             'nama_cabang' => 'OutdoorKriss Glagah',
             'lokasi' => 'Banyuwangi',
             'nama' => 'Putri Novita',
@@ -207,14 +165,8 @@ class RegisterAdminCabangTest extends TestCase
             'alamat' => 'Jl. Cluring 12'
         ]);
 
-        $session = new Store('test', new ArraySessionHandler(120));
-        $request->setLaravelSession($session);
-
-        $controller = new \App\Http\Controllers\AuthController();
-
-        $controller->registerAdminCabang($request);
+        $response->assertSessionHasErrors('gambar_mou');
     }
-
 
     /* =========================================
        TC-REG-07
@@ -222,8 +174,6 @@ class RegisterAdminCabangTest extends TestCase
     ========================================= */
     public function test_tc_reg_07_format_file_tidak_sesuai()
     {
-        $this->expectException(ValidationException::class);
-
         Storage::fake('public');
 
         $file = UploadedFile::fake()->create(
@@ -232,23 +182,17 @@ class RegisterAdminCabangTest extends TestCase
             'application/pdf'
         );
 
-        $request = Request::create('/register-admin', 'POST', [
+        $response = $this->post(route('register.admin_cabang'), [
             'nama_cabang' => 'OutdoorKriss Glagah',
             'lokasi' => 'Banyuwangi',
             'nama' => 'Putri Novita',
             'username' => 'novitaadmin',
             'password' => 'qwerty12',
             'no_telepon' => '081234567890',
-            'alamat' => 'Jl. Cluring 12'
-        ], [], [
+            'alamat' => 'Jl. Cluring 12',
             'gambar_mou' => $file
         ]);
 
-        $session = new Store('test', new ArraySessionHandler(120));
-        $request->setLaravelSession($session);
-
-        $controller = new \App\Http\Controllers\AuthController();
-
-        $controller->registerAdminCabang($request);
+        $response->assertSessionHasErrors('gambar_mou');
     }
 }

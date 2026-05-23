@@ -3,121 +3,156 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LoginUserTest extends TestCase
 {
-    /* =========================================
-       TC-DIST-01
-       Kirim sesuai jumlah permintaan
-    ========================================= */
-    public function test_tc_dist_01_kirim_sesuai_jumlah_permintaan()
-    {
-        $jumlah_diminta = 10;
-        $jumlah_dikirim = 10;
+    use RefreshDatabase;
 
-        $this->assertTrue($jumlah_dikirim == $jumlah_diminta);
+    /* =========================================
+       TC-LOG-01
+       Login dengan username dan password valid
+    ========================================= */
+    public function test_tc_log_01_login_valid()
+    {
+        $user = User::create([
+            'nama' => 'Novita',
+            'username' => 'novitaadmin',
+            'password' => Hash::make('qwerty12'),
+            'no_telepon' => '081234567890',
+            'alamat' => 'Jember',
+            'status' => 'owner'
+        ]);
+
+        $response = $this->post('/login', [
+            'username' => 'novitaadmin',
+            'password' => 'qwerty12'
+        ]);
+
+        $response->assertRedirect(route('dashboard'));
+
+        $this->assertAuthenticatedAs($user);
     }
 
     /* =========================================
-       TC-DIST-02
-       Kirim sebagian
+       TC-LOG-02
+       Username valid dan password salah
     ========================================= */
-    public function test_tc_dist_02_kirim_sebagian()
+    public function test_tc_log_02_password_salah()
     {
-        $this->assertTrue(8 < 10);
+        $user = User::create([
+            'nama' => 'Novita',
+            'username' => 'novitaadmin',
+            'password' => Hash::make('qwerty12'),
+            'no_telepon' => '081234567890',
+            'alamat' => 'Jember',
+            'status' => 'owner'
+        ]);
+
+        $response = $this->from('/login')->post('/login', [
+            'username' => 'novitaadmin',
+            'password' => 'salah123'
+        ]);
+
+        $response->assertRedirect('/login');
+
+        $response->assertSessionHasErrors([
+            'username' => 'Username atau password salah'
+        ]);
+
+        $this->assertGuest();
     }
 
     /* =========================================
-       TC-DIST-03
-       Kirim melebihi permintaan
+       TC-LOG-03
+       Username tidak terdaftar
     ========================================= */
-    public function test_tc_dist_03_kirim_melebihi_permintaan()
+    public function test_tc_log_03_username_tidak_terdaftar()
     {
-        $this->assertTrue(15 > 10);
+        $response = $this->from('/login')->post('/login', [
+            'username' => 'adminbaru',
+            'password' => 'qwerty12'
+        ]);
+
+        $response->assertRedirect('/login');
+
+        $response->assertSessionHasErrors([
+            'username' => 'Username atau password salah'
+        ]);
+
+        $this->assertGuest();
     }
 
     /* =========================================
-       TC-DIST-04
-       Validasi jumlah tidak valid
+       TC-LOG-04
+       Username dan password salah
     ========================================= */
-    public function test_tc_dist_04_jumlah_tidak_valid()
+    public function test_tc_log_04_username_password_salah()
     {
-        $jumlah = 0;
+        $response = $this->from('/login')->post('/login', [
+            'username' => 'usertest',
+            'password' => '123456'
+        ]);
 
-        $this->assertTrue($jumlah <= 0);
+        $response->assertRedirect('/login');
+
+        $response->assertSessionHasErrors([
+            'username' => 'Username atau password salah'
+        ]);
+
+        $this->assertGuest();
     }
 
     /* =========================================
-       TC-DIST-05
-       Stok pusat mencukupi
+       TC-LOG-05
+       Username kosong
     ========================================= */
-    public function test_tc_dist_05_stok_pusat_mencukupi()
+    public function test_tc_log_05_username_kosong()
     {
-        $stok = 20;
-        $kirim = 10;
+        $response = $this->from('/login')->post('/login', [
+            'username' => '',
+            'password' => 'qwerty12'
+        ]);
 
-        $this->assertTrue($stok >= $kirim);
+        $response->assertRedirect('/login');
+
+        $response->assertSessionHasErrors('username');
     }
 
     /* =========================================
-       TC-DIST-06
-       Pengurangan stok pusat
+       TC-LOG-06
+       Password kosong
     ========================================= */
-    public function test_tc_dist_06_pengurangan_stok_pusat()
+    public function test_tc_log_06_password_kosong()
     {
-        $stok_awal = 20;
-        $kirim = 5;
+        $response = $this->from('/login')->post('/login', [
+            'username' => 'novitaadmin',
+            'password' => ''
+        ]);
 
-        $stok_akhir = $stok_awal - $kirim;
+        $response->assertRedirect('/login');
 
-        $this->assertEquals(15, $stok_akhir);
+        $response->assertSessionHasErrors('password');
     }
 
     /* =========================================
-       TC-DIST-07
-       Penambahan stok cabang
+       TC-LOG-07
+       Username dan password kosong
     ========================================= */
-    public function test_tc_dist_07_penambahan_stok_cabang()
+    public function test_tc_log_07_username_password_kosong()
     {
-        $stok_cabang = 0;
-        $terima = 10;
+        $response = $this->from('/login')->post('/login', [
+            'username' => '',
+            'password' => ''
+        ]);
 
-        $stok_cabang += $terima;
+        $response->assertRedirect('/login');
 
-        $this->assertEquals(10, $stok_cabang);
-    }
-
-    /* =========================================
-       TC-DIST-08
-       Status permintaan disetujui
-    ========================================= */
-    public function test_tc_dist_08_status_permintaan_disetujui()
-    {
-        $status = 'menunggu';
-        $status = 'disetujui';
-
-        $this->assertEquals('disetujui', $status);
-    }
-
-    /* =========================================
-       TC-DIST-09
-       Status distribusi dikirim
-    ========================================= */
-    public function test_tc_dist_09_status_distribusi_dikirim()
-    {
-        $status = 'dikirim';
-
-        $this->assertEquals('dikirim', $status);
-    }
-
-    /* =========================================
-       TC-DIST-10
-       Status distribusi diterima
-    ========================================= */
-    public function test_tc_dist_10_status_distribusi_diterima()
-    {
-        $status = 'diterima';
-
-        $this->assertEquals('diterima', $status);
+        $response->assertSessionHasErrors([
+            'username',
+            'password'
+        ]);
     }
 }
