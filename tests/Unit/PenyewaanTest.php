@@ -244,64 +244,71 @@ class PenyewaanTest extends TestCase
     }
  
     // =========================
-    // TC-SEWA-11 (belum bayar)
+// TC-SEWA-10 (belum bayar)
+// =========================
+#[Test]
+public function tc_sewa_10_melihat_tab_belum_bayar()
+{
+    $this->seedRelasi();
+    $this->loginUser();
+
+    DB::table('penyewaan')->insert([
+        'idpenyewaan' => 1,
+        'tanggal_sewa' => now(),
+        'tanggal_selesai' => now()->addDays(1),
+        'total' => 0,
+        'total_produk' => 0,
+        'status_penyewaan' => 'menunggu_pembayaran',
+        'metode_bayar' => 'cash',
+        'batas_pembayaran' => now()->addHours(2),
+        'penyewa_idpenyewa' => 1,
+        'cabang_idcabang' => 1,
+        'admin_pusat_idadmin_pusat' => null,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
+
+    $controller = new PenyewaanController();
+
+    // FIX
+    $request = new Request();
+
+    $response = $controller->riwayat($request);
+
+    $this->assertNotNull($response);
+}
     // =========================
-    #[Test]
-    public function tc_sewa_10_melihat_tab_belum_bayar()
-    {
-        $this->seedRelasi();
-        $this->loginUser();
+// TC-SEWA-11 (aktif)
+// =========================
+#[Test]
+public function tc_sewa_11_melihat_tab_penyewaan_aktif()
+{
+    $this->seedRelasi();
+    $this->loginUser();
 
-        DB::table('penyewaan')->insert([
-    'idpenyewaan' => 1,
-    'tanggal_sewa' => now(),
-    'tanggal_selesai' => now()->addDays(1),
-    'total' => 0,
-    'total_produk' => 0,
-    'status_penyewaan' => 'menunggu_pembayaran',
-    'metode_bayar' => 'cash',
-    'batas_pembayaran' => now()->addHours(2),
-    'penyewa_idpenyewa' => 1,
-    'cabang_idcabang' => 1,
-    'admin_pusat_idadmin_pusat' => null,
-    'created_at' => now(),
-    'updated_at' => now()
-]);
+    DB::table('penyewaan')->insert([
+        'idpenyewaan' => 1,
+        'tanggal_sewa' => now(),
+        'tanggal_selesai' => now()->addDays(1),
+        'total' => 0,
+        'total_produk' => 0,
+        'status_penyewaan' => 'sedang_disewa',
+        'metode_bayar' => 'cash',
+        'batas_pembayaran' => now()->addHours(2),
+        'penyewa_idpenyewa' => 1,
+        'cabang_idcabang' => 1,
+        'admin_pusat_idadmin_pusat' => null,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
 
-        $controller = new PenyewaanController();
-        $response = $controller->riwayat();
+    $controller = new PenyewaanController();
 
-        $this->assertNotNull($response);
-    }
+    // FIX
+    $request = new Request();
 
-    // =========================
-    // TC-SEWA-12 (aktif)
-    // =========================
-    #[Test]
-    public function tc_sewa_11_melihat_tab_penyewaan_aktif()
-    {
-        $this->seedRelasi();
-        $this->loginUser();
+    $response = $controller->riwayat($request);
 
-        DB::table('penyewaan')->insert([
-    'idpenyewaan' => 1,
-    'tanggal_sewa' => now(),
-    'tanggal_selesai' => now()->addDays(1),
-    'total' => 0,
-    'total_produk' => 0,
-    'status_penyewaan' => 'sedang_disewa',
-    'metode_bayar' => 'cash',
-    'batas_pembayaran' => now()->addHours(2),
-    'penyewa_idpenyewa' => 1,
-    'cabang_idcabang' => 1,
-    'admin_pusat_idadmin_pusat' => null,
-    'created_at' => now(),
-    'updated_at' => now()
-]);
-
-        $controller = new PenyewaanController();
-        $response = $controller->riwayat();
-
-        $this->assertNotNull($response);
-    }
+    $this->assertNotNull($response);
+}
 }

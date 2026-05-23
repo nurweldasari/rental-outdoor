@@ -21,12 +21,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
 {
-    // CABANG
-    $cabang = Cabang::create([
-        'nama_cabang' => 'OutdoorKriss Jember',
-        'status_cabang' => 'aktif',
-        'lokasi' => 'Jl. kaliwates, No. 67 Jember Kab. Jember'
-    ]);
 
     // ADMIN PUSAT
     $adminPusatUser = User::create([
@@ -50,19 +44,5 @@ class DatabaseSeeder extends Seeder
     ]);
     Owner::create(['users_idusers' => $ownerUser->idusers]);
 
-    // ADMIN CABANG
-    $adminCabangUser = User::create([
-        'nama' => 'Nur Aini',
-        'username' => 'admincabang',
-        'password' => Hash::make('admin123'),
-        'no_telepon'  => '081331623131',
-        'alamat'      => 'Jl. kaliwates, No. 67 Jember Kab. Jember',
-        'status' => 'admin_cabang'
-    ]);
-    AdminCabang::create([
-        'users_idusers' => $adminCabangUser->idusers,
-        'cabang_idcabang' => $cabang->idcabang,
-        'gambar_mou' => 'default_admin.png'
-    ]);
 }
 }

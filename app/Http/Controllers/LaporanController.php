@@ -51,6 +51,7 @@ class LaporanController extends Controller
         // ================= ADMIN CABANG =================
         if ($user->status === 'admin_cabang') {
 
+
             $adminCabang = $user->adminCabang;
 
             if (!$adminCabang) {

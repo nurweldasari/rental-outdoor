@@ -1,6 +1,7 @@
 /* ===== CONTAINER ===== */
 .kelola-container {
-    max-width: 900px;
+    width: 100%;
+max-width: 1200px;
     margin: auto;
 }
 

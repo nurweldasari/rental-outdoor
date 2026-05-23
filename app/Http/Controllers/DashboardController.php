@@ -63,8 +63,11 @@ public function index(Request $request)
         ->whereYear('created_at', $tahun)
         ->count();
 
-    $totalKategori = Kategori::whereYear('created_at', $tahun)
-        ->count();
+    $totalKategori = Kategori::whereHas('produk.stokCabang', function ($q) use ($cabangId) {
+        $q->where('cabang_idcabang', $cabangId);
+    })
+    ->whereYear('created_at', $tahun)
+    ->count();
 
     $pendapatan = Penyewaan::selectRaw('MONTH(tanggal_sewa) as bulan, SUM(total) as total')
         ->where('cabang_idcabang', $cabangId)

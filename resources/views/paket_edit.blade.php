@@ -107,10 +107,12 @@ function tambahProduk() {
         <select name="produk_cabang_id[]" required>
             <option value="">-- Pilih Produk --</option>
             @foreach($stokCabang as $item)
-                <option value="{{ $item->idstok }}">
-                    {{ $item->produk->nama_produk }} (Stok: {{ $item->jumlah }})
-                </option>
-            @endforeach
+    @if($item->produk)
+        <option value="{{ $item->idstok }}">
+            {{ $item->produk->nama_produk }} (Stok: {{ $item->jumlah }})
+        </option>
+    @endif
+@endforeach
         </select>
 
         <input type="number" name="qty[]" placeholder="Qty" min="1" required>

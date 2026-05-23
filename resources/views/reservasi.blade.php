@@ -107,14 +107,19 @@
 
 @endforeach
                 @forelse($produkList as $pc)
-                    @php
-                        $produk = $pc->produk;
-                        $stok = $pc->jumlah ?? 0;
 
-                        $gambar = $produk->gambar_produk
-                            ? asset('storage/'.$produk->gambar_produk)
-                            : asset('images/placeholder.png');
-                    @endphp
+    @if(!$pc->produk)
+        @continue
+    @endif
+
+    @php
+        $produk = $pc->produk;
+        $stok = $pc->jumlah ?? 0;
+
+        $gambar = $produk->gambar_produk
+            ? asset('storage/'.$produk->gambar_produk)
+            : asset('images/placeholder.png');
+    @endphp
 
                     <div class="card-produk">
                         <span class="badge-kategori">{{ $produk->kategori->nama_kategori ?? '-' }}</span>
