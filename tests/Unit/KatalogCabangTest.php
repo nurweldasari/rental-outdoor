@@ -20,16 +20,26 @@ class KatalogCabangTest extends TestCase
     // 🔥 SEED RELASI SUPER FINAL (ANTI ERROR TOTAL)
     private function seedRelasi()
 {
-    // ✅ 1. USERS (SESUAI STRUKTUR KAMU)
-    DB::table('users')->insert([
-        'idusers' => 1,
-        'nama' => 'Admin',
-        'username' => 'admin',
-        'password' => bcrypt('123456'),
-        'no_telepon' => '08123456789',
-        'alamat' => 'Jakarta',
-        'status' => 'aktif'
-    ]);
+   DB::table('users')->insert([
+    'idusers' => 1,
+    'nama' => 'Penyewa',
+    'username' => 'penyewa',
+    'password' => bcrypt('123456'),
+    'no_telepon' => '08123456789',
+    'alamat' => 'Jakarta',
+    'status' => 'penyewa',
+    'created_at' => now(),
+    'updated_at' => now()
+]);
+
+DB::table('penyewa')->insert([
+    'idpenyewa' => 1,
+    'users_idusers' => 1,
+    'gambar_identitas' => 'test.jpg',
+    'status_penyewa' => 'aktif',
+    'created_at' => now(),
+    'updated_at' => now()
+]);
 
     // ✅ 2. ADMIN PUSAT (BUTUH users_idusers)
     DB::table('admin_pusat')->insert([
@@ -73,11 +83,14 @@ class KatalogCabangTest extends TestCase
 ]);
 }
 
-    // =========================
-    #[Test]
+   #[Test]
 public function tc_kat_01_menampilkan_katalog()
 {
     $this->seedRelasi();
+
+    // LOGIN USER PENYEWA
+    $user = \App\Models\User::find(1);
+    $this->actingAs($user);
 
     Session::start();
     session(['cabang_id' => 1]);
@@ -91,8 +104,9 @@ public function tc_kat_01_menampilkan_katalog()
 
     $controller = new KatalogController();
 
-    $request = new Request(); // ✅ TAMBAH INI
-    $response = $controller->katalogCabang($request); // ✅ FIX
+    $request = new Request();
+
+    $response = $controller->katalogCabang($request);
 
     $this->assertNotNull($response);
 }

@@ -16,7 +16,7 @@ class LoginTest extends TestCase
 {
     $request = Request::create('/login', 'POST', [
         'username' => 'user',
-        'password' => 'admin'
+        'password' => 'admin12'
     ]);
 
     // ✅ TAMBAHKAN SESSION MANUAL
@@ -62,7 +62,7 @@ $request->setLaravelSession($session);
 
         $request = Request::create('/login', 'POST', [
             'username' => '',
-            'password' => 'admin'
+            'password' => 'admin12'
         ]);
 
         $controller = new \App\Http\Controllers\AuthController();
@@ -92,7 +92,7 @@ $request->setLaravelSession($session);
     {
         $request = Request::create('/login', 'POST', [
             'username' => 'pengguna',
-            'password' => 'admin'
+            'password' => 'admin12'
         ]);
 
         Auth::shouldReceive('attempt')

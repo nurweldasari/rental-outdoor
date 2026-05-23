@@ -31,18 +31,27 @@ class DataPenyewaTest extends TestCase
         'password' => bcrypt('123456'),
         'no_telepon' => '0811111111',
         'alamat' => 'alamat',
-        'status' => 'owner',
+        'status' => 'admin_cabang',
     ]);
 
-    // IMPORTANT
-    // masukkan ke tabel owner
-    DB::table('owner')->insert([
+    // buat cabang
+    DB::table('cabang')->insert([
+    'idcabang' => 1,
+    'nama_cabang' => 'Cabang Test',
+    'status_cabang' => 'aktif',
+    'lokasi' => 'Banyuwangi',
+    'created_at' => now(),
+    'updated_at' => now(),
+]);
+
+    // masukkan admin cabang
+    DB::table('admin_cabang')->insert([
         'users_idusers' => 1,
+        'cabang_idcabang' => 1,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
 
-    // login user
     $this->actingAs($user);
 
     return $user;
