@@ -5,7 +5,7 @@
 }
 
 .card-kontrak{
-    background: #6E2E00;
+    background: #6E2E00 !important;
     padding: 15px;
     border-radius: 14px;
     width: fit-content;
