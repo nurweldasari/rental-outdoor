@@ -5,15 +5,14 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\User;
 use App\Models\Cabang;
 use App\Models\Penyewaan;
 use App\Models\BagiHasil;
 use App\Models\SkalaBagiHasil;
-use App\Models\AdminCabang;
 use App\Http\Controllers\BagiHasilController;
 
 class BagiHasilTest extends TestCase
@@ -25,6 +24,10 @@ class BagiHasilTest extends TestCase
     // =========================
     public function test_tc_bh_01_perhitungan_otomatis()
     {
+        $owner = User::factory()->create([
+            'status' => 'owner'
+        ]);
+
         $cabang = Cabang::factory()->create();
 
         Penyewaan::factory()->create([
@@ -34,7 +37,7 @@ class BagiHasilTest extends TestCase
             'tanggal_sewa' => now(),
         ]);
 
-        BagiHasil::create([
+        BagiHasil::factory()->create([
             'cabang_idcabang' => $cabang->idcabang,
             'bulan' => now()->format('Y-m'),
             'presentase_owner' => 50,
@@ -44,10 +47,10 @@ class BagiHasilTest extends TestCase
             'status' => 'terkunci',
         ]);
 
-        $controller = new BagiHasilController();
-        $response = $controller->index(new Request());
+        $response = $this->actingAs($owner)
+    ->get('/bagi-hasil');
 
-        $this->assertNotNull($response);
+        $response->assertStatus(200);
     }
 
     // =========================
@@ -55,6 +58,10 @@ class BagiHasilTest extends TestCase
     // =========================
     public function test_tc_bh_02_simpan_database()
     {
+        $owner = User::factory()->create([
+            'status' => 'owner'
+        ]);
+
         $cabang = Cabang::factory()->create();
 
         $request = new Request([
@@ -67,6 +74,9 @@ class BagiHasilTest extends TestCase
         ]);
 
         $controller = new BagiHasilController();
+
+        $this->actingAs($owner);
+
         $controller->store($request);
 
         $this->assertDatabaseHas('bagi_hasil', [
@@ -102,7 +112,6 @@ class BagiHasilTest extends TestCase
 
         $backup = $skala->owner;
 
-        // simulasi batal
         $skala->owner = $backup;
 
         $this->assertEquals(50, $skala->owner);
@@ -123,7 +132,7 @@ class BagiHasilTest extends TestCase
 
         $data = BagiHasil::whereNotNull('bukti_fee')->get();
 
-        $this->assertNotEmpty($data);
+        $this->assertCount(1, $data);
     }
 
     // =========================
@@ -136,6 +145,7 @@ class BagiHasilTest extends TestCase
         ]);
 
         $controller = new BagiHasilController();
+
         $controller->konfirmasi($data->idbagi_hasil);
 
         $this->assertDatabaseHas('bagi_hasil', [
@@ -154,6 +164,7 @@ class BagiHasilTest extends TestCase
         ]);
 
         $controller = new BagiHasilController();
+
         $controller->tolak($data->idbagi_hasil);
 
         $this->assertDatabaseHas('bagi_hasil', [
@@ -167,16 +178,20 @@ class BagiHasilTest extends TestCase
     // =========================
     public function test_tc_bh_08_upload_bukti()
     {
+        Storage::fake('public');
+
         $data = BagiHasil::factory()->create([
             'status' => 'terkunci'
         ]);
 
-        $file = \Illuminate\Http\UploadedFile::fake()->image('bukti.jpg');
+        $file = UploadedFile::fake()->image('bukti.jpg');
 
         $request = new Request();
+
         $request->files->set('bukti_fee', $file);
 
         $controller = new BagiHasilController();
+
         $controller->uploadBukti($request, $data->idbagi_hasil);
 
         $this->assertDatabaseHas('bagi_hasil', [

@@ -11,11 +11,25 @@
 @endpush
 
 @section('content')
+
 <div class="container-kontrak">
+
     <div class="card-kontrak">
-        <a href="{{ asset('storage/' . $adminCabang->gambar_mou) }}" target="_blank" class="btn-mou">
-            <i class="fa-solid fa-eye"></i> Lihat MoU
+
+        <img 
+            src="{{ asset('storage/' . $adminCabang->gambar_mou) }}" 
+            alt="MoU Franchise"
+            class="gambar-mou"
+        >
+
+        <a href="{{ asset('storage/' . $adminCabang->gambar_mou) }}" 
+           target="_blank"
+           class="btn-mou">
+            <i class="fa-solid fa-eye"></i> Perbesar
         </a>
+
     </div>
+
 </div>
+
 @endsection

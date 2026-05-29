@@ -186,8 +186,21 @@
         <p class="catatan-bayar" id="catatanBayar"></p>
 
         <div class="info-transfer" id="infoTransfer" style="display:none;">
-            <div class="bank-box"><strong>Nama Bank    : {{ $rekening->nama_bank }}</strong></div>
-            <div class="bank-box">No. Rekening : {{ $rekening->no_rekening }}</div>
+
+            @if($rekening)
+                <div class="bank-box">
+                    <strong>Nama Bank : {{ $rekening->nama_bank }}</strong>
+                </div>
+
+                <div class="bank-box">
+                    No. Rekening : {{ $rekening->no_rekening }}
+                </div>
+            @else
+                <div class="bank-box kosong">
+                    Rekening cabang belum tersedia
+                </div>
+            @endif
+
         </div>
         <button class="btn-konfirmasi">Konfirmasi</button>
     </div>
@@ -530,13 +543,21 @@ function renderCart(cart){
         }
     });
 
+    function formatLocalDate(date){
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+    }
+
     const todayDate = new Date();
 
-const tomorrowDate = new Date();
-tomorrowDate.setDate(todayDate.getDate() + 1);
+    const tomorrowDate = new Date();
+    tomorrowDate.setDate(todayDate.getDate() + 1);
 
-const minSewa = todayDate.toISOString().split('T')[0];
-const minSelesai = tomorrowDate.toISOString().split('T')[0];
+    const minSewa = formatLocalDate(todayDate);
+    const minSelesai = formatLocalDate(tomorrowDate);
 
     body.innerHTML = `
         ${html}
@@ -629,6 +650,18 @@ document.addEventListener('DOMContentLoaded', function(){
             info.style.display = 'none';
         }
         else if(this.value === 'transfer'){
+
+            @if(!$rekening)
+                alert('Rekening cabang belum tersedia');
+
+                this.value = '';
+
+                catatan.textContent = '';
+                info.style.display = 'none';
+
+                return;
+            @endif
+
             catatan.textContent = 'Transfer ke rekening (batas waktu 2 jam)';
             info.style.display = 'block';
         }

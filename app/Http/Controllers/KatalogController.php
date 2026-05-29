@@ -56,6 +56,8 @@ public function katalogCabang(Request $request)
     }
 
     $cabangId = session('cabang_id');
+    
+    $rekening = Rekening::where('cabang_idcabang', $cabangId)->first();
 
     $produkList = StokCabang::with(['produk' => function ($q) {
         $q->whereNull('deleted_at');

@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\ValidationException;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use App\Http\Controllers\KategoriController;
@@ -35,7 +36,7 @@ class KategoriTest extends TestCase
     // =========================
     public function test_tc_cat_02_nama_kosong()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(ValidationException::class);
 
         $controller = new KategoriController();
 
@@ -55,7 +56,7 @@ class KategoriTest extends TestCase
             'nama_kategori' => 'Tenda'
         ]);
 
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(ValidationException::class);
 
         $controller = new KategoriController();
 
@@ -65,6 +66,7 @@ class KategoriTest extends TestCase
 
         $controller->store($request);
     }
+
     // =========================
     // TC-CAT-04: Edit kategori valid
     // =========================
@@ -93,7 +95,7 @@ class KategoriTest extends TestCase
     // =========================
     public function test_tc_cat_05_edit_kosong()
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(ValidationException::class);
 
         $kategori = Kategori::create([
             'nama_kategori' => 'Tenda'
@@ -132,11 +134,17 @@ class KategoriTest extends TestCase
     }
 
     // =========================
-    // TC-CAT-07: Cancel
+    // TC-CAT-07: Batal
     // =========================
     public function test_tc_cat_07_batal()
     {
+        Kategori::create([
+            'nama_kategori' => 'Tenda'
+        ]);
+
         $countBefore = Kategori::count();
+
+        // simulasi batal = tidak memanggil store()
 
         $this->assertEquals($countBefore, Kategori::count());
     }
@@ -145,16 +153,17 @@ class KategoriTest extends TestCase
     // TC-CAT-08: Hapus kategori
     // =========================
     public function test_tc_cat_08_hapus_kategori()
-    {
-        $kategori = Kategori::create([
-            'nama_kategori' => 'Tenda'
-        ]);
+   {
+    $kategori = Kategori::create([
+        'nama_kategori' => 'Tenda'
+    ]);
 
-        $controller = new KategoriController();
-        $controller->destroy($kategori->idkategori);
+    $controller = new KategoriController();
 
-        $this->assertDatabaseMissing('kategori', [
-            'idkategori' => $kategori->idkategori
-        ]);
+    $controller->destroy($kategori->idkategori);
+
+    $this->assertSoftDeleted('kategori', [
+        'idkategori' => $kategori->idkategori
+    ]);
     }
 }
