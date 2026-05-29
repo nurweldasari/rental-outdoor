@@ -66,6 +66,11 @@ $paketList = Paket::where('cabang_id', $cabangId)
     // ===============================
     public function toggleStatus($idstok)
     {
+        $user = Auth::user();
+
+        if (!$user->adminCabang) {
+            abort(403, 'User tidak terhubung ke cabang');
+        }
         $stok = StokCabang::findOrFail($idstok);
 
         // 🔥 INI TARUH DI SINI

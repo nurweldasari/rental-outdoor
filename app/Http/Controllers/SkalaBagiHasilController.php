@@ -10,6 +10,11 @@ class SkalaBagiHasilController extends Controller
 {
     public function store(Request $request)
 {
+    if(
+            auth()->user()->status != 'owner' 
+        ){
+            abort(403,'Akses ditolak');
+        }
     $request->validate([
         'cabang_idcabang' => 'required',
         'owner' => 'required|numeric|min:0|max:100',

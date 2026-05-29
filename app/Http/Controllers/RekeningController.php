@@ -9,6 +9,11 @@ class RekeningController extends Controller
 {
    public function store(Request $request)
 {
+    if(
+            auth()->user()->status != 'owner' 
+        ){
+            abort(403,'Akses ditolak');
+        }
     $request->validate([
         'nama_bank'       => 'required|max:45',
         'no_rekening'     => 'required|max:45',

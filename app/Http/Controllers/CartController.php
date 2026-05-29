@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\StokCabang;
 use App\Models\Produk;
@@ -13,6 +14,15 @@ class CartController extends Controller
     /* ================= PRODUK ADD ================= */
     public function add(Request $request)
 {
+    $user = Auth::user();
+
+    $adminCabang = $user->adminCabang ?? null;
+    $penyewa     = $user->penyewa ?? null;
+
+    // jika bukan admin cabang DAN bukan penyewa
+    if (!$adminCabang && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $request->validate([
         'idstok' => ['required', 'integer', 'exists:stok_cabang,idstok'],
     ]);
@@ -92,6 +102,15 @@ $cart[$stok->idstok] = [
 }
 public function update(Request $request)
 {
+    $user = Auth::user();
+
+    $adminCabang = $user->adminCabang ?? null;
+    $penyewa     = $user->penyewa ?? null;
+
+    // jika bukan admin cabang DAN bukan penyewa
+    if (!$adminCabang && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $request->validate([
         'idstok' => ['required', 'integer'],
         'qty'    => ['required', 'integer', 'min:0', 'max:1000'],
@@ -192,6 +211,15 @@ public function update(Request $request)
 }
 public function delete(Request $request)
 {
+    $user = Auth::user();
+
+    $adminCabang = $user->adminCabang ?? null;
+    $penyewa     = $user->penyewa ?? null;
+
+    // jika bukan admin cabang DAN bukan penyewa
+    if (!$adminCabang && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $request->validate([
         'idstok' => ['required', 'integer'],
     ]);
@@ -210,6 +238,15 @@ public function delete(Request $request)
     /* ================= PAKET ADD ================= */
   public function addPaket(Request $request)
 {
+    $user = Auth::user();
+
+    $adminCabang = $user->adminCabang ?? null;
+    $penyewa     = $user->penyewa ?? null;
+
+    // jika bukan admin cabang DAN bukan penyewa
+    if (!$adminCabang && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $paket = Paket::with('detail.stokCabang.produk.hargaAktif', 'hargaTerbaru')
         ->findOrFail($request->paket_id);
 
@@ -300,7 +337,15 @@ public function delete(Request $request)
 }
 public function updatePaket(Request $request)
 {
+    $user = Auth::user();
 
+    $adminCabang = $user->adminCabang ?? null;
+    $penyewa     = $user->penyewa ?? null;
+
+    // jika bukan admin cabang DAN bukan penyewa
+    if (!$adminCabang && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
 
     $request->validate([
         'paket_id' => ['required', 'integer'],
@@ -402,6 +447,15 @@ foreach ($paket->detail as $d) {
 }
 public function deletePaket(Request $request)
 {
+    $user = Auth::user();
+
+    $adminCabang = $user->adminCabang ?? null;
+    $penyewa     = $user->penyewa ?? null;
+
+    // jika bukan admin cabang DAN bukan penyewa
+    if (!$adminCabang && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $request->validate([
         'paket_id' => ['required', 'integer'],
     ]);
@@ -421,6 +475,16 @@ public function deletePaket(Request $request)
 /* ================= PRODUK Pusat ================= */
   public function addPusat(Request $request)
 {
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat ?? null;
+    $owner      = $user->owner ?? null;
+    $penyewa    = $user->penyewa ?? null;
+
+    // hanya admin pusat, owner, dan penyewa yang boleh akses
+    if (!$adminPusat && !$owner && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $request->validate([
         'idproduk' => 'required|exists:produk,idproduk'
     ]);
@@ -480,6 +544,16 @@ $harga = $produk->hargaAktif?->harga ?? 0;
 }
    public function updatePusat(Request $request)
 {
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat ?? null;
+    $owner      = $user->owner ?? null;
+    $penyewa    = $user->penyewa ?? null;
+
+    // hanya admin pusat, owner, dan penyewa yang boleh akses
+    if (!$adminPusat && !$owner && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $request->validate([
         'idproduk' => 'required|exists:produk,idproduk',
         'qty' => 'required|integer|min:0'
@@ -540,6 +614,16 @@ $harga = $produk->hargaAktif?->harga ?? 0;
 }
     public function deletePusat(Request $request)
 {
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat ?? null;
+    $owner      = $user->owner ?? null;
+    $penyewa    = $user->penyewa ?? null;
+
+    // hanya admin pusat, owner, dan penyewa yang boleh akses
+    if (!$adminPusat && !$owner && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $cart = session('cart', []);
     unset($cart['produk_'.$request->idproduk]);
 
@@ -550,6 +634,16 @@ $harga = $produk->hargaAktif?->harga ?? 0;
     /* ================= PAKET Pusat ================= */
    public function addPaketPusat(Request $request)
 {
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat ?? null;
+    $owner      = $user->owner ?? null;
+    $penyewa    = $user->penyewa ?? null;
+
+    // hanya admin pusat, owner, dan penyewa yang boleh akses
+    if (!$adminPusat && !$owner && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $paket = Paket::with('detail.produk')->findOrFail($request->paket_id);
 
     $cart = session('cart', []);
@@ -643,6 +737,16 @@ $items[] = [
 }
 public function updatePaketPusat(Request $request)
 {
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat ?? null;
+    $owner      = $user->owner ?? null;
+    $penyewa    = $user->penyewa ?? null;
+
+    // hanya admin pusat, owner, dan penyewa yang boleh akses
+    if (!$adminPusat && !$owner && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $cart = session('cart', []);
     $key = 'paket_'.$request->paket_id;
 
@@ -713,6 +817,16 @@ public function updatePaketPusat(Request $request)
 }
 public function deletePaketPusat(Request $request)
 {
+    $user = Auth::user();
+
+    $adminPusat = $user->adminPusat ?? null;
+    $owner      = $user->owner ?? null;
+    $penyewa    = $user->penyewa ?? null;
+
+    // hanya admin pusat, owner, dan penyewa yang boleh akses
+    if (!$adminPusat && !$owner && !$penyewa) {
+        abort(403, 'Tidak memiliki akses');
+    }
     $cart = session('cart', []);
     unset($cart['paket_'.$request->paket_id]);
 

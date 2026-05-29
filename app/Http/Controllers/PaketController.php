@@ -40,6 +40,10 @@ class PaketController extends Controller
     {
         $user = auth()->user();
 
+        if (!$user->adminCabang) {
+            abort(403, 'User tidak terhubung ke cabang');
+        }
+
         DB::beginTransaction();
 
         try {
@@ -106,6 +110,11 @@ class PaketController extends Controller
 
     public function update(Request $request, $id)
     {
+        $user = auth()->user();
+
+        if (!$user->adminCabang) {
+            abort(403, 'User tidak terhubung ke cabang');
+        }
         DB::beginTransaction();
 
         try {
@@ -156,6 +165,11 @@ class PaketController extends Controller
 
     public function destroy($id)
     {
+        $user = auth()->user();
+
+        if (!$user->adminCabang) {
+            abort(403, 'User tidak terhubung ke cabang');
+        }
         DB::beginTransaction();
 
         try {

@@ -36,6 +36,14 @@ class PermintaanProdukController extends Controller
     
 public function store(Request $request)
 {
+    $userId = auth()->user()->idusers;
+
+    // hanya admin cabang
+    $isAdminCabang = AdminCabang::where('users_idusers', $userId)->exists();
+
+    if (!$isAdminCabang) {
+        abort(403, 'USER BUKAN ADMIN CABANG');
+    }
     $request->validate([
         'produk_id' => 'required|array',
         'produk_id.*' => 'required|exists:produk,idproduk',

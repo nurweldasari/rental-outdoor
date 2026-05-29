@@ -9,7 +9,6 @@ class KategoriController extends Controller
 {
     public function index(Request $request)
 {
-   
     // HANYA OWNER DAN ADMIN PUSAT
     if(
         auth()->user()->status != 'owner' &&
@@ -28,6 +27,13 @@ class KategoriController extends Controller
 
     public function store(Request $request)
     {
+        // HANYA OWNER DAN ADMIN PUSAT
+        if(
+            auth()->user()->status != 'owner' &&
+            auth()->user()->status != 'admin_pusat'
+        ){
+            abort(403,'Akses ditolak');
+        }
         $request->validate([
             'nama_kategori' => 'required|max:45|unique:kategori,nama_kategori',
         ]);
@@ -41,6 +47,13 @@ class KategoriController extends Controller
 
     public function update(Request $request, $id)
     {
+        // HANYA OWNER DAN ADMIN PUSAT
+    if(
+        auth()->user()->status != 'owner' &&
+        auth()->user()->status != 'admin_pusat'
+    ){
+        abort(403,'Akses ditolak');
+    }
         $request->validate([
             'nama_kategori' => 'required|max:45|unique:kategori,nama_kategori,' . $id . ',idkategori',
         ]);
@@ -55,6 +68,13 @@ class KategoriController extends Controller
 
     public function destroy($id)
     {
+        // HANYA OWNER DAN ADMIN PUSAT
+    if(
+        auth()->user()->status != 'owner' &&
+        auth()->user()->status != 'admin_pusat'
+    ){
+        abort(403,'Akses ditolak');
+    }
         $kategori = Kategori::findOrFail($id);
         $kategori->delete();
 

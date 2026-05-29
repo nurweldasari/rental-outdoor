@@ -50,41 +50,11 @@
 
         {{-- CETAK --}}
         @if($penyewaan->count())
-            <button type="button" class="btn-submit" onclick="openModal()">
-                Cetak Laporan
-            </button>
+            <button type="button" class="btn-submit" onclick="printLaporan()">
+    Cetak Laporan
+</button>
         @endif
 
-    </div>
-
-
-    {{-- ================= MODAL CETAK ================= --}}
-    <div class="modal-overlay" id="modalCetak">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-
-            <h3>Cetak Laporan</h3>
-
-            <form onsubmit="return handlePrint(event)">
-
-                <div class="form-group">
-                    <label>Dari</label>
-                    <input type="date" name="dari">
-                </div>
-
-                <div class="form-group">
-                    <label>Sampai</label>
-                    <input type="date" name="sampai">
-                </div>
-
-                <div class="modal-action">
-                    <button type="submit" class="btn-cetak">
-                        <i class="fa-solid fa-print"></i>Cetak
-                    </button>
-                </div>
-
-            </form>
-        </div>
     </div>
 
 
@@ -206,12 +176,26 @@
 
 {{-- ================= SCRIPT ================= --}}
 <script>
-function openModal() {
-    document.getElementById('modalCetak').style.display = 'flex';
-}
+function printLaporan() {
 
-function closeModal() {
-    document.getElementById('modalCetak').style.display = 'none';
+    const bulan = "{{ request('bulan') }}";
+
+    let textPeriode = 'Semua Periode';
+
+    if (bulan) {
+
+        const date = new Date(bulan + '-01');
+
+        textPeriode = date.toLocaleDateString('id-ID', {
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+
+    document.getElementById('printDateRange').textContent =
+        'Periode : ' + textPeriode;
+
+    window.print();
 }
 
 function handlePrint(e) {

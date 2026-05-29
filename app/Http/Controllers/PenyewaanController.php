@@ -339,6 +339,12 @@ $perPage = $request->get('per_page', 10);
 
 public function uploadPage($id)
 {
+    $user = Auth::user();
+    $penyewa = $user->penyewa ?? null;
+
+    if (!$penyewa) {
+        abort(403, 'Akun ini bukan penyewa');
+    }
     $penyewaan = Penyewaan::findOrFail($id);
 
     // Hanya bisa akses jika status menunggu pembayaran
@@ -360,6 +366,12 @@ public function uploadPage($id)
 
 public function uploadBuktiBayar(Request $request, $idpenyewaan)
 {
+    $user = Auth::user();
+    $penyewa = $user->penyewa ?? null;
+
+    if (!$penyewa) {
+        abort(403, 'Akun ini bukan penyewa');
+    }
     $request->validate([
         'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
     ]);
@@ -572,6 +584,12 @@ public function adminRiwayat(Request $request)
 
 public function cancel($id)
 {
+     $user = Auth::user();
+    $adminCabang = $user->adminCabang;
+
+    if (!$adminCabang) {
+        abort(403, 'Bukan admin cabang');
+    }
     $penyewaan = Penyewaan::with('itemPenyewaan')->findOrFail($id);
 
     // hanya boleh cancel jika masih menunggu pembayaran
@@ -628,9 +646,12 @@ public function cancel($id)
 
 public function createReservasi(Request $request, $id)
 {
-    $user = Auth::user();
+         $user = Auth::user();
     $adminCabang = $user->adminCabang;
 
+    if (!$adminCabang) {
+        abort(403, 'Bukan admin cabang');
+    }
     $rekening = $adminCabang->cabang->rekening ?? null;
 
     $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
@@ -1434,6 +1455,12 @@ public function uploadPusat($id)
 
 public function uploadBuktiBayarPusat(Request $request, $idpenyewaan)
 {
+    $user = Auth::user();
+    $penyewa = $user->penyewa ?? null;
+
+    if (!$user || !$penyewa) {
+        abort(403, 'Akun ini bukan penyewa');
+    }
     $request->validate([
         'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
     ]);
