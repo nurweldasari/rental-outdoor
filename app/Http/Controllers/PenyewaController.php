@@ -110,7 +110,7 @@ class PenyewaController extends Controller
         DB::table('penyewa')->insert([
             'users_idusers'    => $userId,
             'gambar_identitas' => $path,
-            'status_penyewa'     => 'pending',
+            'status_penyewa'     => 'aktif',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -129,53 +129,6 @@ class PenyewaController extends Controller
             ->with('error', 'Terjadi kesalahan saat menyimpan data');
     }
 }
- /* ================= KONFIRMASI TERIMA ================= */
-    public function terima($id)
-    {
-        DB::transaction(function () use ($id) {
-
-            $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
-
-            $penyewa->update([
-                'status_penyewa' => 'aktif'
-            ]);
-        });
-
-        return back()->with('success', 'penyewa disetujui');
-    }
-
-    /* ================= KONFIRMASI TOLAK ================= */
-    public function tolak($id)
-    {
-        DB::transaction(function () use ($id) {
-
-            $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
-
-            $penyewa->update([
-                'status_penyewa' => 'ditolak'
-            ]);
-        });
-
-        return back()->with('success', 'penyewa ditolak');
-    }
-
-    /* ================= TOGGLE STATUS ================= */
-    public function toggleStatus($id)
-    {
-        DB::transaction(function () use ($id) {
-
-            $penyewa = Penyewa::where('users_idusers', $id)->firstOrFail();
-
-            $penyewa->status_penyewa =
-                $penyewa->status_penyewa === 'aktif'
-                ? 'nonaktif'
-                : 'aktif';
-
-            $penyewa->save();
-        });
-
-        return back()->with('success', 'Status penyewa diubah');
-    }
 
 
 //admin pusat
@@ -277,7 +230,7 @@ class PenyewaController extends Controller
         DB::table('penyewa')->insert([
             'users_idusers'    => $userId,
             'gambar_identitas' => $path,
-            'status_penyewa'     => 'pending',
+            'status_penyewa'     => 'aktif',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

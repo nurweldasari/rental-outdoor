@@ -55,6 +55,12 @@ class ProdukController extends Controller
     // ================== STORE ==================
     public function store(Request $request)
     {
+        if(
+            auth()->user()->status != 'owner' &&
+            auth()->user()->status != 'admin_pusat'
+        ){
+            abort(403,'Akses ditolak');
+        }
         $request->validate([
             'nama_produk' => 'required|max:45',
             'stok_pusat'  => 'required|integer',
@@ -108,6 +114,12 @@ class ProdukController extends Controller
     // ================== UPDATE ==================
     public function update(Request $request, $id)
     {
+        if(
+            auth()->user()->status != 'owner' &&
+            auth()->user()->status != 'admin_pusat'
+        ){
+            abort(403,'Akses ditolak');
+        }
         $produk = Produk::findOrFail($id);
 
         $request->validate([
@@ -155,6 +167,12 @@ class ProdukController extends Controller
     // ================== DELETE ==================
     public function destroy($id)
     {
+        if(
+            auth()->user()->status != 'owner' &&
+            auth()->user()->status != 'admin_pusat'
+        ){
+            abort(403,'Akses ditolak');
+        }
         $produk = Produk::findOrFail($id);
 
         if ($produk->gambar_produk) {

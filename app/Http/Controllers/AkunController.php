@@ -172,6 +172,11 @@ public function editrekening()
 
     public function updateRekening(Request $request)
 {
+    $user = Auth::user();
+
+        if (!$user->adminCabang) {
+            abort(403, 'User tidak terhubung ke cabang');
+        }
     $request->validate([
         'nama_bank'   => 'required|max:45',
         'no_rekening' => 'required|max:45',
