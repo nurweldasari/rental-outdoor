@@ -119,7 +119,9 @@ foreach ($items as $i => $id) {
 
         foreach ($paket->detail as $d) {
 
-            $stok = StokCabang::findOrFail($d->stok_cabang_id);
+            $stok = StokCabang::where('idstok', $d->stok_cabang_id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
             $jumlahPotong = $d->qty * $qty;
 
@@ -139,7 +141,9 @@ foreach ($items as $i => $id) {
 
         foreach ($paket->detail as $d) {
 
-            $produk = Produk::findOrFail($d->produk_idproduk);
+            $produk = Produk::where('idproduk', $d->produk_idproduk)
+            ->lockForUpdate()
+            ->firstOrFail();
 
             $jumlahPotong = $d->qty * $qty;
 
@@ -147,7 +151,7 @@ foreach ($items as $i => $id) {
                 throw new \Exception('Stok paket pusat tidak mencukupi');
             }
 
-            $produk->decrement('stok_pusat', $jumlahPotong);
+            $produk->decrement('stok_pusat', $jumlahPotong); //lock for update
         }
     }
 
@@ -195,7 +199,10 @@ foreach ($items as $i => $id) {
 
                 if ($tipe === 'cabang') {
 
-                    $stok = StokCabang::with('produk')->findOrFail($id);
+                    $stok = StokCabang::with('produk')
+                    ->where('idstok', $id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
                     if ($qty > $stok->jumlah) {
                         throw new \Exception('Stok cabang tidak mencukupi');
@@ -208,7 +215,9 @@ foreach ($items as $i => $id) {
 
                 } else {
 
-                    $produk = Produk::findOrFail($id);
+                    $produk = Produk::where('idproduk', $id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
                     if ($qty > $produk->stok_pusat) {
                         throw new \Exception('Stok pusat tidak mencukupi');
@@ -757,6 +766,7 @@ public function reservasi(Request $request, $idpenyewa)
 
             $stok = StokCabang::where('idstok', $d->stok_cabang_id)
                 ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
+                ->lockForUpdate()
                 ->firstOrFail();
 
             $jumlahPotong = $d->qty * $qty;
@@ -800,6 +810,7 @@ public function reservasi(Request $request, $idpenyewa)
 
         $stok = StokCabang::where('idstok', $id)
             ->where('cabang_idcabang', $adminCabang->cabang_idcabang)
+            ->lockForUpdate()
             ->firstOrFail();
 
         if ($qty > $stok->jumlah) {
@@ -981,7 +992,9 @@ public function reservasiPusat(Request $request, $idpenyewa)
                         throw new \Exception('Detail paket tidak valid');
                     }
 
-                    $produk = Produk::findOrFail($d->produk_idproduk);
+                    $produk = Produk::where('idproduk', $d->produk_idproduk)
+                        ->lockForUpdate()
+                        ->firstOrFail();
 
                     $jumlahPotong = $d->qty * $qty;
 
@@ -1022,7 +1035,9 @@ $totalProduk += $qty;
             // ================= PRODUK =================
             else {
 
-                $produk = Produk::findOrFail($id);
+                $produk = Produk::where('idproduk', $id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
                 if ($qty > $produk->stok_pusat) {
                     throw new \Exception('Stok pusat tidak cukup');

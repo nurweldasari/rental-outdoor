@@ -285,7 +285,6 @@ public function kirimOtp(Request $request)
 
         return response()->json([
             'status' => 'success',
-            'otp_debug' => $otp // 🔥 hapus ini nanti kalau production
         ]);
 
     } catch (\Exception $e) {

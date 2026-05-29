@@ -7,24 +7,27 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
-
 class RoleMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle($request, Closure $next, ...$roles)
-{
-    if (!Auth::check()) {
-        abort(401);
-    }
+    public function handle(
+        Request $request,
+        Closure $next,
+        ...$roles
+    ): Response {
 
-    if (!in_array(Auth::user()->status, $roles)) {
-        abort(403);
-    }
+        // cek login
+        if (!Auth::check()) {
+            abort(401);
+        }
 
-    return $next($request);
-}
+        // cek role/status user
+        if (!in_array(Auth::user()->status, $roles)) {
+            abort(403, 'Akses ditolak');
+        }
+
+        return $next($request);
+    }
 }
