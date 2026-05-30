@@ -12,6 +12,7 @@ use App\Models\Permintaan;
 use App\Models\PermintaanProduk;
 use App\Models\Cabang;
 use App\Models\Kategori;
+use PHPUnit\Framework\Attributes\Test;
 
 class PermintaanProdukTest extends TestCase
 {
@@ -208,5 +209,63 @@ public function per_04_konfirmasi_permintaan_produk_berhasil()
         $response->assertViewHas('permintaan');
     }
 
-   
+  
+#[Test]
+public function tc_da_06_produk_tidak_dipilih()
+{
+    $user = User::factory()->create();
+
+    $cabang = Cabang::create([
+        'nama_cabang' => 'Cabang Test',
+        'status_cabang' => 'aktif',
+        'lokasi' => 'Banyuwangi'
+    ]);
+
+    AdminCabang::create([
+        'users_idusers' => $user->idusers,
+        'cabang_idcabang' => $cabang->idcabang,
+    ]);
+
+    $response = $this->actingAs($user)
+        ->from(route('permintaan_produk.create'))
+        ->post(route('permintaan_produk.store'), [
+            'produk_id' => [], // kosong
+            'jumlah_diminta' => [5],
+            'keterangan' => 'Butuh cepat'
+        ]);
+
+    $response->assertSessionHasErrors('produk_id');
+}
+#[Test]
+public function tc_da_07_jumlah_permintaan_kosong()
+{
+    $user = User::factory()->create();
+
+    $cabang = Cabang::create([
+        'nama_cabang' => 'Cabang Test',
+        'status_cabang' => 'aktif',
+        'lokasi' => 'Banyuwangi'
+    ]);
+
+    AdminCabang::create([
+        'users_idusers' => $user->idusers,
+        'cabang_idcabang' => $cabang->idcabang,
+    ]);
+
+    $kategori = Kategori::factory()->create();
+
+    $produk = Produk::factory()->create([
+        'kategori_idkategori' => $kategori->idkategori
+    ]);
+
+    $response = $this->actingAs($user)
+        ->from(route('permintaan_produk.create'))
+        ->post(route('permintaan_produk.store'), [
+            'produk_id' => [$produk->idproduk],
+            'jumlah_diminta' => [''], // kosong
+            'keterangan' => 'Butuh cepat'
+        ]);
+
+    $response->assertSessionHasErrors('jumlah_diminta.0');
+}
 }

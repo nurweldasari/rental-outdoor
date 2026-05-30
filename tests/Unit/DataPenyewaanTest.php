@@ -57,73 +57,168 @@ class DataPenyewaanTest extends TestCase
             'status_penyewaan' => $status,
             'metode_bayar' => 'transfer',
             'batas_pembayaran' => now()->addDay(),
-
-            // 🔥 FIX FK VALID
             'penyewa_idpenyewa' => $penyewa->idpenyewa,
             'cabang_idcabang' => $cabang->idcabang,
             'admin_pusat_idadmin_pusat' => $adminPusat->idadmin_pusat,
         ]);
     }
 
-    /** @test */
-    public function pen_01_admin_dapat_melihat_daftar_penyewaan()
+    /**
+     * TC-PS-01
+     */
+    public function test_pen_01_admin_dapat_melihat_daftar_penyewaan()
+{
+    [$user, $cabang] = $this->makeAdmin();
+
+    $penyewaan = $this->createPenyewaan($cabang);
+
+    $response = $this->actingAs($user)
+        ->get(route('data_penyewaan'));
+
+    $response->assertStatus(200);
+    $response->assertViewIs('data_penyewaan');
+
+    $this->assertDatabaseHas('penyewaan', [
+        'idpenyewaan' => $penyewaan->idpenyewaan
+    ]);
+}
+    /**
+     * TC-PS-02
+     */
+    public function test_pen_02_admin_dapat_menyetujui_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 
-        $this->actingAs($user)
-            ->get(route('data_penyewaan'))
-            ->assertStatus(200)
-            ->assertViewIs('data_penyewaan');
-    }
-
-    /** @test */
-    public function pen_02_admin_dapat_menyetujui_penyewaan()
-    {
-        [$user, $cabang] = $this->makeAdmin();
-
-        $penyewaan = $this->createPenyewaan($cabang);
+        $penyewaan = $this->createPenyewaan(
+            $cabang,
+            'menunggu_pembayaran'
+        );
 
         $this->actingAs($user)
-            ->post(route('admin.konfirmasi_bayar', $penyewaan->idpenyewaan))
+            ->post(
+                route(
+                    'admin.konfirmasi_bayar',
+                    $penyewaan->idpenyewaan
+                )
+            )
             ->assertSessionHas('success');
-            /** cek status apakah status berubah */
+
+        $this->assertDatabaseHas('penyewaan', [
+            'idpenyewaan' => $penyewaan->idpenyewaan,
+            'status_penyewaan' => 'sedang_disewa'
+        ]);
     }
 
-    /** @test */
-    public function pen_03_admin_dapat_membatalkan_penyewaan()
+    /**
+     * TC-PS-03
+     */
+    public function test_pen_03_admin_dapat_membatalkan_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 
-        $penyewaan = $this->createPenyewaan($cabang);
+        $penyewaan = $this->createPenyewaan(
+            $cabang,
+            'menunggu_pembayaran'
+        );
 
         $this->actingAs($user)
-            ->post(route('admin.penyewaan.cancel', $penyewaan->idpenyewaan))
+            ->post(
+                route(
+                    'admin.penyewaan.cancel',
+                    $penyewaan->idpenyewaan
+                )
+            )
             ->assertRedirect();
+
+        $this->assertDatabaseHas('penyewaan', [
+            'idpenyewaan' => $penyewaan->idpenyewaan,
+            'status_penyewaan' => 'dibatalkan'
+        ]);
     }
 
-    /** @test */
-    public function pen_04_admin_dapat_melihat_detail_penyewaan()
+    /**
+     * TC-PS-04
+     */
+    public function test_pen_04_admin_dapat_melihat_detail_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 
         $penyewaan = $this->createPenyewaan($cabang);
 
         $this->actingAs($user)
-            ->get(route('admin.penyewaan.detail', $penyewaan->idpenyewaan))
+            ->get(
+                route(
+                    'admin.penyewaan.detail',
+                    $penyewaan->idpenyewaan
+                )
+            )
             ->assertStatus(200)
-            ->assertViewIs('detail_penyewaan');
-            /** view has */
+            ->assertViewIs('detail_penyewaan')
+            ->assertViewHas('penyewaan');
     }
 
-    /** @test */
-    public function pen_05_admin_dapat_menyelesaikan_penyewaan()
+    /**
+     * TC-PS-05
+     */
+    public function test_pen_05_admin_dapat_menyelesaikan_penyewaan()
     {
         [$user, $cabang] = $this->makeAdmin();
 
-        $penyewaan = $this->createPenyewaan($cabang, 'sedang_disewa');
+        $penyewaan = $this->createPenyewaan(
+            $cabang,
+            'sedang_disewa'
+        );
 
         $this->actingAs($user)
-            ->post(route('admin.penyewaan.selesai', $penyewaan->idpenyewaan))
+            ->post(
+                route(
+                    'admin.penyewaan.selesai',
+                    $penyewaan->idpenyewaan
+                )
+            )
             ->assertRedirect(route('data_riwayat'));
+
+        $this->assertDatabaseHas('penyewaan', [
+            'idpenyewaan' => $penyewaan->idpenyewaan,
+            'status_penyewaan' => 'selesai'
+        ]);
+    }
+
+    /**
+     * TC-PS-09
+     */
+    public function test_pen_06_detail_penyewaan_tidak_ditemukan()
+    {
+        [$user, $cabang] = $this->makeAdmin();
+
+        $this->actingAs($user)
+            ->get(route('admin.penyewaan.detail', 999))
+            ->assertStatus(404);
+    }
+
+    /**
+     * TC-PS-10
+     */
+    public function test_pen_07_konfirmasi_pengembalian_belum_aktif()
+    {
+        [$user, $cabang] = $this->makeAdmin();
+
+        $penyewaan = $this->createPenyewaan(
+            $cabang,
+            'menunggu_pembayaran'
+        );
+
+        $this->actingAs($user)
+            ->post(
+                route(
+                    'admin.penyewaan.selesai',
+                    $penyewaan->idpenyewaan
+                )
+            );
+
+        $this->assertDatabaseHas('penyewaan', [
+            'idpenyewaan' => $penyewaan->idpenyewaan,
+            'status_penyewaan' => 'menunggu_pembayaran'
+        ]);
     }
 }
