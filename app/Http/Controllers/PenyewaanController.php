@@ -413,7 +413,8 @@ public function adminIndex(Request $request)
         'sedang_disewa',
         'dibatalkan'
     ])
-    ->orderBy('tanggal_sewa', 'desc');
+    ->orderByDesc('tanggal_sewa')
+    ->orderByDesc('created_at'); 
 
     // Filter pencarian nama / no telepon penyewa
     $query->whereHas('penyewa.user', function ($q) use ($request) {
