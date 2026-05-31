@@ -86,21 +86,6 @@
         </select>
     </div>
 
-    <div class="periode">
-        <span>Pilih Tahun</span>
-
-        <select name="tahun_pendapatan" onchange="this.form.submit()">
-
-            @for($y=date('Y'); $y>=2023; $y--)
-                <option value="{{ $y }}"
-                    {{ $tahunPendapatan == $y ? 'selected' : '' }}>
-                    {{ $y }}
-                </option>
-            @endfor
-
-        </select>
-    </div>
-
 </form>
 
       @forelse($pendapatanList as $p)
