@@ -17,18 +17,104 @@ class DistribusiProdukTest extends TestCase
 {
     use RefreshDatabase;
 
-    // ================================
-    // TC-DIST-01: Kirim sesuai permintaan
-    // ================================
-    public function test_tc_dist_01_kirim_sesuai_jumlah_permintaan()
+    // =====================================================
+    // HELPER OWNER
+    // =====================================================
+    private function owner()
     {
-        $owner = User::factory()->create(['status' => 'owner']);
+        $password = 'password123';
+
+        $user = User::factory()->create([
+            'username' => 'owner1',
+            'password' => bcrypt($password),
+            'status' => 'owner'
+        ]);
+
+        return [$user, $password];
+    }
+
+    // =====================================================
+    // HELPER LOGIN OWNER
+    // =====================================================
+    private function loginOwner($username, $password)
+    {
+        return $this->post('/login', [
+            'username' => $username,
+            'password' => $password
+        ]);
+    }
+
+    // =====================================================
+    // TC-DIST-01
+    // Owner berhasil login
+    // =====================================================
+    public function test_tc_dist_01_owner_berhasil_login()
+    {
+        [$owner, $password] = $this->owner();
+
+        $this->post('/login', [
+            'username' => $owner->username,
+            'password' => $password
+        ]);
+
+        $this->assertAuthenticated();
+
+        $this->assertAuthenticatedAs($owner);
+    }
+
+    // =====================================================
+    // TC-DIST-02
+    // Owner dapat membuka halaman distribusi
+    // =====================================================
+    public function test_tc_dist_02_owner_dapat_membuka_halaman_distribusi()
+    {
+        [$owner, $password] = $this->owner();
+
+        // LOGIN OWNER
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
+        // AKSES HALAMAN
+        $response = $this->get(
+            route('distribusi_produk')
+        );
+
+        // CEK VIEW
+        $response->assertViewIs(
+            'distribusi_produk'
+        );
+
+        // CEK DATA VIEW
+        $response->assertViewHas('permintaan');
+
+        $response->assertViewHas('riwayat');
+
+        // CEK MASIH LOGIN
+        $this->assertAuthenticatedAs($owner);
+    }
+
+    // =====================================================
+    // TC-DIST-03
+    // Mengirim produk sesuai jumlah permintaan
+    // =====================================================
+    public function test_tc_dist_03_kirim_produk_sesuai_permintaan()
+    {
+        [$owner, $password] = $this->owner();
+
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
 
         $produk = Produk::factory()->create([
             'stok_pusat' => 20
         ]);
 
-        $permintaan = Permintaan::factory()->create();
+        $permintaan = Permintaan::factory()->create([
+            'status' => 'menunggu'
+        ]);
 
         $permintaanProduk = PermintaanProduk::factory()->create([
             'permintaan_id' => $permintaan->idpermintaan,
@@ -36,179 +122,237 @@ class DistribusiProdukTest extends TestCase
             'jumlah_diminta' => 10
         ]);
 
-        $response = $this->actingAs($owner)->post(route('distribusi_produk.kirim'), [
-            'jumlah_dikirim' => [
-                $permintaanProduk->id => 10
-            ],
-            'keterangan' => 'test kirim'
-        ]);
+        // KIRIM PRODUK
+        $this->post(
+            route('distribusi_produk.kirim'),
+            [
+                'jumlah_dikirim' => [
+                    $permintaanProduk->id => 10
+                ],
+                'keterangan' => 'test kirim'
+            ]
+        );
 
-        $response->assertRedirect();
-
+        // CEK DISTRIBUSI
         $this->assertDatabaseHas('distribusi_produk', [
             'permintaan_produk_id' => $permintaanProduk->id,
             'jumlah_dikirim' => 10,
             'status_distribusi' => 'dikirim'
         ]);
-    }
 
-    // ================================
-    // TC-DIST-02: Kirim sebagian
-    // ================================
-    public function test_tc_dist_02_kirim_sebagian()
-    {
-        $owner = User::factory()->create(['status' => 'owner']);
-
-        $produk = Produk::factory()->create(['stok_pusat' => 20]);
-
-        $permintaan = Permintaan::factory()->create();
-
-        $permintaanProduk = PermintaanProduk::factory()->create([
-            'permintaan_id' => $permintaan->idpermintaan,
-            'produk_idproduk' => $produk->idproduk,
-            'jumlah_diminta' => 10
+        // CEK STOK BERKURANG
+        $this->assertDatabaseHas('produk', [
+            'idproduk' => $produk->idproduk,
+            'stok_pusat' => 10
         ]);
 
-        $response = $this->actingAs($owner)->post(route('distribusi_produk.kirim'), [
-            'jumlah_dikirim' => [
-                $permintaanProduk->id => 5
-            ]
-        ]);
-
-        $response->assertRedirect();
-
-        $this->assertDatabaseHas('distribusi_produk', [
-            'jumlah_dikirim' => 5
+        // CEK STATUS PERMINTAAN
+        $this->assertDatabaseHas('permintaan', [
+            'idpermintaan' => $permintaan->idpermintaan,
+            'status' => 'disetujui'
         ]);
     }
 
-    // ================================
-    // TC-DIST-03: Melebihi permintaan
-    // ================================
-    public function test_tc_dist_03_kirim_melebihi_permintaan()
+    // =====================================================
+    // TC-DIST-04
+    // Mengirim sebagian produk
+    // =====================================================
+    public function test_tc_dist_04_kirim_sebagian_produk()
     {
-        $owner = User::factory()->create(['status' => 'owner']);
+        [$owner, $password] = $this->owner();
 
-        $produk = Produk::factory()->create(['stok_pusat' => 20]);
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
 
-        $permintaan = Permintaan::factory()->create();
-
-        $permintaanProduk = PermintaanProduk::factory()->create([
-            'permintaan_id' => $permintaan->idpermintaan,
-            'produk_idproduk' => $produk->idproduk,
-            'jumlah_diminta' => 10
-        ]);
-
-        $response = $this->actingAs($owner)->post(route('distribusi_produk.kirim'), [
-            'jumlah_dikirim' => [
-                $permintaanProduk->id => 15
-            ]
-        ]);
-
-        $response->assertSessionHas('error');
-    }
-
-    // ================================
-    // TC-DIST-04: Jumlah tidak valid
-    // ================================
-    public function test_tc_dist_04_jumlah_tidak_valid()
-{
-    $owner = User::factory()->create(['status' => 'owner']);
-
-    $produk = Produk::factory()->create(['stok_pusat' => 20]);
-
-    $permintaan = Permintaan::factory()->create();
-
-    $permintaanProduk = PermintaanProduk::factory()->create([
-        'permintaan_id' => $permintaan->idpermintaan,
-        'produk_idproduk' => $produk->idproduk,
-        'jumlah_diminta' => 10
-    ]);
-
-    $response = $this->actingAs($owner)->post(route('distribusi_produk.kirim'), [
-        'jumlah_dikirim' => [
-            $permintaanProduk->id => 0
-        ]
-    ]);
-
-    $response->assertInvalid(['jumlah_dikirim.1']);
-}
-    // ================================
-    // TC-DIST-05: Stok cukup
-    // ================================
-    public function test_tc_dist_05_stok_cukup()
-    {
-        $stok = 20;
-        $kirim = 10;
-
-        $this->assertTrue($stok >= $kirim);
-    }
-
-    // ================================
-    // TC-DIST-06: Pengurangan stok pusat
-    // ================================
-    public function test_tc_dist_06_pengurangan_stok()
-    {
         $produk = Produk::factory()->create([
             'stok_pusat' => 20
         ]);
 
-        $produk->stok_pusat -= 5;
-        $produk->save();
+        $permintaan = Permintaan::factory()->create([
+            'status' => 'menunggu'
+        ]);
 
+        $permintaanProduk = PermintaanProduk::factory()->create([
+            'permintaan_id' => $permintaan->idpermintaan,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah_diminta' => 10
+        ]);
+
+        $this->post(
+            route('distribusi_produk.kirim'),
+            [
+                'jumlah_dikirim' => [
+                    $permintaanProduk->id => 5
+                ]
+            ]
+        );
+
+        $this->assertDatabaseHas('distribusi_produk', [
+            'permintaan_produk_id' => $permintaanProduk->id,
+            'jumlah_dikirim' => 5
+        ]);
+
+        // STOK BERKURANG 5
         $this->assertDatabaseHas('produk', [
             'idproduk' => $produk->idproduk,
             'stok_pusat' => 15
         ]);
     }
 
-    // ================================
-    // TC-DIST-07: Stok cabang bertambah
-    // ================================
-    public function test_tc_dist_07_stok_cabang()
+    // =====================================================
+    // TC-DIST-05
+    // Jumlah kirim melebihi permintaan
+    // =====================================================
+    public function test_tc_dist_05_jumlah_kirim_melebihi_permintaan()
     {
-        $cabang = Cabang::factory()->create();
-        $produk = Produk::factory()->create();
+        [$owner, $password] = $this->owner();
 
-        $stok = StokCabang::create([
-            'cabang_idcabang' => $cabang->idcabang,
-            'produk_idproduk' => $produk->idproduk,
-            'jumlah' => 0
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
+        $produk = Produk::factory()->create([
+            'stok_pusat' => 20
         ]);
 
-        $stok->jumlah += 10;
-        $stok->save();
+        $permintaan = Permintaan::factory()->create([
+            'status' => 'menunggu'
+        ]);
 
-        $this->assertEquals(10, $stok->jumlah);
+        $permintaanProduk = PermintaanProduk::factory()->create([
+            'permintaan_id' => $permintaan->idpermintaan,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah_diminta' => 10
+        ]);
+
+        $response = $this->post(
+            route('distribusi_produk.kirim'),
+            [
+                'jumlah_dikirim' => [
+                    $permintaanProduk->id => 15
+                ]
+            ]
+        );
+
+        $response->assertSessionHas('error');
+
+        // DISTRIBUSI TIDAK TERSIMPAN
+        $this->assertDatabaseMissing('distribusi_produk', [
+            'permintaan_produk_id' => $permintaanProduk->id,
+            'jumlah_dikirim' => 15
+        ]);
     }
 
-    // ================================
-    // TC-DIST-08: Status disetujui
-    // ================================
-    public function test_tc_dist_08_status_disetujui()
+    // =====================================================
+    // TC-DIST-06
+    // Jumlah kirim tidak valid
+    // =====================================================
+    public function test_tc_dist_06_jumlah_kirim_tidak_valid()
     {
-        $status = 'disetujui';
+        [$owner, $password] = $this->owner();
 
-        $this->assertEquals('disetujui', $status);
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
+        $produk = Produk::factory()->create([
+            'stok_pusat' => 20
+        ]);
+
+        $permintaan = Permintaan::factory()->create([
+            'status' => 'menunggu'
+        ]);
+
+        $permintaanProduk = PermintaanProduk::factory()->create([
+            'permintaan_id' => $permintaan->idpermintaan,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah_diminta' => 10
+        ]);
+
+        $response = $this->post(
+            route('distribusi_produk.kirim'),
+            [
+                'jumlah_dikirim' => [
+                    $permintaanProduk->id => 0
+                ]
+            ]
+        );
+
+        $response->assertInvalid([
+            'jumlah_dikirim.' . $permintaanProduk->id
+        ]);
+
+        // DATA TIDAK TERSIMPAN
+        $this->assertDatabaseMissing('distribusi_produk', [
+            'permintaan_produk_id' => $permintaanProduk->id
+        ]);
     }
 
-    // ================================
-    // TC-DIST-09: Status dikirim
-    // ================================
-    public function test_tc_dist_09_status_dikirim()
+    // =====================================================
+    // TC-DIST-07
+    // Stok cabang bertambah saat distribusi diterima
+    // =====================================================
+    public function test_tc_dist_07_stok_cabang_bertambah()
     {
-        $status = 'dikirim';
+        [$owner, $password] = $this->owner();
 
-        $this->assertEquals('dikirim', $status);
-    }
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
 
-    // ================================
-    // TC-DIST-10: Status diterima
-    // ================================
-    public function test_tc_dist_10_status_diterima()
-    {
-        $status = 'diterima';
+        $cabang = Cabang::factory()->create();
 
-        $this->assertEquals('diterima', $status);
+        $produk = Produk::factory()->create([
+            'stok_pusat' => 20
+        ]);
+
+        $permintaan = Permintaan::factory()->create([
+            'cabang_idcabang' => $cabang->idcabang,
+            'status' => 'disetujui'
+        ]);
+
+        $permintaanProduk = PermintaanProduk::factory()->create([
+            'permintaan_id' => $permintaan->idpermintaan,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah_diminta' => 10
+        ]);
+
+        DistribusiProduk::create([
+            'permintaan_produk_id' => $permintaanProduk->id,
+            'tanggal_distribusi' => now(),
+            'jumlah_dikirim' => 10,
+            'status_distribusi' => 'dikirim'
+        ]);
+
+        $this->post(
+            route(
+                'distribusi_produk.terima',
+                $permintaan->idpermintaan
+            )
+        );
+
+        // CEK STOK CABANG
+        $this->assertDatabaseHas('stok_cabang', [
+            'cabang_idcabang' => $cabang->idcabang,
+            'produk_idproduk' => $produk->idproduk,
+            'jumlah' => 10
+        ]);
+
+        // CEK STATUS DISTRIBUSI
+        $this->assertDatabaseHas('distribusi_produk', [
+            'permintaan_produk_id' => $permintaanProduk->id,
+            'status_distribusi' => 'diterima'
+        ]);
+
+        // CEK STATUS HEADER
+        $this->assertDatabaseHas('permintaan', [
+            'idpermintaan' => $permintaan->idpermintaan,
+            'status' => 'sampai'
+        ]);
     }
 }

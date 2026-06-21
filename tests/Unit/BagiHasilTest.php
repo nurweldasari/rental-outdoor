@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,20 +12,94 @@ use App\Models\Cabang;
 use App\Models\Penyewaan;
 use App\Models\BagiHasil;
 use App\Models\SkalaBagiHasil;
-use App\Http\Controllers\BagiHasilController;
 
 class BagiHasilTest extends TestCase
 {
     use RefreshDatabase;
 
-    // =========================
-    // TC-BH-01: Hitung otomatis bagi hasil
-    // =========================
-    public function test_tc_bh_01_perhitungan_otomatis()
+    // =====================================================
+    // HELPER OWNER
+    // =====================================================
+    private function owner()
     {
-        $owner = User::factory()->create([
+        $password = 'password123';
+
+        $user = User::factory()->create([
+            'username' => 'owner1',
+            'password' => bcrypt($password),
             'status' => 'owner'
         ]);
+
+        return [$user, $password];
+    }
+
+    // =====================================================
+    // HELPER LOGIN OWNER
+    // =====================================================
+    private function loginOwner($username, $password)
+    {
+        return $this->post('/login', [
+            'username' => $username,
+            'password' => $password
+        ]);
+    }
+
+    // =====================================================
+    // TC-BH-01
+    // Owner berhasil login
+    // =====================================================
+    public function test_tc_bh_01_owner_berhasil_login()
+    {
+        [$owner, $password] = $this->owner();
+
+        $response = $this->post('/login', [
+            'username' => $owner->username,
+            'password' => $password
+        ]);
+
+        $response->assertRedirect(
+            route('dashboard')
+        );
+
+        $this->assertAuthenticated();
+    }
+
+    // =====================================================
+    // TC-BH-02
+    // Owner dapat membuka halaman bagi hasil
+    // =====================================================
+    public function test_tc_bh_02_owner_dapat_membuka_halaman_bagi_hasil()
+    {
+        [$owner, $password] = $this->owner();
+
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
+        $response = $this->get('/bagi-hasil');
+
+        $response->assertViewIs(
+            'bagi_hasil_owner'
+        );
+
+        $response->assertViewHas('cabangs');
+
+        $response->assertViewHas('riwayat');
+    }
+
+    // =====================================================
+    // TC-BH-03
+    // Perhitungan otomatis bagi hasil
+    // =====================================================
+    public function test_tc_bh_03_perhitungan_otomatis_bagi_hasil()
+    {
+        [$owner, $password] = $this->owner();
+
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
 
         $cabang = Cabang::factory()->create();
 
@@ -37,91 +110,225 @@ class BagiHasilTest extends TestCase
             'tanggal_sewa' => now(),
         ]);
 
-        BagiHasil::factory()->create([
+        SkalaBagiHasil::factory()->create([
             'cabang_idcabang' => $cabang->idcabang,
-            'bulan' => now()->format('Y-m'),
-            'presentase_owner' => 50,
-            'presentase_cabang' => 50,
-            'nominal_owner' => 500000,
-            'nominal_cabang' => 500000,
-            'status' => 'terkunci',
-        ]);
-
-        $response = $this->actingAs($owner)
-    ->get('/bagi-hasil');
-
-        $response->assertStatus(200);
-    }
-
-    // =========================
-    // TC-BH-02: Simpan ke database
-    // =========================
-    public function test_tc_bh_02_simpan_database()
-    {
-        $owner = User::factory()->create([
-            'status' => 'owner'
-        ]);
-
-        $cabang = Cabang::factory()->create();
-
-        $request = new Request([
-            'cabang_idcabang' => $cabang->idcabang,
-            'bulan' => '2026-01',
-            'presentase_owner' => 50,
-            'presentase_cabang' => 50,
-            'nominal_owner' => 500000,
-            'nominal_cabang' => 500000,
-        ]);
-
-        $controller = new BagiHasilController();
-
-        $this->actingAs($owner);
-
-        $controller->store($request);
-
-        $this->assertDatabaseHas('bagi_hasil', [
-            'cabang_idcabang' => $cabang->idcabang,
-            'bulan' => '2026-01',
-            'status' => 'terkunci',
-        ]);
-    }
-
-    // =========================
-    // TC-BH-03: Update skala
-    // =========================
-    public function test_tc_bh_03_update_skala()
-    {
-        $skala = SkalaBagiHasil::factory()->create([
-            'owner' => 70,
-            'cabang' => 30,
-        ]);
-
-        $this->assertEquals(70, $skala->owner);
-        $this->assertEquals(30, $skala->cabang);
-    }
-
-    // =========================
-    // TC-BH-04: Batal perubahan
-    // =========================
-    public function test_tc_bh_04_batal_perubahan()
-    {
-        $skala = SkalaBagiHasil::factory()->create([
             'owner' => 50,
             'cabang' => 50,
         ]);
 
-        $backup = $skala->owner;
+        $response = $this->get(
+            '/bagi-hasil/detail/' . $cabang->idcabang
+        );
 
-        $skala->owner = $backup;
+        $response->assertViewIs(
+            'bagi_hasil_owner'
+        );
 
-        $this->assertEquals(50, $skala->owner);
+        $response->assertViewHas(
+            'totalPendapatan',
+            1000000
+        );
+
+        $response->assertViewHas(
+            'hasilOwner',
+            500000
+        );
+
+        $response->assertViewHas(
+            'hasilCabang',
+            500000
+        );
     }
 
-    // =========================
-    // TC-BH-05: Lihat bukti fee
-    // =========================
-    public function test_tc_bh_05_lihat_bukti_fee()
+    // =====================================================
+    // TC-BH-04
+    // Simpan bagi hasil ke database
+    // =====================================================
+    public function test_tc_bh_04_simpan_bagi_hasil_ke_database()
     {
+        [$owner, $password] = $this->owner();
+
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
+        $cabang = Cabang::factory()->create();
+
+        $response = $this->post(
+            '/bagi-hasil/store',
+            [
+                'cabang_idcabang' => $cabang->idcabang,
+                'bulan' => '2026-01',
+                'presentase_owner' => 50,
+                'presentase_cabang' => 50,
+                'nominal_owner' => 500000,
+                'nominal_cabang' => 500000,
+            ]
+        );
+
+        $response->assertRedirect();
+
+        $response->assertSessionHas(
+            'success'
+        );
+
+        $this->assertDatabaseHas('bagi_hasil', [
+            'cabang_idcabang' => $cabang->idcabang,
+            'bulan' => '2026-01',
+            'presentase_owner' => 50,
+            'presentase_cabang' => 50,
+            'nominal_owner' => 500000,
+            'nominal_cabang' => 500000,
+            'status' => 'terkunci',
+        ]);
+    }
+
+    // =====================================================
+    // TC-BH-05
+    // Gagal simpan karena sudah closing
+    // =====================================================
+    public function test_tc_bh_05_gagal_simpan_karena_sudah_closing()
+    {
+        [$owner, $password] = $this->owner();
+
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
+        $cabang = Cabang::factory()->create();
+
+        BagiHasil::factory()->create([
+            'cabang_idcabang' => $cabang->idcabang,
+            'bulan' => '2026-01',
+        ]);
+
+        $response = $this->post(
+            '/bagi-hasil/store',
+            [
+                'cabang_idcabang' => $cabang->idcabang,
+                'bulan' => '2026-01',
+                'presentase_owner' => 50,
+                'presentase_cabang' => 50,
+                'nominal_owner' => 500000,
+                'nominal_cabang' => 500000,
+            ]
+        );
+
+        $response->assertSessionHas(
+            'error'
+        );
+    }
+
+    // =====================================================
+    // TC-BH-06
+    // Konfirmasi bukti fee
+    // =====================================================
+    public function test_tc_bh_06_konfirmasi_bukti_fee()
+    {
+        [$owner, $password] = $this->owner();
+
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
+        $data = BagiHasil::factory()->create([
+            'status' => 'menunggu'
+        ]);
+
+        $response = $this->post(
+            '/bagi-hasil/' . $data->idbagi_hasil . '/konfirmasi'
+        );
+
+        $response->assertSessionHas(
+            'success'
+        );
+
+        $this->assertDatabaseHas('bagi_hasil', [
+            'idbagi_hasil' => $data->idbagi_hasil,
+            'status' => 'terkonfirmasi'
+        ]);
+    }
+
+    // =====================================================
+    // TC-BH-07
+    // Menolak bukti fee
+    // =====================================================
+    public function test_tc_bh_07_menolak_bukti_fee()
+    {
+        [$owner, $password] = $this->owner();
+
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
+        $data = BagiHasil::factory()->create([
+            'status' => 'menunggu'
+        ]);
+
+        $response = $this->post(
+            '/bagi-hasil/' . $data->idbagi_hasil . '/tolak'
+        );
+
+        $response->assertSessionHas(
+            'success'
+        );
+
+        $this->assertDatabaseHas('bagi_hasil', [
+            'idbagi_hasil' => $data->idbagi_hasil,
+            'status' => 'ditolak'
+        ]);
+    }
+
+    // =====================================================
+    // TC-BH-08
+    // Upload bukti fee
+    // =====================================================
+    public function test_tc_bh_08_upload_bukti_fee()
+    {
+        Storage::fake('public');
+
+        $data = BagiHasil::factory()->create([
+            'status' => 'terkunci'
+        ]);
+
+        $file = UploadedFile::fake()->image(
+            'bukti.jpg'
+        );
+
+        $response = $this->post(
+            '/bagi-hasil/upload/' . $data->idbagi_hasil,
+            [
+                'bukti_fee' => $file
+            ]
+        );
+
+        $response->assertSessionHas(
+            'success'
+        );
+
+        $this->assertDatabaseHas('bagi_hasil', [
+            'idbagi_hasil' => $data->idbagi_hasil,
+            'status' => 'menunggu'
+        ]);
+    }
+
+    // =====================================================
+    // TC-BH-09
+    // Melihat bukti fee
+    // =====================================================
+    public function test_tc_bh_09_melihat_bukti_fee()
+    {
+        [$owner, $password] = $this->owner();
+
+        $this->loginOwner(
+            $owner->username,
+            $password
+        );
+
         $cabang = Cabang::factory()->create();
 
         BagiHasil::factory()->create([
@@ -130,73 +337,16 @@ class BagiHasilTest extends TestCase
             'status' => 'menunggu'
         ]);
 
-        $data = BagiHasil::whereNotNull('bukti_fee')->get();
+        $response = $this->get(
+            '/bagi-hasil/detail/' . $cabang->idcabang
+        );
 
-        $this->assertCount(1, $data);
-    }
+        $response->assertViewIs(
+            'bagi_hasil_owner'
+        );
 
-    // =========================
-    // TC-BH-06: Konfirmasi bukti
-    // =========================
-    public function test_tc_bh_06_konfirmasi_bukti()
-    {
-        $data = BagiHasil::factory()->create([
-            'status' => 'menunggu'
-        ]);
-
-        $controller = new BagiHasilController();
-
-        $controller->konfirmasi($data->idbagi_hasil);
-
-        $this->assertDatabaseHas('bagi_hasil', [
-            'idbagi_hasil' => $data->idbagi_hasil,
-            'status' => 'terkonfirmasi'
-        ]);
-    }
-
-    // =========================
-    // TC-BH-07: Tolak bukti
-    // =========================
-    public function test_tc_bh_07_tolak_bukti()
-    {
-        $data = BagiHasil::factory()->create([
-            'status' => 'menunggu'
-        ]);
-
-        $controller = new BagiHasilController();
-
-        $controller->tolak($data->idbagi_hasil);
-
-        $this->assertDatabaseHas('bagi_hasil', [
-            'idbagi_hasil' => $data->idbagi_hasil,
-            'status' => 'ditolak'
-        ]);
-    }
-
-    // =========================
-    // TC-BH-08: Upload bukti fee
-    // =========================
-    public function test_tc_bh_08_upload_bukti()
-    {
-        Storage::fake('public');
-
-        $data = BagiHasil::factory()->create([
-            'status' => 'terkunci'
-        ]);
-
-        $file = UploadedFile::fake()->image('bukti.jpg');
-
-        $request = new Request();
-
-        $request->files->set('bukti_fee', $file);
-
-        $controller = new BagiHasilController();
-
-        $controller->uploadBukti($request, $data->idbagi_hasil);
-
-        $this->assertDatabaseHas('bagi_hasil', [
-            'idbagi_hasil' => $data->idbagi_hasil,
-            'status' => 'menunggu'
-        ]);
+        $response->assertViewHas(
+            'buktiFee'
+        );
     }
 }
