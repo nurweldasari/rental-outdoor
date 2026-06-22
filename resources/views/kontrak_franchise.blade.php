@@ -14,22 +14,26 @@
 
 <div class="container-kontrak">
 
-    <div class="card-kontrak">
+        @php
+            $file = asset('storage/' . $adminCabang->gambar_mou);
+            $ext = strtolower(pathinfo($adminCabang->gambar_mou, PATHINFO_EXTENSION));
+        @endphp
 
-        <img 
-            src="{{ asset('storage/' . $adminCabang->gambar_mou) }}" 
-            alt="MoU Franchise"
-            class="gambar-mou"
-        >
+        @if($ext === 'pdf')
+            <iframe
+                src="{{ $file }}"
+                width="100%"
+                height="800px"
+                style="border:none;">
+            </iframe>
+        @else
+            <img
+                src="{{ $file }}"
+                alt="MoU Franchise"
+                class="gambar-mou">
+        @endif
 
-        <a href="{{ asset('storage/' . $adminCabang->gambar_mou) }}" 
-           target="_blank"
-           class="btn-mou">
-            <i class="fa-solid fa-eye"></i> Perbesar
-        </a>
-
-    </div>
-
+    
 </div>
 
 @endsection

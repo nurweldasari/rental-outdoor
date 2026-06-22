@@ -44,6 +44,7 @@
         <i class="fa-solid fa-user"></i>
         <input type="text"
                name="nama"
+               value="{{ old('nama') }}"
                placeholder="Nama Lengkap"
                required
                minlength="3"
@@ -57,6 +58,7 @@
         <i class="fa-solid fa-user-circle"></i>
         <input type="text"
                name="username"
+               value="{{ old('username') }}"
                placeholder="Username"
                required>
     </div>
@@ -81,6 +83,7 @@
         <i class="fa-solid fa-phone"></i>
         <input type="text"
                name="no_telepon"
+               value="{{ old('no_telepon') }}"
                placeholder="No. Telepon"
                required
                pattern="[0-9]{10,15}"
@@ -93,7 +96,7 @@
         <textarea name="alamat"
                   rows="2"
                   placeholder="Alamat"
-                  required></textarea>
+                  required>{{ old('alamat') }}</textarea>
     </div>
 
     <!-- FILE -->
@@ -105,12 +108,12 @@
                    id="gambar_identitas"
                    hidden
                    required
-                   accept=".jpg,.jpeg,.png">
+                   accept=".jpg,.jpeg,.png,.pdf">
         </label>
 
         <div class="upload-area" id="file-name">
             <i class="fa-solid fa-cloud-arrow-up"></i>
-            JPG / PNG max 2MB
+            JPG / PNG / PDF max 2MB
         </div>
     </div>
 <div id="uploadSuccess" class="upload-success" style="display:none;">
@@ -132,8 +135,14 @@
         fileInput.addEventListener('change', function () {
     if (this.files.length > 0) {
 
+        const ext = this.files[0].name.split('.').pop().toLowerCase();
+
+        const icon = ext === 'pdf'
+            ? 'fa-file-pdf'
+            : 'fa-file-image';
+
         fileName.innerHTML = `
-            <i class="fa-solid fa-file-image"></i>
+            <i class="fa-solid ${icon}"></i>
             ${this.files[0].name}
         `;
 

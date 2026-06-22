@@ -100,7 +100,7 @@ class AuthController extends Controller
         'password' => 'required|string|min:6|max:255',
             'no_telepon' => ['required','digits_between:10,15','unique:users,no_telepon','regex:/^08[0-9]{8,11}$/' ],
             'alamat' => 'required|string|max:255',
-            'gambar_identitas' => 'bail|required|image|mimes:jpg,jpeg,png|max:2048',
+            'gambar_identitas' => 'bail|required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             ],[
         'username.unique' => 'Username sudah digunakan',
         'password.min' => 'Password minimal 6 karakter',
@@ -109,12 +109,10 @@ class AuthController extends Controller
             'Nomor telepon harus 10-15 digit',
         'no_telepon.regex' =>
             'Nomor telepon harus diawali 08',
-        'gambar_identitas.image' =>
-            'Foto identitas harus JPG/PNG maksimal 2MB',
         'gambar_identitas.mimes' =>
-            'Foto identitas harus JPG/PNG maksimal 2MB',
+        'Identitas harus berupa JPG, PNG, atau PDF maksimal 2MB',
         'gambar_identitas.max' =>
-            'Foto identitas harus JPG/PNG maksimal 2MB',
+         'Ukuran file maksimal 2MB',
     ]);
         DB::beginTransaction();
 
@@ -164,7 +162,7 @@ class AuthController extends Controller
     'password' => 'required|string|min:6|max:255',
     'no_telepon' => [ 'required','string', 'max:20', 'unique:users,no_telepon', 'regex:/^08[0-9]{8,11}$/' ],
     'alamat' => 'required|string',
-    'gambar_mou' => 'bail|required|image|mimes:jpg,jpeg,png|max:2048'
+    'gambar_mou' => 'bail|required|file|mimes:jpg,jpeg,png,pdf|max:2048'
 
 ], [
 
@@ -177,14 +175,11 @@ class AuthController extends Controller
     'no_telepon.regex' =>
         'Nomor telepon harus diawali 08 dan 10-13 digit',
 
-    'gambar_mou.image' =>
-        'Foto MOU harus JPG/PNG maksimal 2MB',
-
     'gambar_mou.mimes' =>
-        'Foto MOU harus JPG/PNG maksimal 2MB',
+    'File MOU harus berupa JPG, PNG, atau PDF maksimal 2MB',
 
     'gambar_mou.max' =>
-        'Foto MOU harus JPG/PNG maksimal 2MB',
+        'File MOU maksimal 2MB',
 
 ]);
 

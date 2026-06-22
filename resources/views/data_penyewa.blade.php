@@ -120,9 +120,9 @@
 
       <!-- KIRI -->
       <div class="modal-left">
-        <img id="modalFoto" src="" alt="Gambar Identitas">
-        <p>Gambar Identitas</p>
-      </div>
+            <div id="previewContainer"></div>
+            <p>Gambar Identitas</p>
+        </div>
 
       <!-- KANAN -->
       <div class="modal-right">
@@ -199,11 +199,33 @@ document.querySelectorAll('.cancel-form').forEach(form => {
 });
 document.querySelectorAll('.btn-detail').forEach(btn => {
     btn.onclick = () => {
+
         modalNama.value = btn.dataset.nama;
         modalUsername.value = btn.dataset.username;
         modalTelepon.value = btn.dataset.telepon;
         modalAlamat.value = btn.dataset.alamat;
-        modalFoto.src = btn.dataset.foto;
+
+        const file = btn.dataset.foto;
+        const ext = file.split('.').pop().toLowerCase();
+
+        const preview = document.getElementById('previewContainer');
+
+        if (ext === 'pdf') {
+            preview.innerHTML = `
+                <iframe
+                    src="${file}"
+                    width="100%"
+                    height="400"
+                    style="border:none;">
+                </iframe>
+            `;
+        } else {
+            preview.innerHTML = `
+                <img id="modalFoto"
+                     src="${file}"
+                     alt="Gambar Identitas">
+            `;
+        }
 
         modalDetailPenyewa.style.display = 'flex';
     };
