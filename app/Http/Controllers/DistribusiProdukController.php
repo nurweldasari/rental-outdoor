@@ -68,8 +68,11 @@ class DistribusiProdukController extends Controller
         }
 
         if ($produk->stok_pusat < $jumlahKirim) {
-            return back()->with('error', 'Stok pusat tidak mencukupi. Sisa stok: ' . $produk->stok_pusat);
-        }
+
+    return back()
+        ->with('error', 'Stok '.$produk->nama_produk.' tidak mencukupi. Sisa stok: '.$produk->stok_pusat)
+        ->with('error_permintaan', $permintaanProduk->permintaan_id);
+}
     }
 
     // ===================== PROSES SIMPAN =====================

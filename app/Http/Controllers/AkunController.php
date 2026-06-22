@@ -37,6 +37,11 @@ class AkunController extends Controller
 
     public function profilcabang(Request $request)
     {
+        $user = Auth::user();
+
+        if (!$user->adminCabang) {
+            abort(403, 'User tidak terhubung ke cabang');
+        }
         $request->validate([
     'nama_cabang' => 'required|string|max:255',
     'lokasi'      => 'required|string|max:255',

@@ -209,9 +209,22 @@
 
 @endsection
 
+@if(session('success'))
+<div class="toast-success" id="toastSuccess">
+    <i class="fa-solid fa-circle-check"></i>
+    <span>{{ session('success') }}</span>
+</div>
+@endif
 @push('scripts')
 <script>
-
+    setTimeout(() => {
+    const toast = document.getElementById('toastSuccess');
+    if (toast) {
+        toast.style.opacity = '0';
+        toast.style.transition = '0.5s';
+        setTimeout(() => toast.remove(), 500);
+    }
+}, 3000);
 /* SEARCH */
 document.getElementById('searchInput').addEventListener('input', function () {
     const keyword = this.value.toLowerCase();

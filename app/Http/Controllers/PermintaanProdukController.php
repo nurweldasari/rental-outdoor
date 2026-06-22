@@ -45,12 +45,33 @@ public function store(Request $request)
         abort(403, 'USER BUKAN ADMIN CABANG');
     }
     $request->validate([
-        'produk_id' => 'required|array',
-        'produk_id.*' => 'required|exists:produk,idproduk',
-        'jumlah_diminta' => 'required|array',
-        'jumlah_diminta.*' => 'required|integer|min:1',
-        'keterangan' => 'nullable|string|max:255',
-    ]);
+    'produk_id' => 'required|array',
+    'produk_id.*' => 'required|exists:produk,idproduk',
+    'jumlah_diminta' => 'required|array',
+    'jumlah_diminta.*' => 'required|integer|min:1',
+    'keterangan' => 'nullable|string|max:255',
+]);
+
+// CEK STOK PUSAT
+$errors = [];
+
+foreach ($request->produk_id as $i => $produkId) {
+
+    $produk = Produk::findOrFail($produkId);
+    $jumlahDiminta = $request->jumlah_diminta[$i];
+
+    if ($jumlahDiminta > $produk->stok_pusat) {
+        $errors[] =
+            $produk->nama_produk .
+            ' melebihi stok pusat (tersedia '.$produk->stok_pusat.')';
+    }
+}
+
+if ($errors) {
+    return back()
+        ->withInput()
+        ->with('error', implode(', ', $errors));
+}
 
     $userId = Auth::user()->idusers;
     $adminCabang = AdminCabang::where('users_idusers', $userId)->first();

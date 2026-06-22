@@ -16,15 +16,11 @@
     <h3>Ajukan Permintaan Produk</h3>
 
     {{-- Error validasi --}}
-    @if ($errors->any())
-        <div class="alert alert-red">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    @if(session('error'))
+    <div class="alert alert-red">
+        {{ session('error') }}
+    </div>
+@endif
 
     {{-- Flash message --}}
     @if(session('success'))

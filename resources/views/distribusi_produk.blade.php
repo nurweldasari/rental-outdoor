@@ -35,7 +35,11 @@
 
         @forelse ($permintaan as $perm)
         <div class="permintaan-card">
-
+ @if(session('error_permintaan') == $perm->idpermintaan)
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
             {{-- TOP INFO --}}
             <div class="permintaan-top">
                 <div class="permintaan-info">
@@ -78,11 +82,6 @@
                 <div class="produk-item">
 
                     <h4>{{ $item->produk->nama_produk }}</h4>
-                     @if(session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif
 
                   @php
             $dikirim = $item->distribusi->sum('jumlah_dikirim') ?? 0;
