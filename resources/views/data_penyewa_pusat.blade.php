@@ -167,9 +167,9 @@
 
       <!-- KIRI -->
       <div class="modal-left">
-        <img id="modalFoto" src="" alt="Gambar Identitas">
+        <div id="previewContainer"></div>
         <p>Gambar Identitas</p>
-      </div>
+    </div>
 
       <!-- KANAN -->
       <div class="modal-right">
@@ -196,10 +196,6 @@
 
       </div>
 
-      <div id="imgPreviewOverlay">
-        <span onclick="closeImgPreview()">&times;</span>
-        <img>
-      </div>
 
     </div>
 
@@ -231,30 +227,41 @@
 }, 3000);
 document.querySelectorAll('.btn-detail').forEach(btn => {
     btn.onclick = () => {
+
         modalNama.value = btn.dataset.nama;
         modalUsername.value = btn.dataset.username;
         modalTelepon.value = btn.dataset.telepon;
         modalAlamat.value = btn.dataset.alamat;
-        modalFoto.src = btn.dataset.foto;
 
-        modalDetailPenyewa.style.display = 'flex';
+        const file = btn.dataset.foto;
+        const ext = file.split('.').pop().toLowerCase();
+
+        const preview = document.getElementById('previewContainer');
+
+        if (ext === 'pdf') {
+            preview.innerHTML = `
+                <iframe
+                    src="${file}"
+                    width="100%"
+                    height="450"
+                    style="border:none;border-radius:10px;">
+                </iframe>
+            `;
+        } else {
+            preview.innerHTML = `
+                <img
+                    id="modalFoto"
+                    src="${file}"
+                    alt="Gambar Identitas">
+            `;
+        }
+
+        document.getElementById('modalDetailPenyewa').style.display = 'flex';
     };
 });
 
 function closeModal() {
     document.getElementById("modalDetailPenyewa").style.display = "none";
-}
-const modalFoto = document.getElementById('modalFoto');
-const overlay = document.getElementById('imgPreviewOverlay');
-const overlayImg = overlay.querySelector('img');
-
-modalFoto.addEventListener('click', () => {
-  overlayImg.src = modalFoto.src;
-  overlay.style.display = 'flex';
-});
-
-function closeImgPreview() {
-  overlay.style.display = 'none';
 }
 
 document.getElementById('searchInput').addEventListener('keyup', function () {

@@ -36,35 +36,48 @@
 
 <div class="input-group">
     <i class="fa-solid fa-user icon-left"></i>
-    <input type="text" name="nama_cabang" placeholder="Nama Cabang" required>
+    <input type="text" name="nama_cabang"
+       value="{{ old('nama_cabang') }}"
+       placeholder="Nama Cabang" required>
 </div>
 
 <div class="input-group">
     <i class="fa-solid fa-location-dot icon-left"></i>
-    <input type="text" name="lokasi" placeholder="Lokasi Cabang" required>
+    <input type="text" name="lokasi"
+       value="{{ old('lokasi') }}"
+       placeholder="Lokasi Cabang" required>
 </div>
 
 <div class="row">
     <div class="input-group">
         <i class="fa-solid fa-user icon-left"></i>
-        <input type="text" name="nama" placeholder="Nama Admin Cabang" required>
+        <input type="text" name="nama"
+       value="{{ old('nama') }}"
+       placeholder="Nama Admin Cabang" required>
     </div>
 
     <div class="input-group">
         <i class="fa-solid fa-phone icon-left"></i>
-        <input type="text" name="no_telepon" placeholder="No. Telephone Admin Cabang" required>
+        <input type="text" name="no_telepon"
+       value="{{ old('no_telepon') }}"
+       placeholder="No. Telephone Admin Cabang" required>
     </div>
 </div>
 
 <div class="input-group textarea-group">
     <i class="fa-solid fa-location-dot icon-left"></i>
-    <textarea name="alamat" rows="2" placeholder="Alamat Domisili Admin Cabang" required></textarea>
+    <textarea name="alamat"
+          rows="2"
+          placeholder="Alamat Domisili Admin Cabang"
+          required>{{ old('alamat') }}</textarea>
 </div>
 
 <div class="row">
     <div class="input-group">
         <i class="fa-solid fa-circle-user icon-left"></i>
-        <input type="text" name="username" placeholder="Username" required>
+        <input type="text" name="username"
+       value="{{ old('username') }}"
+       placeholder="Username" required>
     </div>
 
     <div class="input-group password-group">
@@ -77,12 +90,12 @@
 <div class="upload-box">
     <label class="upload-btn">
         Upload MOU
-        <input type="file" name="gambar_mou" id="gambar_mou" hidden required accept=".jpg,.jpeg,.png">
+        <input type="file" name="gambar_mou" id="gambar_mou" hidden required accept=".jpg,.jpeg,.png,.pdf">
     </label>
 
     <div class="upload-area" id="file-name">
         <i class="fa-solid fa-cloud-arrow-up"></i>
-        JPG / PNG max 2MB
+        Upload File MOU maksimal 2MB
     </div>
 </div>
 
@@ -103,7 +116,14 @@ const fileName = document.getElementById('file-name');
 
 fileInput.addEventListener('change', function () {
     if (this.files.length > 0) {
-        fileName.innerHTML = `<i class="fa-solid fa-file-image"></i> ${this.files[0].name}`;
+        const ext = this.files[0].name.split('.').pop().toLowerCase();
+
+        const icon = ext === 'pdf'
+            ? 'fa-file-pdf'
+            : 'fa-file-image';
+
+        fileName.innerHTML =
+            `<i class="fa-solid ${icon}"></i> ${this.files[0].name}`;
     }
 });
 
