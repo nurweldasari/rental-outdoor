@@ -11,76 +11,93 @@
 
 OutdoorKriss merupakan aplikasi berbasis web yang dikembangkan untuk mendukung pengelolaan penyewaan perlengkapan outdoor pada setiap kantor cabang. Sistem ini dibangun untuk mengatasi proses penyewaan yang sebelumnya masih dilakukan secara manual melalui pencatatan di buku dan pemesanan melalui WhatsApp.
 
-Melalui sistem ini, penyewa dapat melakukan reservasi secara online, sedangkan admin cabang dapat mengelola penyewaan, stok produk, pembayaran, pengembalian, permintaan alat ke pusat, serta laporan penyewaan secara terintegrasi. Selain itu, sistem juga dilengkapi dengan fitur notifikasi WhatsApp sebagai pengingat pengembalian barang.
+Melalui sistem ini, penyewa dapat melakukan reservasi secara online, sedangkan admin cabang dapat mengelola penyewaan, stok cabang, permintaan alat ke pusat, serta laporan penyewaan secara terintegrasi. Selain itu, sistem juga dilengkapi dengan fitur notifikasi WhatsApp sebagai pengingat pengembalian barang.
 
 ---
 
-## 📌 Fitur Utama
+## 🚀 Fitur Utama
 
-### 👤 Penyewa
-
-* Registrasi dan login akun
-* Melihat katalog dan ketersediaan produk
-* Melakukan penyewaan secara online
-* Memilih metode pembayaran (Transfer atau Cash)
-* Melihat status dan riwayat penyewaan
-* Mengelola profil akun
-
-### 👨‍💼 Admin Cabang
-
-* Dashboard
-* Manajemen data penyewa
-* Manajemen kategori, produk, dan paket
-* Manajemen stok produk cabang
-* Manajemen penyewaan
-* Verifikasi pembayaran
-* Manajemen pengembalian
-* Mengirim permintaan produk ke pusat
-* Melihat laporan penyewaan
-* Mengelola akun admin
-
----
-
-## 👥 Role Pengguna
-
-### Penyewa
-
-Penyewa dapat melakukan proses penyewaan perlengkapan outdoor secara online tanpa harus datang langsung ke toko atau melakukan pemesanan melalui WhatsApp.
-
-### Admin Cabang
-
-Admin bertanggung jawab mengelola seluruh aktivitas operasional penyewaan pada cabang, mulai dari pengelolaan produk, transaksi penyewaan, pembayaran, pengembalian, hingga permintaan produk kepada pusat.
+| 👤 Penyewa                                     | 👨‍💼 Admin Cabang                     |
+| ---------------------------------------------- | -------------------------------------- |
+| 🔐 Registrasi & Login                          | 📊 Dashboard                           |
+| 🔍 Melihat katalog dan ketersediaan produk     | 👥 Mengelola data penyewa              |
+| 🛒 Melakukan penyewaan secara online           | 📦 Mengelola stok produk cabang        |
+| 💳 Memilih metode pembayaran (Transfer / Cash) | 📋 Mengelola transaksi penyewaan       |
+| 📜 Melihat status dan riwayat penyewaan        | 🔄 Mengelola pengembalian barang       |
+| 👤 Mengelola profil akun                       | 📤 Mengirim permintaan produk ke pusat |
+|                                                | 📈 Melihat laporan penyewaan           |
+|                                                | ⚙️ Mengelola profil admin              |
 
 ---
 
 ## 🔄 Alur Sistem
 
-1. Penyewa melakukan registrasi dan login.
-2. Penyewa memilih produk yang tersedia.
-3. Penyewa melakukan penyewaan secara online.
-4. Penyewa memilih metode pembayaran.
-5. Admin memverifikasi transaksi penyewaan.
-6. Sistem memperbarui stok produk secara otomatis.
-7. Admin memproses pengambilan dan pengembalian barang.
-8. Sistem mengirim notifikasi WhatsApp sebagai pengingat pengembalian.
-9. Jika stok cabang tidak mencukupi, admin dapat mengirim permintaan produk ke pusat.
-10. Seluruh transaksi tersimpan dan dapat ditampilkan dalam laporan penyewaan.
+```text
+═══════════════════════════════════════════════
+                    Admin Cabang
+═══════════════════════════════════════════════
+                        │
+                        ▼
+     Kelola Produk / Tambah Paket / Kelola Stok
+                        │
+                        ▼
+      (Opsional) Mengajukan Permintaan Alat ke Pusat
+                        │
+                        ▼
+═══════════════════════════════════════════════
+                    PENYEWA
+═══════════════════════════════════════════════
+                        │
+                        ▼
+               Registrasi / Login
+                        │
+                        ▼
+       Melihat Katalog & Ketersediaan Produk
+                        │
+                        ▼
+            Melakukan Penyewaan Online
+                        │
+                        ▼
+         Memilih Metode Pembayaran
+                        │
+                        ▼
+═══════════════════════════════════════════════
+                  ADMIN CABANG
+═══════════════════════════════════════════════
+                        │
+                        ▼
+            Verifikasi Penyewaan
+                        │
+                        ▼
+         Stok Diperbarui Otomatis
+                        │
+                        ▼
+              Barang Disiapkan
+                        │
+                        ▼
+         Penyewa Menggunakan Barang
+                        │
+                        ▼
+📲 Notifikasi WhatsApp Pengingat Pengembalian
+                        │
+                        ▼
+          Proses Pengembalian Barang
+                        │
+                        ▼
+     Riwayat Transaksi & Laporan Penyewaan
+```
 
 ---
 
 ## 🛠️ Teknologi yang Digunakan
 
-* Laravel
-* PHP
-* MySQL
-* HTML
-* CSS
-* JavaScript
-* Bootstrap
-* SweetAlert2
-* WhatsApp API
-
----
+| Teknologi                  | Kegunaan                      |
+| -------------------------- | ----------------------------- |
+| **Laravel**                | Framework backend             |
+| **PHP**                    | Bahasa pemrograman            |
+| **MySQL**                  | Database                      |
+| **HTML, CSS & JavaScript** | Antarmuka pengguna            |
+| **API Fonnte**             | Integrasi notifikasi WhatsApp |
 
 ## 📂 Modul Sistem
 
@@ -99,12 +116,10 @@ Dashboard
 │
 ├── Admin Cabang
 │   ├── Data Penyewa
-│   ├── Kategori Produk
-│   ├── Produk
+│   ├── Produk Cabang
 │   ├── Paket
 │   ├── Penyewaan
-│   ├── Pembayaran
-│   ├── Pengembalian
+│   ├── Riwayat Penyewaan
 │   ├── Permintaan Produk
 │   └── Laporan
 ```
@@ -117,17 +132,6 @@ Dashboard
 * Cash
 
 ---
-
-## 📊 Fitur Sistem
-
-* Penyewaan perlengkapan outdoor secara online
-* Pencatatan stok otomatis
-* Pengelolaan transaksi penyewaan
-* Pengelolaan pengembalian barang
-* Permintaan produk dari cabang ke pusat
-* Laporan penyewaan cabang
-* Notifikasi WhatsApp pengingat pengembalian barang
-
 ## 🚀 Cara Menjalankan Project
 
 ### Clone Repository
