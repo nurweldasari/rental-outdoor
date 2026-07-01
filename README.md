@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-# 🏕️ OutdoorKriss - Sistem Manajemen Penyewaan Perlengkapan Outdoor
+# OutdoorKriss - Sistem Manajemen Penyewaan Perlengkapan Outdoor
 
 OutdoorKriss merupakan aplikasi berbasis web yang dikembangkan untuk mendukung pengelolaan penyewaan perlengkapan outdoor pada setiap kantor cabang. Sistem ini dibangun untuk mengatasi proses penyewaan yang sebelumnya masih dilakukan secara manual melalui pencatatan di buku dan pemesanan melalui WhatsApp.
 
@@ -15,7 +15,7 @@ Melalui sistem ini, penyewa dapat melakukan reservasi secara online, sedangkan a
 
 ---
 
-## 🚀 Fitur Utama
+## Fitur Utama
 
 | 👤 Penyewa                                     | 👨‍💼 Admin Cabang                     |
 | ---------------------------------------------- | -------------------------------------- |
@@ -30,7 +30,7 @@ Melalui sistem ini, penyewa dapat melakukan reservasi secara online, sedangkan a
 
 ---
 
-## 🔄 Alur Sistem
+## Alur Sistem
 
 ```text
 ═══════════════════════════════════════════════
@@ -38,7 +38,7 @@ Melalui sistem ini, penyewa dapat melakukan reservasi secara online, sedangkan a
 ═══════════════════════════════════════════════
                         │
                         ▼
-     Kelola Produk / Tambah Paket / Kelola Stok
+             Kelola Stok Produk / Tambah Paket 
                         │
                         ▼
       (Opsional) Mengajukan Permintaan Alat ke Pusat
@@ -78,7 +78,7 @@ Melalui sistem ini, penyewa dapat melakukan reservasi secara online, sedangkan a
          Penyewa Menggunakan Barang
                         │
                         ▼
-📲 Notifikasi WhatsApp Pengingat Pengembalian
+Notifikasi WhatsApp Pengingat Pengembalian
                         │
                         ▼
           Proses Pengembalian Barang
@@ -89,7 +89,7 @@ Melalui sistem ini, penyewa dapat melakukan reservasi secara online, sedangkan a
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 | Teknologi                  | Kegunaan                      |
 | -------------------------- | ----------------------------- |
@@ -99,7 +99,7 @@ Melalui sistem ini, penyewa dapat melakukan reservasi secara online, sedangkan a
 | **HTML, CSS & JavaScript** | Antarmuka pengguna            |
 | **API Fonnte**             | Integrasi notifikasi WhatsApp |
 
-## 📂 Modul Sistem
+## Modul Sistem
 
 ```text
 Dashboard
@@ -123,16 +123,8 @@ Dashboard
 │   ├── Permintaan Produk
 │   └── Laporan
 ```
-
 ---
-
-## 💳 Metode Pembayaran
-
-* Transfer
-* Cash
-
----
-## 🚀 Cara Menjalankan Project
+## Cara Menjalankan Project
 
 ### Clone Repository
 
@@ -197,29 +189,6 @@ http://127.0.0.1:8000
 ```
 
 ---
-
-## 📸 Tampilan Sistem
-
-- Halaman Login
-- Dashboard Admin
-- Dashboard Penyewa
-- Katalog Produk
-- Penyewaan
-- Pembayaran
-- Pengembalian
-- Laporan
-
----
-
-## 🎯 Tujuan Sistem
-
-- Mempermudah proses penyewaan perlengkapan outdoor.
-- Membantu admin dalam mengelola transaksi penyewaan.
-- Mengurangi pencatatan manual.
-- Menyediakan laporan penyewaan secara cepat dan akurat.
-
----
-
 ## 👩‍💻 Pengembang
 
 **Nur Welda Sari**
